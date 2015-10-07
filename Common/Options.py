@@ -1,0 +1,15 @@
+
+PRINT_ERRORS_ON_CREATION = False
+PRINT_TREE_TRANSDUCER_OUTPUTS = False
+PRINT_TREE_TRANSDUCER_OUTPUTS_LIST = ['Constituent', 'Primary', 'Block']
+PRINT_ARRANGEMENT_OUTPUTS = False # True
+
+
+import struct
+INT_LENGTH = struct.calcsize("P")
+MAX_INT = (1<<INT_LENGTH*8 - 1) - 1
+MAX_UINT = (1<<INT_LENGTH*8) - 1
+POINTER_LENGTH = struct.calcsize("P")
+MAX_TYPE_DEPTH = MAX_INT
+
+
