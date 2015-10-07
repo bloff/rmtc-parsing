@@ -1,6 +1,4 @@
 /.idea*
 *__pycache__*
-/0.Output/stdout
-/0.Output/tmp.bin
-/Notes/persistent-survey.pdf
-/Notes/persistent.pdf
+*.pyc
+
