@@ -1,7 +1,7 @@
 from Syntax.__exports__ import Element, Form, Identifier, Literal
 from Syntax.Token import is_token, TOKEN
 from Transducers.Arrangements.ArrangementRule import ArrangementRule
-from Semantics.Types.Bootstrap0 import String
+# from Semantics.Types.Bootstrap0 import String
 
 class Strings(ArrangementRule):
     def __init__(self):
@@ -17,7 +17,7 @@ class Strings(ArrangementRule):
             string_token = element.next
             parent.remove(element)
             parent.remove(element.end)
-            string_token.code = Literal(String, string_token.value, string_token.range)
+            string_token.code = Literal("STRING(PLACEHOLDER)", string_token.value, string_token.range)
             return string_token.next
         else:
             new_form_element = element.parent.wrap(element, element.end, Form)

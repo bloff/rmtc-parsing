@@ -1,7 +1,7 @@
 from Syntax.__exports__ import Element, Literal, Identifier
 from Syntax.Token import is_token, TOKEN
 from Transducers.Arrangements.ArrangementRule import ArrangementRule
-from Semantics.Types.Bootstrap0 import Float, Int
+# from Semantics.Types.Bootstrap0 import Float, Int
 
 class Constituent(ArrangementRule):
     def __init__(self):
@@ -30,9 +30,9 @@ class Constituent(ArrangementRule):
 
     def apply(self, element) -> Element:
         if Constituent.is_int(element.value):
-            new_element = element.parent.replace(element, Literal(Int, int(element.value), element.range))
+            new_element = element.parent.replace(element, Literal("INT(PLACEHOLDER)", int(element.value), element.range))
         elif Constituent.is_float(element.value):
-            new_element = element.parent.replace(element, Literal(Float, float(element.value), element.range))
+            new_element = element.parent.replace(element, Literal("FLOAT(PLACEHOLDER)", float(element.value), element.range))
         else:
             new_element = element.parent.replace(element, Identifier(element.value, element.range))
             # if element.value in self.stalling_identifiers:

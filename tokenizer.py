@@ -36,7 +36,7 @@ def parse_args(argv):
                 if output_name == 'stdout': options.output = sys.stdout.buffer
                 if output_name == 'stderr': options.output = sys.stderr.buffer
                 else: options.output = open(output_name, "wb")
-        elif arg.lower().endswith('.lyc'):
+        elif arg.lower().endswith('.ly'):
             if 'filename' in options:
                 print("Multiple filenames found!")
                 exit(-1)
