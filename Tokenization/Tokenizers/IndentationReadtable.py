@@ -4,23 +4,23 @@ from Common.Errors import TokenizingError
 from Streams.IndentedCharacterStream import IndentedCharacterStream
 from Tokenization.Readtable import *
 from Tokenization.Tokenizers import Util
+from Tokenization.Tokenizers.Tokenizer import TokenizationContext
 from .Tokenizer import Tokenizer
 from Tokenization.StandardReadtable import RT_CLOSING
 from Syntax.Token import token_BEGIN, token_END, token_INDENT, token_CONSTITUENT, token_PUNCTUATION
 
 
 class IndentationReadtableTokenizer(Tokenizer):
-    def __init__(self, stream: CharacterStream, readtable: Readtable):
-        istream = stream if isinstance(stream, IndentedCharacterStream) else IndentedCharacterStream(stream)
-        Tokenizer.__init__(self, istream)
-        self.readtable = readtable
+    def __init__(self, context:TokenizationContext):
+        assert isinstance(context.stream, IndentedCharacterStream)
+        Tokenizer.__init__(self, context)
 
         self.last_begin_token = None
 
 
     def run(self):
-        readtable = self.readtable
-        stream = self.stream
+        readtable = self.context.readtable
+        stream = self.context.stream
         """:type : IndentedCharacterStream"""
 
         while True:
@@ -68,7 +68,7 @@ class IndentationReadtableTokenizer(Tokenizer):
                     # Step 7
                     elif seq_type == RT_MACRO:
                         assert 'tokenizer' in properties
-                        for token in Util.tokenize_macro(stream, readtable, seq, properties):
+                        for token in Util.tokenize_macro(self.context, seq, properties):
                             yield token
                     # Step 8
                     elif seq_type == RT_CONSTITUENT:
@@ -120,11 +120,11 @@ class IndentationReadtableTokenizer(Tokenizer):
                         stream.unread_seq(seq)
 
 
-                self.stream.push()
-                tokenizer = IndentationReadtableTokenizer(self.stream, self.readtable)
+                self.context.stream.push()
+                tokenizer = self.context.DefaultTokenizer(self.context)
                 for token in tokenizer.run():
                     yield token
-                self.stream.pop()
+                self.context.stream.pop()
 
 
 

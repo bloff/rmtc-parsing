@@ -2,7 +2,7 @@ from Common.Errors import TokenizingError
 from Streams.CharacterStream import CharacterStream
 from Streams.StreamPosition import StreamPosition
 from Streams.StreamRange import StreamRange
-from .Tokenizer import Tokenizer
+from .Tokenizer import Tokenizer, TokenizationContext
 from Syntax.Token import token_BEGIN_MACRO, token_END_MACRO
 from .TokenizerRegistry import def_tokenizer_class, get_tokenizer_class
 
@@ -19,8 +19,8 @@ _delimiter_pairs = {
     }
 
 class DelimiterTokenizer(Tokenizer):
-    def __init__(self, stream: CharacterStream, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition, readtable):
-        Tokenizer.__init__(self, stream)
+    def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
+        Tokenizer.__init__(self, context)
 
         if opening_delimiter not in _delimiter_pairs:
             raise TokenizingError(opening_delimiter_position, "Unregistered delimiter pair, for opening sequence “%s”" % opening_delimiter)
@@ -32,11 +32,11 @@ class DelimiterTokenizer(Tokenizer):
 
 
     def run(self):
-        stream = self.stream
+        stream = self.context.stream
         opening_delimiter_token = token_BEGIN_MACRO(self.opening_delimiter, self.opening_delimiter_position, self.opening_delimiter_position_after)
         yield opening_delimiter_token
 
-        tokenizer = get_tokenizer_class('Standard')(stream)
+        tokenizer = self.context.StandardTokenizer(self.context)
         for token in tokenizer.run():
             yield token
 

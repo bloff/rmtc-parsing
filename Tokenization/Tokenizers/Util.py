@@ -2,10 +2,13 @@ from Common.Errors import TokenizingError
 from Streams import IndentedCharacterStream, CharacterStream
 from Tokenization.Readtable import RT_NEWLINE, RT_CONSTITUENT, Readtable
 from Tokenization.Readtable import RT_WHITESPACE
+from Tokenization.Tokenizers.Tokenizer import TokenizationContext, Tokenizer
 from Tokenization.Tokenizers.TokenizerRegistry import get_tokenizer_class
 
 
-def tokenize_macro(stream:IndentedCharacterStream, readtable:Readtable, seq, properties):
+def tokenize_macro(context:TokenizationContext, seq, properties):
+    stream = context.stream
+    readtable = context.readtable
     abs_macro_seq_position = stream.absolute_position_of_unread_seq(seq)
     abs_macro_seq_position_after = stream.copy_absolute_position()
 
@@ -20,7 +23,9 @@ def tokenize_macro(stream:IndentedCharacterStream, readtable:Readtable, seq, pro
             raise TokenizingError(stream.copy_absolute_position(), "Indentation too small after opening macro sequence '%s'." % seq)
 
     stream.push()
-    tokenizer = get_tokenizer_class(properties.tokenizer)(stream, seq, abs_macro_seq_position, abs_macro_seq_position_after, readtable)
+    TokenizerClass = context[properties.tokenizer]
+    assert issubclass(TokenizerClass, Tokenizer)
+    tokenizer = TokenizerClass(context, seq, abs_macro_seq_position, abs_macro_seq_position_after)
     for token in tokenizer.run():
         yield token
     stream.pop()

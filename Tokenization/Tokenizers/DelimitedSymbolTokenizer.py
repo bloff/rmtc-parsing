@@ -1,7 +1,7 @@
 from Common.Errors import TokenizingError
 from Streams.CharacterStream import CharacterStream
 from Streams.StreamPosition import StreamPosition
-from .Tokenizer import Tokenizer
+from .Tokenizer import Tokenizer, TokenizationContext
 from Syntax.Token import token_CONSTITUENT
 from .TokenizerRegistry import def_tokenizer_class
 
@@ -11,9 +11,9 @@ from .TokenizerRegistry import def_tokenizer_class
 #     '‘' : '’',
 #     }
 
-class DelimitedSymbol(Tokenizer):
-    def __init__(self, stream: CharacterStream, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition, readtable):
-        Tokenizer.__init__(self, stream)
+class DelimitedSymbolTokenizer(Tokenizer):
+    def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
+        Tokenizer.__init__(self, context)
 
         if opening_delimiter != "«":
             raise TokenizingError(opening_delimiter_position, "Multiple-escape tokenizer called with unknown opening sequence “%s”" % opening_delimiter)
@@ -25,7 +25,7 @@ class DelimitedSymbol(Tokenizer):
 
 
     def run(self):
-        stream = self.stream
+        stream = self.context.stream
         seen_escape = False
 
         # opening_string_token = token_BEGIN_MACRO(self.opening_delimiter, self.opening_delimiter_position, stream.position)
@@ -56,4 +56,4 @@ class DelimitedSymbol(Tokenizer):
                     elif char == '␉': value += '\t'
                     else: value += char
 
-def_tokenizer_class('Delimited Symbol', DelimitedSymbol)
+def_tokenizer_class('Delimited Symbol', DelimitedSymbolTokenizer)

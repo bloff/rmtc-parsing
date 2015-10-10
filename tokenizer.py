@@ -4,11 +4,10 @@ import msgpack
 
 from Common.Errors import LycError, TokenizingError
 from Common.SysArgsParser import SysArgsParser
+from Parsers.LycParser import LycParser
 from Streams.FileStream import FileStream
 from Streams.StringStream import StringStream
 from Syntax.Token import TOKEN
-from Tokenization.Tokenizers.Standard import StandardTokenizer
-from Tokenization.StandardReadtable import standard_readtable, RT_CLOSING
 from Common.Record import Record
 
 
@@ -56,37 +55,23 @@ def tokenize(options):
         code = open(filename, encoding='utf-8').read()
         stream = StringStream(code)
 
-        tokenizer = StandardTokenizer(stream)
-
+        parser = LycParser()
 
         if 'output' in options:
             output = options.output
             encoder = options.encoder
-            current_index = 0
-            for token in tokenizer.run():
-                token_first = token.range.first_position.index
-                token_after = token.range.position_after.index
-                if token_first > current_index:
-                    token_type = TOKEN.WHITESPACE.value if options.binary else TOKEN.WHITESPACE.name
-                    bytes_ = encoder((token_type, current_index, token_first))
-                    output.write(bytes_)
-                    current_index = token_first
-                elif token_first < current_index:
-                    raise TokenizingError(token_first, "Overlapping tokens (%s, %s)!!!" % (current_index, token_first))
-                token_type = token.type.value if options.binary else token.type.name
-                bytes_ = encoder((token_type, current_index, token_after))
-                print([token_type, current_index, token_after])
-                current_index = token_after
+            filler_token_value = TOKEN.WHITESPACE.value if options.binary else TOKEN.WHITESPACE.name
+            for token, first_index, index_after in parser.tokenize_with_intervals(stream):
+                if token is None:
+                    bytes_ = encoder((filler_token_value, first_index, index_after))
+                else:
+                    token_value = token.type.value if options.binary else token.type.name
+                    bytes_ = encoder((token_value, first_index, index_after))
                 output.write(bytes_)
         else:
-            for token in tokenizer.run():
+            for token in parser.tokenize(stream):
                 print(str(token))
 
-        if not stream.next_is_EOF():
-            seq, properties = standard_readtable.probe(stream)
-            if properties.type == RT_CLOSING:
-                raise TokenizingError(stream.absolute_position_of_unread_seq(seq), "Uncaptured closing sequence “%s”." % seq)
-            raise TokenizingError(stream.absolute_position_of_unread_seq(seq), "Failed to Tokenize all of the text!")
     except LycError as e:
         print(e.trace)
 

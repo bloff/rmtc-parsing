@@ -5,14 +5,14 @@ from Streams.StreamRange import StreamRange
 from Tokenization.Readtable import RT_TOKEN, RT_MACRO, RT_CONSTITUENT, RT_WHITESPACE, RT_PUNCTUATION, RT_NEWLINE, \
     RT_CLOSING, RT_INVALID
 from Tokenization.Tokenizers import Util
-from .Tokenizer import Tokenizer
+from .Tokenizer import Tokenizer, TokenizationContext
 from Syntax.Token import token_BEGIN_MACRO, token_END_MACRO, token_COMMENT, token_CONSTITUENT
 from .TokenizerRegistry import def_tokenizer_class
 
 
 class CommentTokenizer(Tokenizer):
-    def __init__(self, stream: CharacterStream, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition, readtable):
-        Tokenizer.__init__(self, stream)
+    def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
+        Tokenizer.__init__(self, context)
 
         if opening_delimiter != '#':
             raise TokenizingError(opening_delimiter_position, "Comment tokenizer called with unknown opening sequence “%s”" % opening_delimiter)
@@ -21,13 +21,12 @@ class CommentTokenizer(Tokenizer):
         self.opening_delimiter_position = opening_delimiter_position
         self.opening_delimiter_position_after = opening_delimiter_position_after
         self.closing_delimiter = '◁'
-        self.readtable = readtable
 
         assert len(opening_delimiter) == 1 and len(self.closing_delimiter) == 1 # TODO: handle larger string delimiters?
 
 
     def run(self):
-        stream = self.stream
+        stream = self.context.stream
         seen_escape = False
 
         opening_comment_token = token_BEGIN_MACRO(self.opening_delimiter, self.opening_delimiter_position, self.opening_delimiter_position_after)
@@ -65,8 +64,8 @@ class CommentTokenizer(Tokenizer):
                     else: value += char
 
     def escape(self):
-        stream = self.stream
-        readtable = self.readtable
+        stream = self.context.stream
+        readtable = self.context.readtable
 
         if stream.next_is_EOF():
             return
@@ -80,7 +79,7 @@ class CommentTokenizer(Tokenizer):
                 yield token_CONSTITUENT(seq, stream.absolute_position_of_unread_seq(seq), stream.copy_absolute_position())
             elif seq_type == RT_MACRO:
                 assert 'tokenizer' in properties
-                for token in Util.tokenize_macro(stream, readtable, seq, properties):
+                for token in Util.tokenize_macro(self.context, seq, properties):
                     yield token
             elif seq_type == RT_CONSTITUENT:
                 first_position = stream.absolute_position_of_unread_seq(seq)

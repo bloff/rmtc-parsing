@@ -1,11 +1,12 @@
 from typing import Union
-from Common.Instance import Instance
+
 from Syntax.Code import Code
 from Syntax.Form import Form
 from Syntax.Identifier import Identifier
 from Syntax.Literal import Literal
 from Syntax.Node import Element
 from Syntax.Tuple import Tuple
+
 
 def _identifier_eq(name, semantic_extra, equal_to_name, equal_to_semantic_extra):
     return ((equal_to_semantic_extra is None or semantic_extra == equal_to_semantic_extra) and
@@ -38,7 +39,7 @@ def identifier_in(arg: Union[Code, Element, str], collection_of_str):
         name, syntactic_extra, semantic_extra = Identifier.split_name(arg)
         for itm in collection_of_str:
             equal_to_name, equal_to_semantic_extra = Identifier.split_name(itm)
-            if _identifier_eq(name, syntactic_extra, semantic_extra, equal_to_name, equal_to_semantic_extra ):
+            if _identifier_eq(name, semantic_extra, equal_to_name, equal_to_semantic_extra ):
                 return True
         return False
     else:
@@ -48,14 +49,17 @@ def identifier_in(arg: Union[Code, Element, str], collection_of_str):
 
 def is_literal(
         code_or_element: Union[Code, Element],
-        type:Instance=None
+        of_type=None
         ) -> bool:
     if code_or_element is None: return False
     code = get_code(code_or_element)
-    if type is None:
+    if of_type is None:
         return isinstance(code, Literal)
     else:
-        return isinstance(code, Literal) and code.type is type
+        if isinstance(code, Literal):
+            return code.type is of_type
+        else:
+            return False
 
 
 def is_form(
@@ -67,7 +71,10 @@ def is_form(
     if form_head_identifier_name is None:
         return isinstance(code, Form)
     else:
-        return isinstance(code, Form) and is_identifier(code.first, form_head_identifier_name)
+        if isinstance(code, Form):
+            return is_identifier(code.first, form_head_identifier_name)
+        else:
+            return False
 
 
 def is_tuple(code_or_element: Union[Code, Element]) -> bool:

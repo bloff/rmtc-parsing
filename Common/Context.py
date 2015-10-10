@@ -22,6 +22,7 @@ class Context(object):
             if name in scope:
                 return scope[name]
         raise AttributeError("No such variable %s in context %s"%(name, self._name))
+
     def let(self, **kwargs):
         return _ContextBlock(self._stack, kwargs)
 
@@ -34,3 +35,6 @@ class Context(object):
             self.__dict__[name] = value
         else:
             raise AttributeError("Context variables can only be set using `with env.let()`")
+
+    def __getitem__(self, item):
+        return self.__getattr__(item)

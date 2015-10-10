@@ -4,8 +4,8 @@ import msgpack
 
 from Common.Record import Record
 from Common.SysArgsParser import SysArgsParser
-from Transducers import DefaultArranger
 from Common.Errors import LycError
+from Parsers.LycParser import LycParser
 from Streams.FileStream import FileStream
 from Syntax.LispPrinter import indented_lisp_printer
 from Common import Options
@@ -49,12 +49,13 @@ def parse_args(argv):
 
 
 def arrange(options):
+    parser = LycParser()
     try:
         filename = options.filename
 
         stream = FileStream(filename)
 
-        file_node = DefaultArranger.arrange(stream)
+        file_node = parser.arrange(stream)
         print(indented_lisp_printer(file_node))
 
     except LycError as e:
@@ -62,6 +63,7 @@ def arrange(options):
 
 def main():
     options = parse_args(sys.argv)
+
 
     arrange(options)
 
