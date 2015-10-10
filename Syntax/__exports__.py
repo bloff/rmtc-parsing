@@ -1,4 +1,3 @@
-from ._common import *
 from .Code import Code
 from .Identifier import Identifier
 from Syntax.Util import is_identifier

@@ -1,20 +1,39 @@
+
 from Common.StringStuff import EOF
 from Streams.CharacterStream import CharacterStream
 from Streams.StreamPosition import StreamPosition
 from Streams._common import StreamError
 
 
+
+
 class IndentedCharacterStream(CharacterStream):
+    """
+    A character stream for parsing with indentation by ignoring leading whitespace.
+   """
 
     def __init__(self, parent:CharacterStream):
         CharacterStream.__init__(self, parent.name)
-        self.parent = parent
-        # The stack keeps the first position of the various indentation levels
-        self.stack = [parent.copy_position()]
+
+        # The stream from which we obtain the (absolute) characters.
+        self._parent = parent
+        # Keeps the first StreamPosition_ of the various indentation levels
+        self._stack = [parent.copy_position()]
+
+        # Keeps the StreamPosition_ of the current character, relative to the position in the top of the stack
         self.current_relative_position = StreamPosition(self.name, 0, 1, 1, 1)
+
+        # Remembers whether the substream has finished reading
         self.relative_eof = False
 
     def unread(self, n:int=1) -> str:
+        """
+        Unreads characters from the current substream. Raises an error if an attempt is made
+        at unreading beyond the beginning.
+
+        :param n: The number of characters to unread.
+        :type n: int
+        """
         if n > 1:
             last = self.unread()
             assert last != EOF
@@ -31,10 +50,10 @@ class IndentedCharacterStream(CharacterStream):
                 return EOF
             else:
                 char = None
-                current_starting_column = self.stack[-1].visual_column
+                current_starting_column = self._stack[-1].visual_column
                 while True:
-                    char = self.parent.unread()
-                    if self.parent.position.visual_column < current_starting_column:
+                    char = self._parent.unread()
+                    if self._parent.position.visual_column < current_starting_column:
                         if char == '\n':
                             break
                         else: continue
@@ -47,25 +66,32 @@ class IndentedCharacterStream(CharacterStream):
                 return char
 
     def read(self) -> str:
+        """
+        Reads the next character of the current substream. Raises an error if an attempt is made at reading beyond the EOF.
+
+        :rtype : str
+        :returns The next character in the current substream, or EOF if there are no more characters.
+        """
+
         if self.relative_eof:
             raise StreamError("Tried to read character beyond EOF.")
 
         char = None
-        current_starting_column = self.stack[-1].visual_column
-        while self.parent.position.visual_column < current_starting_column:
-            char = self.parent.read()
+        current_starting_column = self._stack[-1].visual_column
+        while self._parent.position.visual_column < current_starting_column:
+            char = self._parent.read()
             if char == ' ':
                 continue
             elif char == '\n':
                     break
             else:
-                self.parent.unread()
+                self._parent.unread()
                 self._yield_eof()
                 return EOF
 
-        if char != '\n': char = self.parent.read()
+        if char != '\n': char = self._parent.read()
 
-        if char == '\n' and not self.next_line_check(current_starting_column):
+        if char == '\n' and not self._next_line_check(current_starting_column):
             # if we find a newline character, and the next line
             # is either a blank line, or a line whose first non-whitespace
             # character begins at or after "current_starting_column",
@@ -73,7 +99,7 @@ class IndentedCharacterStream(CharacterStream):
             # but if we find a newline character preceeding a line whose first
             # non-whitespace begins before `current_starting_column`, then
             # we yield EOF to the top reader
-            self.parent.unread()
+            self._parent.unread()
             self._yield_eof()
             return EOF
 
@@ -88,48 +114,50 @@ class IndentedCharacterStream(CharacterStream):
         self.current_relative_position.column = -1
         self.current_relative_position.visual_column = -1
 
-    def next_line_check(self, current_starting_column):
+    def _next_line_check(self, current_starting_column):
         # assumes that a \n was just read by parent
         # returns True iff
         # the current line is empty, or
         # the first non-whitespace character of this line
         #  begins after `current_starting_column`
         while True:
-            char = self.parent.read()
+            char = self._parent.read()
             if char == ' ':
                 continue
             elif char == '\n' or char == EOF: # if the line was empty
                 # unread the entire line
-                self.parent.unread()
-                self.parent.unread(self.parent.column - 1)
+                self._parent.unread()
+                self._parent.unread(self._parent.column - 1)
                 return True
             else:
-                first_non_whitespace_column = self.parent.column - 1
-                self.parent.unread(first_non_whitespace_column)
+                first_non_whitespace_column = self._parent.column - 1
+                self._parent.unread(first_non_whitespace_column)
                 return first_non_whitespace_column >= current_starting_column
 
 
     @property
     def position(self) -> StreamPosition:
+        """
+        Returns the current relative position (the position relative to the last ``push`` operation).
+        """
         return self.current_relative_position
 
 
-
     def push(self):
-        self.stack.append(self.parent.copy_position())
+        self._stack.append(self._parent.copy_position())
         self._update_relative_position()
         self.current_relative_position.index = 0
-        self.relative_eof = self.parent.prev_is_EOF()
+        self.relative_eof = self._parent.prev_is_EOF()
 
     def pop(self):
-        self.stack.pop()
+        self._stack.pop()
         self._update_relative_position()
         self.current_relative_position.index = 0 # no unread to previous-level characters
-        self.relative_eof = self.parent.prev_is_EOF()
+        self.relative_eof = self._parent.prev_is_EOF()
 
     def _update_relative_position(self):
-        fpos = self.stack[-1]
-        cpos = self.parent.position
+        fpos = self._stack[-1]
+        cpos = self._parent.position
         crpos = self.current_relative_position
         crpos.line = cpos.line - fpos.line + 1
         crpos.column = max(cpos.column - fpos.visual_column + 1, 1)
@@ -138,7 +166,10 @@ class IndentedCharacterStream(CharacterStream):
 
     @property
     def absolute_position(self) -> StreamPosition:
-        return self.parent.absolute_position
+        """
+        Returns the current absolute position (the position of the current character in the parent stream).
+        """
+        return self._parent.absolute_position
 
 
 
@@ -166,7 +197,7 @@ g h
         rpos = istream.copy_position()
         apos = istream.copy_absolute_position()
         char = istream.read()
-        if char == 'c' and len(istream.stack) == 1:
+        if char == 'c' and len(istream._stack) == 1:
             istream.unread()
             istream.push()
             print("#"* 10 + "   PUSH   " + "#" * 10)

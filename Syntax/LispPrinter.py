@@ -9,7 +9,6 @@ from Syntax.Literal import Literal
 from .Tuple import Tuple, PreTuple
 from .Token import Token
 from Common.Errors import LycError
-import Syntax._common as common
 
 _delimiters = {
                   PreForm:("ₐ⟅", "⟆ₐ"),
@@ -100,6 +99,3 @@ def indented_lisp_printer(code_or_element, current_line = None) -> str:
     else:
         raise LycError(None, "ERROR PRODUCING LISP FORM!")
 
-
-
-common.printer = lisp_printer

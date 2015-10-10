@@ -1,4 +1,6 @@
 /.idea*
 *__pycache__*
 *.pyc
-
+/docs/_build/*
+/0.Output/stdout
+/0.Output/tmp.bin

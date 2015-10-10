@@ -1,11 +1,16 @@
 
 
 class Code(object):
+    """
+    The base class for all syntax types.
+    """
     def __init__(self):
         # reflexive
 
         self.range = None
-        """:type : StreamRange"""
+        """
+        The StreamRange_ (starting and ending position) of the Code instance in the source code.
+        """
         #
         # # Syntactic Information:
         # #    range - filename, starting and ending position
