@@ -2,9 +2,48 @@
 
 Streams
 =======
-.. toctree::
-   :maxdepth: 2
 
+.. _CharacterStream:
+
+CharacterStream
+---------------
+
+.. automodule:: Streams.CharacterStream
+   :members:
+
+.. _FileStream:
+
+FileStream
+----------
+
+.. automodule:: Streams.FileStream
+   :members:
+
+.. _StringStream:
+
+StringStream
+------------
+
+.. automodule:: Streams.StringStream
+   :members:
+
+
+.. _StreamPosition:
+
+StreamPosition
+--------------
+.. automodule:: Streams.StreamPosition
+   :members:
+
+.. _StreamRange:
+
+StreamRange
+-----------
+.. automodule:: Streams.StreamRange
+   :members:
+
+
+.. _IndentedCharacterStream:
 
 IndentedCharacterStream
 -----------------------

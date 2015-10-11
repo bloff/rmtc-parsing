@@ -1,5 +1,7 @@
 from Syntax.Punctuator import Punctuator
-from Syntax.__exports__ import Node, PreForm, Form, PreTuple, Tuple
+from Syntax.__exports__ import Node, Form, Tuple
+from Syntax.PreTuple import PreTuple
+from Syntax.PreForm import PreForm
 from Transducers.TreeTransducer import TreeTransducer
 
 __author__ = 'bruno'

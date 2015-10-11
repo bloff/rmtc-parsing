@@ -1,6 +1,8 @@
 from Common.Util import is_not_none
 from Syntax.Punctuator import Punctuator
-from Syntax.__exports__ import Element, Form, Identifier, PreTuple
+from Syntax.__exports__ import Form, Identifier
+from Syntax.PreTuple import PreTuple
+from Syntax.Element import Element
 from Syntax.Token import is_token, TOKEN
 from Transducers.Arrangements.ArrangementRule import ArrangementRule
 from Common.Errors import ArrangementError

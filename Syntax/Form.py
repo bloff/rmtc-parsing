@@ -1,5 +1,4 @@
-from .Node import Node, Element
-from .Code import Code
+from .Node import Node
 
 
 class Form(Node):
@@ -25,10 +24,4 @@ class Form(Node):
         import Syntax.LispPrinter
         return Syntax.LispPrinter.lisp_printer(self)
 
-def is_head(element:Element):
-    return isinstance(element.parent, Form) and element.is_first()
 
-class PreForm(Form):
-    def __init__(self, *children):
-        Form.__init__(self, *children)
-        self.prepend_head = None

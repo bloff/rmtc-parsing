@@ -4,7 +4,7 @@ from Syntax.Code import Code
 from Syntax.Form import Form
 from Syntax.Identifier import Identifier
 from Syntax.Literal import Literal
-from Syntax.Node import Element
+from Syntax.Element import Element
 from Syntax.Tuple import Tuple
 
 
@@ -81,3 +81,7 @@ def is_tuple(code_or_element: Union[Code, Element]) -> bool:
     if code_or_element is None: return False
     code = get_code(code_or_element)
     return isinstance(code, Tuple)
+
+
+def is_head(element:Element):
+    return isinstance(element.parent, Form) and element.is_first()

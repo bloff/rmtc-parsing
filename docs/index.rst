@@ -19,6 +19,11 @@ This is described in the following three blog posts:
 -  `Parsing via chains of tree-transducers <http://bloff.github.io/lyc/blog/drafts.html>`__
    (yet to be written)
 
+
+.. note::
+   You may jump to the full `Table of contents`_ below. Following is an overview of the source code.
+
+
 Structure of the source code
 ============================
 
@@ -53,18 +58,56 @@ read or written. This probably should be replaced with Python's own
 with exactly what I needed, instead of worrying about implementing
 whatever Python needs. Will refactor this at some point.
 
--  **CharacterStream** - Is the base class.
--  **FileStream** - Implementation to read from a file.
--  **StringStream** - Implementation to read from a String.
--  **StreamPosition**, **StreamRange** - For describing a position in a
+-  :ref:`CharacterStream` - Is the base class.
+-  :ref:`FileStream` - Implementation to read from a file.
+-  :ref:`StringStream` - Implementation to read from a String.
+-  :ref:`StreamPosition`, :ref:`StreamRange` - For describing a position in a
    stream, or a range of positions.
--  **IndentedCharacterStream** - This one allows for ``push`` and
-   ``pop`` operations.
+-  :ref:`IndentedCharacterStream` - This one allows for ``push`` and
+   ``pop`` operations. This is how we parse indentation in
+   a recursive descent parser.
 
 
 :ref:`Syntax <syntax_modules>`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Syntax types.
 
+-  :ref:`Code` - The base class for all syntax types.
+-  :ref:`Identifier` - An identifier.
+-  :ref:`Literal` - A Literal.
+-  :ref:`Node` and :ref:`Element` - A *Node* is a doubly-linked list, where each *Element* in the list holds
+   (a reference to) an instance of *Code*. Currently we define 6 types of nodes:
+
+   - :ref:`Form` - A Form denotes a Node where the first element is singled out, and called the *head* of the form.
+     It is usually understood that the first element is *applied* to the remaining elements, called *arguments* of the form.
+     One may denote a Form by ``head( arg1, arg2, ...)`` or ``⦅head arg1 arg2 ...⦆``.
+   - :ref:`Tuple` - A Tuple is a Node where no element is singled out. It usually represents a sequence of elements, taken
+     together.
+     One may denote a Tuple by ``(elm1, elm2, ...)``.
+   - :ref:`PreForm` and :ref:`PreTuple` - A PreForm or a PreTuple denotes a Form or a Tuple, respectively, if it holds
+     two or more elements appear, or, if there is a single element, denotes that very same single element.
+     One may denote a PreForm by ``ₐ⟅elm1 ...⟆ₐ``, and a PreTuple by ``⟅elm1 ...⟆``.
+   - :ref:`Punctuator` - A Node whose single element should be parsed for punctuation.
+- :ref:`NodeIterator` - An iterator for iterating over the elements of a Node.
+- :ref:`Token` - An Element representing a token. The outcome of tokenization should be a single Node instance whose
+  elements are all Tokens.
+- :ref:`LispPrinter` - A collection of functions for printing Code using S-Expressions (Lisp prefix notation).
+
+
+
+:ref:`Tokenization <tokenization_modules>`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Readtable-macro parsing.
+
+
+:ref:`Transducers <transducers_modules>`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Tree transducers.
+
+
+:ref:`Parsers <parsers_modules>`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Parsers for specific languages (currently only ``lyc``).
 
 
 
@@ -76,4 +119,18 @@ whatever Python needs. Will refactor this at some point.
    * :ref:`genindex`
    * :ref:`modindex`
    * :ref:`search`
+
+
+Table of contents
+=================
+
+.. toctree::
+   :maxdepth: 2
+
+   API/common
+   API/streams
+   API/syntax
+   API/tokenization
+   API/transducers
+   API/parsers
 

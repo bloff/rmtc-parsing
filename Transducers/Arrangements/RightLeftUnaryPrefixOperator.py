@@ -1,6 +1,6 @@
 from Syntax.Form import is_head, Form
-from Syntax.Node import Element
-from Syntax.Util import is_identifier, identifier_in
+from Syntax.Element import Element
+from Syntax.Util import is_identifier, identifier_in, is_head
 from Transducers.Arrangements.ArrangementRule import ArrangementRule
 
 __author__ = 'bruno'

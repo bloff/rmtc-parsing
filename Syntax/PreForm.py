@@ -1,18 +1,9 @@
-from .Node import Node
+from Syntax.Form import Form
+
+__author__ = 'bruno'
 
 
-#
-# class ApplyPreForm(PreForm):
-#     def __init__(self, *children):
-#         PreForm.__init__(self, *children)
-#
-# class TuplePreForm(PreForm):
-#     def __init__(self, *children):
-#         PreForm.__init__(self, *children)
-#
-# class TupleSubPreForm(PreForm):
-#     def __init__(self, *children):
-#         PreForm.__init__(self, *children)
-#         # self.preform = True
-#         # self.defaults_to_apply_form = False
-#         # self.children_default_to_tuple_form = False
+class PreForm(Form):
+    def __init__(self, *children):
+        Form.__init__(self, *children)
+        self.prepend_head = None

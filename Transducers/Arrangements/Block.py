@@ -1,5 +1,6 @@
 from Syntax.Punctuator import Punctuator
-from Syntax.__exports__ import Element, PreForm
+from Syntax.PreForm import PreForm
+from Syntax.Element import Element
 from Syntax.Token import is_token, TOKEN
 from Transducers.Arrangements.ArrangementRule import ArrangementRule
 from Common.Errors import ArrangementError

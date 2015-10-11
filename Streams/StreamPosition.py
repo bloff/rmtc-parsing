@@ -1,6 +1,22 @@
 class StreamPosition(object):
+    """
+    A class representing a position in a stream.
+    """
     def __init__(self, stream_name:str, *args):
+        """
+        Initializer.
+
+        :param stream_name: The name of the stream
+        :type stream_name: str
+        :param args:
+            Either:
+               * Not given, equivalent to (-1, 0, 0, 0)
+               * A 4-tuple containing the index, line, column and visual_column values.
+               * The 4 values given as separate parameters
+        :return: A StreamPosition
+        """
         self.stream_name = stream_name
+        """The name of the stream."""
 
         if len(args) == 0:
             args = [-1, 0, 0, 0]
@@ -11,9 +27,13 @@ class StreamPosition(object):
         assert len(args) == 4
 
         self.index = args[0]
+        """The number of characters between the start of the stream and the position."""
         self.line = args[1]
+        """The line number of the position."""
         self.column = args[2]
+        """The column number of the position."""
         self.visual_column = args[3]
+        """The visual-column number of the position (for variable-width characters, this might be different of the column number)."""
 
     def __cmp__(self, other):
         if self.index < other.index: return -1

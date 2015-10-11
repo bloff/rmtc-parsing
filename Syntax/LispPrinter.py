@@ -1,12 +1,15 @@
 from Common.Util import is_not_none
-from .Node import Node, Element
+from .Node import Node
+from Syntax.Element import Element
 from .Identifier import Identifier
-from .Form import Form, PreForm
+from .Form import Form
+from Syntax.PreForm import PreForm
 # from Semantics.Code.Symbol import Symbol
 from Syntax.Punctuator import Punctuator
 from Syntax.Code import Code
 from Syntax.Literal import Literal
-from .Tuple import Tuple, PreTuple
+from .Tuple import Tuple
+from Syntax.PreTuple import PreTuple
 from .Token import Token
 from Common.Errors import LycError
 

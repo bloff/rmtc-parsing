@@ -1,4 +1,6 @@
-from Syntax.__exports__ import Element, PreForm, Form
+from Syntax.__exports__ import Form
+from Syntax.PreForm import PreForm
+from Syntax.Element import Element
 from Syntax.Util import is_identifier
 from Syntax.Token import is_token, TOKEN
 from Transducers.Arrangements.ArrangementRule import ArrangementRule

@@ -2,12 +2,21 @@ from Streams.StreamPosition import StreamPosition
 
 
 class StreamRange(object):
+    """
+    Represents a contiguous interval in a stream.
+    """
     def __init__(self, first_position:StreamPosition=None, position_after:StreamPosition=None):
         if first_position is not None:
             assert position_after is not None
             assert first_position.stream_name == position_after.stream_name
         self.first_position = first_position
+        """
+        The position of the first character in the range.
+        """
         self.position_after = position_after
+        """
+        The position of the character immediately after the last character of the range. Equal to first_position if the range has length 0.
+        """
 
     @property
     def stream_name(self):

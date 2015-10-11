@@ -1,12 +1,19 @@
 from Common.StringStuff import EOF
-from Streams import StreamPosition
+from Streams.StreamPosition  import StreamPosition
 
 
 class WrongSeqError(Exception):
+    """
+    This error is raised if, when trying to unread a certain sequence of characters,
+    """
     pass
 
 
 class CharacterStream(object):
+    """
+    An object from which characters can be :py:meth:`read`, :py:meth:`unread`, and so on.
+    """
+
     def __init__(self, name = None):
         self.name = name
 
@@ -87,6 +94,10 @@ class CharacterStream(object):
 
 
     def position_of_unread(self, n:int=1) -> StreamPosition:
+        """
+        Returns a copy of the StreamPosition instance representing the relative position of the stream after unreading
+        ``n`` characters.
+        """
         self.unread(n)
         pos = self.copy_position()
         while n > 0:
@@ -95,6 +106,10 @@ class CharacterStream(object):
         return pos
 
     def position_of_unread_seq(self, seq:str) -> StreamPosition:
+        """
+        Returns a copy of the StreamPosition instance representing the relative position of the stream after unreading
+        the sequence of characters ``seq``.
+        """
         self.unread_seq(seq)
         pos = self.copy_position()
         n = len(seq)
@@ -104,6 +119,10 @@ class CharacterStream(object):
         return pos
 
     def absolute_position_of_unread(self, n:int=1) -> StreamPosition:
+        """
+        Returns a copy of the StreamPosition instance representing the absolute position of the stream after unreading
+        ``n`` characters.
+        """
         self.unread(n)
         pos = self.copy_absolute_position()
         while n > 0:
@@ -112,6 +131,10 @@ class CharacterStream(object):
         return pos
 
     def absolute_position_of_unread_seq(self, seq:str) -> StreamPosition:
+        """
+        Returns a copy of the StreamPosition instance representing the absolute position of the stream after unreading
+        the sequence of characters ``seq``.
+        """
         self.unread_seq(seq)
         pos = self.copy_absolute_position()
         n = len(seq)

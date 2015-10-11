@@ -1,6 +1,7 @@
 from Common.Errors import ArrangementError
 from Syntax.Util import is_identifier, identifier_in, is_literal
-from Syntax.__exports__ import Element, Form
+from Syntax.__exports__ import Form
+from Syntax.Element import Element
 from Syntax.Token import is_token, TOKEN
 from Transducers.Arrangements.ArrangementRule import ArrangementRule
 

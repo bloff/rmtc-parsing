@@ -1,4 +1,5 @@
-from Syntax.__exports__ import Element, Literal, Identifier
+from Syntax.__exports__ import Literal, Identifier
+from Syntax.Element import Element
 from Syntax.Token import is_token, TOKEN
 from Transducers.Arrangements.ArrangementRule import ArrangementRule
 # from Semantics.Types.Bootstrap0 import Float, Int
