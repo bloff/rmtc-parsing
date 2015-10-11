@@ -1,11 +1,10 @@
 import sys
 
-import msgpack
+#import msgpack
 
 from Common.Errors import LycError, TokenizingError
 from Common.SysArgsParser import SysArgsParser
 from Parsers.LycParser import LycParser
-from Streams.FileStream import FileStream
 from Streams.StringStream import StringStream
 from Syntax.Token import TOKEN
 from Common.Record import Record
@@ -23,7 +22,8 @@ def parse_args(argv):
             options.verbose = True
         elif arg == '--binary':
             options.binary = True
-            options.encoder = msgpack.packb
+            #options.encoder = msgpack.packb
+            raise NotImplementedError()
         elif arg == '--lex':
             if 'encoder' not in options:
                 options.binary = False
