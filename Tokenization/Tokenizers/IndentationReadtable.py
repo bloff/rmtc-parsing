@@ -6,7 +6,6 @@ from Tokenization.Readtable import *
 from Tokenization.Tokenizers import Util
 from Tokenization.Tokenizers.Tokenizer import TokenizationContext
 from .Tokenizer import Tokenizer
-from Tokenization.StandardReadtable import RT_CLOSING
 from Syntax.Token import token_BEGIN, token_END, token_INDENT, token_CONSTITUENT, token_PUNCTUATION
 
 

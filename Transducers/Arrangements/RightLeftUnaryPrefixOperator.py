@@ -1,4 +1,4 @@
-from Syntax.Form import is_head, Form
+from Syntax.Form import Form
 from Syntax.Node import Element
 from Syntax.Util import is_identifier, identifier_in, is_head
 from Transducers.Arrangements.ArrangementRule import ArrangementRule

@@ -15,7 +15,6 @@ class Element(object):
     :param parent: The ``Node`` containing this element.
     :param kwargs: Any number of attributes that should be associated with this element.
     """
-
     def __init__(self, code_or_element, parent=None, **kwargs):
         assert parent is None or isinstance(parent, Node)
         self.__dict__.update(kwargs)
@@ -36,12 +35,24 @@ class Element(object):
             assert isinstance(code_or_element, Element)
             self.code = code_or_element.code
 
+    @staticmethod
+    def _make_new_element(code_or_element, parent=None):
+        if isinstance(code_or_element, Code):
+            return Element(code_or_element, parent)
+        else:
+            assert isinstance(code_or_element, Element)
+            if code_or_element.parent is None:
+                code_or_element.parent = parent
+                return code_or_element
+            else:
+                return Element(code_or_element, parent)
+
 
     def __getattr__(self, item):
         return self.__dict__.get(item, None)
 
     def __setattr__(self, key, item):
-        self.__dict__.set(key, item)
+        self.__dict__[key] = item
 
 
     def is_last(self):
@@ -127,11 +138,11 @@ class Node (Code):
 
         if len(children) > 0:
             assert isinstance(children[0], Code) or isinstance(children[0], Element)
-            current = self.first = Element.make(children[0], self)
+            current = self.first = Element._make_new_element(children[0], self)
             self.range.update(current.code.range)
             for child in children[1:]:
                 assert isinstance(child, Code) or isinstance(child, Element)
-                current.next = Element.make(child, self)
+                current.next = Element._make_new_element(child, self)
                 current.next.prev = current
                 current = current.next
                 self.range.update(current.code.range)
@@ -156,8 +167,8 @@ class Node (Code):
 
         """
         assert isinstance(child, Code) or isinstance(child, Element)
-        element = Element.make(child, self)
-        self.range.update(element.code.range)
+        element = Element._make_new_element(child, self)
+        self.range.update(element.range)
         if self.first is None:
             self.first = self.last = element
         else:
@@ -176,8 +187,8 @@ class Node (Code):
 
         """
         assert isinstance(child, Code) or isinstance(child, Element)
-        element = Element.make(child, self)
-        self.range.update(element.code.range)
+        element = Element._make_new_element(child, self)
+        self.range.update(element.range)
         if self.first is None:
             self.first = self.last = element
         else:
@@ -206,8 +217,8 @@ class Node (Code):
             self.append(child)
         else:
             assert after_this.parent is self
-            element = Element.make(child, self)
-            self.range.update(element.code.range)
+            element = Element._make_new_element(child, self)
+            self.range.update(element.range)
             element.next = after_this.next
             element.prev = after_this
             if after_this.next is not None:
@@ -253,8 +264,8 @@ class Node (Code):
         assert isinstance(element, Element)
         assert element.parent is self
         assert isinstance(new_child, Code) or isinstance(new_child, Element)
-        new_element = Element.make(new_child, self)
-        self.range.update(new_element.code.range)
+        new_element = Element._make_new_element(new_child, self)
+        self.range.update(new_element.range)
         new_element.next = element.next
         new_element.prev = element.prev
         # if c is the head
