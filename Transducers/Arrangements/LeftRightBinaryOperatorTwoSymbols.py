@@ -1,5 +1,5 @@
 from Syntax.__exports__ import Form, Identifier
-from Syntax.Element import Element
+from Syntax.Node import Element
 from Syntax.Util import is_identifier
 from Transducers.Arrangements.ArrangementRule import ArrangementRule
 

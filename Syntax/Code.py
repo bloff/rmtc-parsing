@@ -9,7 +9,7 @@ class Code(object):
 
         self.range = None
         """
-        The StreamRange_ (starting and ending position) of the Code instance in the source code.
+        The ``StreamRange`` (starting and ending position) of the Code instance in the source code.
         """
         #
         # # Syntactic Information:

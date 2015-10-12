@@ -1,7 +1,7 @@
 from Common.Util import is_not_none
 from Syntax.Util import identifier_in
 from Syntax.__exports__ import Form, Identifier
-from Syntax.Element import Element
+from Syntax.Node import Element
 from Transducers.Arrangements.ArrangementRule import ArrangementRule
 from Syntax.Token import is_token, TOKEN
 

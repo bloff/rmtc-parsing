@@ -1,7 +1,7 @@
 from Streams.StreamPosition import StreamPosition
 from Streams.StreamRange import StreamRange
 from enum import Enum
-from Syntax.Element import Element
+from Syntax.Node import Element
 
 
 class TOKEN(Enum):

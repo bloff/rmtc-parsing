@@ -1,8 +1,7 @@
 from Common.Errors import ArrangementError
-from Syntax.Node import Node
+from Syntax.Node import Node, Element
 from Syntax.Punctuator import Punctuator
 from Syntax.PreTuple import PreTuple
-from Syntax.Element import Element
 from Syntax.Token import is_token, TOKEN
 from Transducers.Arrangements.ArrangementRule import ArrangementRule
 

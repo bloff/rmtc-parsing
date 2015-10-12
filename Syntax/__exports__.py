@@ -3,8 +3,7 @@ from .Identifier import Identifier
 from Syntax.Util import is_identifier
 from .Literal import Literal
 from .Node import Node
-from Syntax.NodeIterator import NodeIterator
-from Syntax.Element import Element
+from Syntax.Node import Element, NodeIterator
 from .Form import Form
 from Syntax.PreForm import PreForm
 from .Tuple import Tuple

@@ -1,6 +1,6 @@
 from Common.Util import is_not_none
 from .Node import Node
-from Syntax.Element import Element
+from Syntax.Node import Element
 from .Identifier import Identifier
 from .Form import Form
 from Syntax.PreForm import PreForm

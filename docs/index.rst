@@ -53,7 +53,8 @@ Several utilities used throughout the project.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Self-contained implementation of an object from which characters can be
-read or written. This probably should be replaced with Python's own
+read, while keeping track of offset, and line and column numbers.
+This probably should be replaced with Python's own
 *TextIOBase* class. But it was much simpler for me to just have a class
 with exactly what I needed, instead of worrying about implementing
 whatever Python needs. Will refactor this at some point.

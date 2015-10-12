@@ -4,7 +4,7 @@ from Syntax.Code import Code
 from Syntax.Form import Form
 from Syntax.Identifier import Identifier
 from Syntax.Literal import Literal
-from Syntax.Element import Element
+from Syntax.Node import Element
 from Syntax.Tuple import Tuple
 
 

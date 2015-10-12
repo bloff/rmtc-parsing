@@ -4,6 +4,3 @@ Tokenization
 ============
 
 
-
-.. automodule:: Syntax.Code
-   :members:

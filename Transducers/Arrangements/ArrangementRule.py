@@ -1,4 +1,4 @@
-from Syntax.Element import Element
+from Syntax.Node import Element
 
 __author__ = 'bruno'
 

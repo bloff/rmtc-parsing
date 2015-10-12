@@ -1,10 +1,114 @@
+from typing import Union
 from Streams.StreamRange import StreamRange
 from .Code import *
-from Syntax.Element import Element
-from Syntax.NodeIterator import NodeIterator
+from Syntax.Code import Code
 
+
+
+class Element(object):
+    """
+    An element of a Node.
+
+    :param code_or_element:
+      If ``code_or_element`` is not an ``Element``, then code_or_element is the code attribute of the new element.
+      If ``code_or_element`` is an ``Element``, then ``code_or_element``'s ``code`` attribute is the code attribute of the new element.
+    :param parent: The ``Node`` containing this element.
+    :param kwargs: Any number of attributes that should be associated with this element.
+    """
+
+    def __init__(self, code_or_element, parent=None, **kwargs):
+        assert parent is None or isinstance(parent, Node)
+        self.__dict__.update(kwargs)
+
+        self.parent = parent
+        """The ``Node`` containing this element."""
+        self.prev = None
+        """The ``Element`` that precedes this element, or ``None`` if this is the first element."""
+        self.next = None
+        """The ``Element`` that follows this element, or ``None`` if this is the last element."""
+        self.code = None
+        """The ``Code`` associated with this element. May be ``None``."""
+
+
+        if code_or_element is None or isinstance(code_or_element, Code):
+            self.code = code_or_element
+        else:
+            assert isinstance(code_or_element, Element)
+            self.code = code_or_element.code
+
+
+    def __getattr__(self, item):
+        return self.__dict__.get(item, None)
+
+    def __setattr__(self, key, item):
+        self.__dict__.set(key, item)
+
+
+    def is_last(self):
+        """
+        Whether this element is the last of its Node. Returns ``False`` if parent is ``None``.
+        """
+        return self.parent is not None and self.next is None
+
+    def is_first(self):
+        """
+        Whether this element is the first of its Node. Returns ``False`` if parent is ``None``.
+        """
+        return self.parent is not None and self.prev is None
+
+    @property
+    def number(self) -> int:
+        """
+        The position of this element in its parent ``Node``.
+        """
+        node = self
+        i = 0
+        while not node.is_first():
+            i += 1
+            node = node.prev
+        return i
+
+    @property
+    def range(self) -> StreamRange:
+        """
+        The range attribute (of ``StreamRange`` type) of this element's associated ``Code`` instance.
+        """
+        assert self.code is not None
+        return self.code.range
+
+    def __str__(self):
+        if self.code is not None:
+            return "Element(%s)" % str(self.code)
+        else:
+            return "Element()"
+
+
+class NodeIterator(object):
+    def __init__(self, first_element:Element):
+        self.current = first_element
+        self.next = first_element.next if first_element is not None else None
+        self.i = -1
+
+    def __next__(self) -> Element:
+        if self.current is None:
+            raise StopIteration()
+
+        ret = self.current
+        self.current = self.next
+        if self.next is not None:
+            self.next = self.next.next
+
+        self.i += 1
+
+        return ret
+
+    def __iter__(self):
+        return self
 
 class Node (Code):
+    """
+    A doubly-linked list.
+    """
 
     # Given a list of elements and/or Code instances, or a sequence of elements and/or Code instances as arguments
     # creates a node whose elements have the given code instances, and the code instances of the given elements;
@@ -14,10 +118,10 @@ class Node (Code):
         if len(children) == 1 and isinstance(children[0], list):
             children = children[0]
 
-        # first element of node
         self.first = None
-        # last element of node
+        """The first Element of the doubly-linked list."""
         self.last = None
+        """The last Element of the doubly-linked list."""
 
         self.range = StreamRange()
 
@@ -34,11 +138,23 @@ class Node (Code):
             self.last = current
 
     def erase(self):
+        """
+        Empties the entire list.
+        """
         for node in self:
             node.parent = node.next = node.prev = None
         self.first = self.last = None
 
-    def prepend(self, child):
+    def prepend(self, child:Union[Code,Element]):
+        """
+        Adds an element to the beginning of this node.
+
+        :param child: A Code or an Element to be inserted. If ``child`` is an Element whose ``parent`` field is ``None``,
+          the element will be changed to have this node as its parent.
+
+        :type child: Code or Element
+
+        """
         assert isinstance(child, Code) or isinstance(child, Element)
         element = Element.make(child, self)
         self.range.update(element.code.range)
@@ -50,6 +166,15 @@ class Node (Code):
             self.first = element
 
     def append(self, child):
+        """
+        Adds an element to the end of this node.
+
+        :param child: A Code or an Element to be inserted. If ``child`` is an Element whose ``parent`` field is ``None``,
+          the element will be changed to have this node as its parent.
+
+        :type child: Code or Element
+
+        """
         assert isinstance(child, Code) or isinstance(child, Element)
         element = Element.make(child, self)
         self.range.update(element.code.range)
@@ -61,6 +186,20 @@ class Node (Code):
             self.last = element
 
     def insert(self, after_this:Element, child):
+        """
+        Inserts a new element after a given element of this node.
+
+        :param after_this: An Element (whose ``parent`` must be this node) after which
+           the new element is to be inserted.
+
+        :type after_this: Element
+
+        :param child: A Code or an Element to be inserted. If ``child`` is an Element whose ``parent`` field is ``None``,
+          the element will be changed to have this node as its parent.
+
+        :type child: Code or Element
+
+        """
         assert isinstance(after_this, Element) or (after_this is None and self.first is None)
         assert isinstance(child, Code) or isinstance(child, Element)
         if after_this is None and self.first is None:
@@ -77,6 +216,15 @@ class Node (Code):
             after_this.next = element
 
     def remove(self, element):
+        """
+        Inserts a new element after a given element of this node.
+
+        :param element: An Element (whose ``parent`` must be this node) after which
+           the new element is to be inserted.
+
+        :type element: Element
+
+        """
         assert isinstance(element, Element)
         assert element.parent is self
 
@@ -88,6 +236,20 @@ class Node (Code):
         element.parent = element.next = element.prev = None
 
     def replace(self, element, new_child):
+        """
+        Replacesa given element of this node with a new element.
+
+        :param element: The element (whose ``parent`` must be this node)
+            to be replaced.
+
+        :type element: Element
+
+        :param new_child: A Code or an Element to be inserted. If ``child`` is an Element whose ``parent`` field is ``None``,
+          the element will be changed to have this node as its parent.
+
+        :type new_child: Code or Element
+
+        """
         assert isinstance(element, Element)
         assert element.parent is self
         assert isinstance(new_child, Code) or isinstance(new_child, Element)
@@ -104,39 +266,25 @@ class Node (Code):
         element.parent = element.next = element.prev = None
         return new_element
 
-    # def expand(self, element, code):
-    #     assert isinstance(element, Element)
-    #     assert element.parent is self
-    #     assert isinstance(code, Code)
-    #     new_element = Element.make(code, self)
-    #     new_element.next = element.next
-    #     new_element.prev = element.prev
-    #     assert element.expansion is None
-    #     element.expansion = new_element
-
-    # # replaces node in self with the elements of form
-    # # so (a b c).replace_explode(b, (d e)) = (a d e c)
-    # def replace_explode(self, element, node_or_list):
-    #     assert isinstance(node_or_list, Node) or isinstance(node_or_list, list)
-    #     assert isinstance(element, Element)
-    #     element_to_insert_after = element
-    #     if isinstance(node_or_list, Node):
-    #         element_to_add = node_or_list.first
-    #         while element_to_add is not None:
-    #             self.insert(element_to_insert_after, element_to_add)
-    #             element_to_insert_after = element_to_insert_after.next
-    #             element_to_add = element_to_add.next
-    #     else:
-    #         assert isinstance(node_or_list, list)
-    #         for i in range(len(node_or_list)):
-    #             self.insert(element_to_insert_after, node_or_list[i])
-    #             element_to_insert_after = element_to_insert_after.next
-    #     self.remove(element)
-
     # replaces node in self with the elements of given Node
     # Destroys the given Node in the process
     # so (a b c).replace_explode(b, (d e)) = (a d e c), and the (d e) node becomes ()
     def replace_explode_modify(self, element, node):
+        """
+        Replaces a given element of this node with the sequence of elements given by another node.
+
+        **This operation removes the elements from the given node, and makes this node their parent.**
+
+        :param element: The element (whose ``parent`` must be this node)
+            to be replaced.
+
+        :type element: Element
+
+        :param node: A ``Node`` whose elements will replace the given element.
+
+        :type node: Node
+
+        """
         assert isinstance(node, Node)
         assert isinstance(element, Element)
         assert element.parent is self
@@ -164,24 +312,33 @@ class Node (Code):
         self.remove(element)
 
 
-
-    # # expands node in self with the elements of form
-    # # so (a b c).replace_explode(b, (d e)) = (a b-expanded-to(d e) c)
-    # def expand_explode(self, element, node_or_list):
-    #     assert isinstance(node_or_list, Node) or isinstance(node_or_list, list)
-    #     if isinstance(node_or_list, list):
-    #         node_or_list = Node(node_or_list)
-    #     new_element = Element(node_or_list, self)
-    #     new_element.next = element.next
-    #     new_element.prev = element.prev
-    #     assert element.expansion is None
-    #     element.expansion = new_element
-
     # ( ... first_node ... last_node ...)
     # =>
     # ( ... (first_node ... last_node) ...)
     def wrap(self, first_element, last_element, node_class_constructor = None, *node_class_constructor_args, **node_class_constructor_kwargs):
+        """
+        Replaces the sequence of elements of this node between first_element and last_element with a new node,
+        containing that very same sequence.
 
+        :param first_element: The first element (whose ``parent`` must be this node)
+            in the sequence to be wrapped.
+
+        :type first_element: Element
+
+        :param last_element: The first element (whose ``parent`` must be this node)
+            in the sequence to be wrapped.
+
+        :type last_element: Element
+
+        :param node_class_constructor: A subtype of ``Node`` which will be used to construct the new node.
+
+        :type node_class_constructor: type
+
+        :param node_class_constructor_args: Arguments to pass to the constructor of the new node.
+
+        :param node_class_constructor_kwargs: Keyword arguments to pass to the constructor of the new node.
+
+        """
         new_node = Node() if node_class_constructor is None else node_class_constructor(*node_class_constructor_args, **node_class_constructor_kwargs)
         new_element = Element(new_node, self)
         new_element.prev = first_element.prev
@@ -203,24 +360,6 @@ class Node (Code):
 
         return new_element
 
-    # # ( ... (a b c) ... ) where parameter node = (a b c)
-    # # =>
-    # # ( ... a b c ...)
-    # def unwrap(self, node):
-    #     if not isinstance(node, Form):
-    #         return
-    #
-    #     if node.is_head(): self.first = node.head
-    #     else: node.prev.next = node.head
-    #     if node.is_tail(): self.last = node.tail
-    #     else: node.next.prev = node.tail
-    #
-    #     node.head.prev = node.prev
-    #     node.tail.next = node.next
-    #
-    #     for e in node:
-    #         e.par = self
-
 
     def __len__(self):
         count = 0
@@ -235,17 +374,6 @@ class Node (Code):
 
         if isinstance(key, slice):
             raise NotImplementedError()
-            # if key.step != None:
-            #     return [self[i] for i in range(key.start, min(key.stop, len(self)))] # FIXME
-            # else:
-            #     ret = []
-            #     i = key.start
-            #     element = self[i]
-            #     while element is not None and i < key.stop:
-            #         ret.append(element)
-            #         element = element.next
-            #         i -= 1
-            #     return ret
 
         if not isinstance(key, int) or key >= c or key < -c:
             raise IndexError()
@@ -285,22 +413,12 @@ class Node (Code):
         return NodeIterator(self.first)
 
     def iterate_from(self, start:int):
+        """
+        Returns an iterator that goes through all elements from the ``start`` position to the end of the node.
+        """
         return NodeIterator(self[start] if len(self) > start else None)
 
     def __str__(self):
         children = [str(element.code) if element.code is not None else str(element) for element in self]
         return "Node(%s)" % ", ".join(children)
 
-    # def __contains__(self, item):
-    #     if isinstance(item, Symbol):
-    #         for c in self:
-    #             if isinstance(c, Symbol) and c.val == item.name:
-    #                 return True
-    #     elif isinstance(item, Literal):
-    #         for c in self:
-    #             if isinstance(c, Literal) and c.val == item.val:
-    #                 return True
-    #
-    #     # todo: isinstance(type, Form) ?
-    #     else:
-    #         return False
