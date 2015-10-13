@@ -1,7 +1,7 @@
 .. _transducers_modules:
 
-Tokenization
-============
+Transducers
+===========
 
 
 
