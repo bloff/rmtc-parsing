@@ -4,6 +4,3 @@ Parsers
 =======
 
 
-
-.. automodule:: Syntax.Code
-   :members:

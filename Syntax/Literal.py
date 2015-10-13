@@ -1,5 +1,6 @@
-from Streams import StreamRange
-from .Code import *
+from Streams.StreamRange import StreamRange
+from Syntax.Code import Code
+
 
 class Literal(Code):
     def __init__(self, type, value, range:StreamRange=None):

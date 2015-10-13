@@ -2,6 +2,13 @@ from Streams.StreamRange import StreamRange
 from .Code import *
 
 class Identifier(Code):
+    """
+    An identifier with a syntactic name, and an extra (called *semantic*) name.
+
+    :param full_name: The identifier's full name, as in ``syntactic_name#semantic_name``.
+    :param stream_range: The range where the identifier appears in.
+    """
+
     def __init__(self, full_name:str, stream_range:StreamRange=None):
         super(Identifier, self).__init__()
         name, semantic_extra = Identifier.split_name(full_name)

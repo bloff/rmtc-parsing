@@ -13,6 +13,7 @@ Code
    :members:
 
 
+
 .. _Identifier:
 
 Identifier
@@ -20,6 +21,8 @@ Identifier
 
 .. autoclass:: Syntax.Identifier.Identifier
    :members:
+   :show-inheritance:
+
 
 
 .. _Literal:
@@ -28,7 +31,21 @@ Literal
 -------
 
 .. autoclass:: Syntax.Literal.Literal
-   :members: 
+   :members:
+   :show-inheritance:
+
+
+
+
+.. _Element:
+
+Element
+-------
+
+.. autoclass:: Syntax.Node.Element
+   :members:
+
+
 
 .. _Node:
 
@@ -40,13 +57,7 @@ Node
    :special-members:
 
 
-.. _Element:
 
-Element
--------
-
-.. autoclass:: Syntax.Node.Element
-   :members: 
 
 .. _Form:
 
