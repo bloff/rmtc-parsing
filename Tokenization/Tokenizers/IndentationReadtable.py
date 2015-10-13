@@ -2,7 +2,7 @@ from sys import maxsize as MAX_INT
 
 from Common.Errors import TokenizingError
 from Streams.IndentedCharacterStream import IndentedCharacterStream
-from Tokenization.Readtable import *
+from Tokenization.Readtable import RT
 from Tokenization.Tokenizers import Util
 from Tokenization.Tokenizers.Tokenizer import TokenizationContext
 from .Tokenizer import Tokenizer
@@ -53,34 +53,34 @@ class IndentationReadtableTokenizer(Tokenizer):
                     seq_type = properties.type
 
                     # Step 3
-                    if seq_type == RT_WHITESPACE:
+                    if seq_type == RT.WHITESPACE:
                         pass
                     # Step 4
-                    elif seq_type == RT_NEWLINE:
+                    elif seq_type == RT.NEWLINE:
                         break # goto Stage 2
                     # Step 5
-                    elif seq_type == RT_TOKEN:
+                    elif seq_type == RT.ISOLATED_CONSTITUENT:
                         yield token_CONSTITUENT(seq, stream.absolute_position_of_unread_seq(seq), stream.copy_absolute_position())
                     # Step 6
-                    elif seq_type == RT_PUNCTUATION:
+                    elif seq_type == RT.PUNCTUATION:
                         yield token_PUNCTUATION(self.last_begin_token, seq, stream.absolute_position_of_unread_seq(seq), stream.copy_absolute_position())
                     # Step 7
-                    elif seq_type == RT_MACRO:
+                    elif seq_type == RT.MACRO:
                         assert 'tokenizer' in properties
                         for token in Util.tokenize_macro(self.context, seq, properties):
                             yield token
                     # Step 8
-                    elif seq_type == RT_CONSTITUENT:
+                    elif seq_type == RT.CONSTITUENT:
                         first_position = stream.absolute_position_of_unread_seq(seq)
                         concatenation =  seq + Util.read_and_concatenate_constituent_sequences(stream, readtable)
                         yield token_CONSTITUENT(concatenation, first_position, stream.copy_absolute_position())
                     # Step 9
-                    elif seq_type == RT_CLOSING:
+                    elif seq_type == RT.CLOSING:
                         stream.unread_seq(seq)
                         yield token_END(self.last_begin_token, stream.copy_absolute_position())
                         return
                     # Step 10
-                    elif seq_type == RT_INVALID:
+                    elif seq_type == RT.INVALID:
                         first_position = stream.absolute_position_of_unread_seq(seq)
                         error_message = properties.error_message if 'error_message' in properties else "Unspecified error."
                         raise TokenizingError(first_position, error_message)
@@ -96,7 +96,7 @@ class IndentationReadtableTokenizer(Tokenizer):
                 if relative_column_number > W:
                     seq, properties = readtable.probe(stream)
 
-                    if properties.type == RT_CLOSING:
+                    if properties.type == RT.CLOSING:
                         yield token_END(self.last_begin_token, stream.absolute_position_of_unread_seq(seq))
                         stream.unread_seq(seq)
                         return
@@ -111,7 +111,7 @@ class IndentationReadtableTokenizer(Tokenizer):
                 elif relative_column_number == W: # finish if the first non-whitespace character is a closing seq
                     seq, properties = readtable.probe(stream)
 
-                    if properties.type == RT_CLOSING:
+                    if properties.type == RT.CLOSING:
                         yield token_END(self.last_begin_token, stream.absolute_position_of_unread_seq(seq))
                         stream.unread_seq(seq)
                         return

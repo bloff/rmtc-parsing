@@ -21,6 +21,8 @@ _delimiters = {
                   Punctuator:('⟨', '⟩'),
                 }
 
+# TODO: refactor all __str__ and __repr__ methods to allow for each language to choose its own representation
+
 def lisp_printer(code_or_element) -> str:
     if isinstance(code_or_element, list):
         return (u"\n".join(lisp_printer(elm) for elm in code_or_element)) + u"\n"
@@ -63,7 +65,7 @@ def indented_lisp_printer(code_or_element, current_line = None) -> str:
         return (u"\n".join(lisp_printer(elm) for elm in code_or_element)) + u"\n"
 
     line_prefix = ""
-    if is_not_none(code_or_element, ".range.first_position") and code_or_element.range.first_position.line > current_line[0]:
+    if is_not_none(code_or_element, ".range.first_position.line") and code_or_element.range.first_position.line > current_line[0]:
         current_line[0] = code_or_element.range.first_position.line
         line_prefix = "\n" + " " * (code_or_element.range.first_position.column - 1)
 
@@ -74,12 +76,6 @@ def indented_lisp_printer(code_or_element, current_line = None) -> str:
         lisp_form += " ".join(elms)
         lisp_form += right
         return line_prefix + lisp_form
-    # elif isinstance(code, Literal):
-    #     v = code.val
-    #     if isinstance(v, basestring):
-    #         return u"“" + v + u"”"
-    #     else:
-    #         return unicode(str(v))
     elif isinstance(code_or_element, Token):
         if code_or_element.code is not None:
             return line_prefix + indented_lisp_printer(code_or_element.code, current_line)

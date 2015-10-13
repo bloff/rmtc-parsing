@@ -1,16 +1,37 @@
+from enum import Enum
 from Common.Record import Record
 from Streams.CharacterStream import CharacterStream
 
-RT_WHITESPACE = 1
-RT_NEWLINE = 2
-RT_TOKEN = 3
-RT_CONSTITUENT = 4
-RT_MACRO = 5
-RT_INVALID = 6
-RT_CLOSING = 7
-RT_PUNCTUATION = 8
+class RT(Enum):
+    """
+    Enum of readtable entry types.
+    """
+    WHITESPACE = 1
+    """A whitespace character sequence."""
+    NEWLINE = 2
+    """A newline character sequence."""
+    ISOLATED_CONSTITUENT = 3
+    """A constituent character sequence that should *not* be concatenated with other adjacent constituent sequences."""
+    CONSTITUENT = 4
+    """A constituent character sequence that *should* be concatenated with other adjacent constituent sequences."""
+    MACRO = 5
+    """A character sequence that begins a reader macro."""
+    INVALID = 6
+    """A character sequence that should not appear."""
+    CLOSING = 7
+    """A character sequence that signals the end of a reader macro."""
+    PUNCTUATION = 8
+    """A punctuation character sequence."""
 
 class Readtable(object):
+    """
+    A readtable. It associates certain characters or sequences of characters with a dictionary of so-called *properties* (which could be anything).
+    For instance, lyc's readtable associates the sequence :literal:`“` with the properties ``{'type': RT.MACRO, 'tokenizer': 'StringTokenizer'}``,
+    which should mean that if a :literal:`“` character is found, it signals a reader macro which is to be processed by the tokenizer called
+    'StringTokenizer'.
+
+    The table is organized as a prefix tree. Each path in the tree is a sequence in the table.
+    """
     def __init__(self):
         self.root_node = {}
         self.default_properties = Record({})

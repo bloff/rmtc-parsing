@@ -3,11 +3,21 @@ from Syntax.Code import Code
 
 
 class Literal(Code):
+    """
+    A ``Code`` type representing a value.
+
+    :param type: Some instance representing the type of the literal.
+    :param value: The value associated with the literal.
+    :param range: The ``StreamRange`` of where this literal appears.
+    """
     def __init__(self, type, value, range:StreamRange=None):
         super(Literal, self).__init__()
         self.type = type
+        """Some instance representing the type of the literal."""
         self.value = value
+        """The value associated with the literal."""
         self.range = range if range is not None else StreamRange()
+
 
     def __str__(self):
         if isinstance(self.value, int):

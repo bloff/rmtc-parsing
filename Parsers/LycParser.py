@@ -1,13 +1,9 @@
 from typing import Union
 
-from Common.Errors import TokenizingError
 from Parsers.RMTCParser import RMTCParser
 from Streams.CharacterStream import CharacterStream
 from Streams.IndentedCharacterStream import IndentedCharacterStream
-from Streams.StreamPosition import StreamPosition
-from Streams.StringStream import StringStream
-from Tokenization.Readtable import make_read_table, RT_MACRO, RT_CLOSING, RT_TOKEN, RT_PUNCTUATION, RT_INVALID, \
-    RT_WHITESPACE, RT_NEWLINE, RT_CONSTITUENT
+from Tokenization.Readtable import make_read_table, RT
 from Tokenization.Tokenizers.RawComment import RawCommentTokenizer
 from Tokenization.Tokenizers.Comment import CommentTokenizer
 from Tokenization.Tokenizers.DelimitedSymbolTokenizer import DelimitedSymbolTokenizer
@@ -15,14 +11,12 @@ from Tokenization.Tokenizers.Delimiter import DelimiterTokenizer
 from Tokenization.Tokenizers.IndentationReadtable import IndentationReadtableTokenizer
 from Tokenization.Tokenizers.String import StringTokenizer
 from Tokenization.Tokenizers.Tokenizer import TokenizationContext
-
 from Transducers.Arrangements.ApplyToRest import ApplyToRest
 from Transducers.Arrangements.Arrangement import Arrangement
 from Transducers.Arrangements.LeftRightBinaryOperator import LeftRightBinaryOperator
 from Transducers.TopDownTreeTransducer import TopDownTreeTransducer
 from Transducers.ConvertPreForms import ConvertPreforms
 from Transducers.ReadDirection import ReadDirection
-from Syntax.__exports__ import Node
 from Transducers.Arrangements.Block import Block
 from Transducers.Arrangements.Comments import Comment, RawComment
 from Transducers.Arrangements.Constituents import Constituent
@@ -47,33 +41,32 @@ from Transducers.Arrangements.TransformationArrow import TransformationArrow
 
 
 #region Default lyc readtable
-from Transducers.TreeTransducer import apply_transducer_chain
 
 default_lyc_readtable = make_read_table([
-    [RT_MACRO,
+    [RT.MACRO,
         ['(', '⦅', '[', '⟦', '{', '⦃', '‘', '⟨'],
         {'tokenizer': 'DelimiterTokenizer'}],
 
-    [RT_CLOSING, ["”", ")", "⦆", "]", "⟧", "}", "⦄", "◁", "’", '⟩'],],
+    [RT.CLOSING, ["”", ")", "⦆", "]", "⟧", "}", "⦄", "◁", "’", '⟩'],],
 
-    [RT_MACRO, '«', {'tokenizer': 'DelimitedSymbolTokenizer', 'preserve-leading-whitespace': True}],
+    [RT.MACRO, '«', {'tokenizer': 'DelimitedSymbolTokenizer', 'preserve-leading-whitespace': True}],
 
-#    [RT_MACRO, '‘', {'tokenizer': 'Quote'}],
+#    [RT.MACRO, '‘', {'tokenizer': 'Quote'}],
 
-    [RT_MACRO, '“', {'tokenizer': 'StringTokenizer', 'preserve-leading-whitespace': True}],
+    [RT.MACRO, '“', {'tokenizer': 'StringTokenizer', 'preserve-leading-whitespace': True}],
 
-    [RT_MACRO, '#', {'tokenizer': 'CommentTokenizer', 'preserve-leading-whitespace': True}],
+    [RT.MACRO, '#', {'tokenizer': 'CommentTokenizer', 'preserve-leading-whitespace': True}],
 
-    [RT_MACRO, '##', {'tokenizer': 'RawCommentTokenizer', 'preserve-leading-whitespace': True}],
+    [RT.MACRO, '##', {'tokenizer': 'RawCommentTokenizer', 'preserve-leading-whitespace': True}],
 
-    # [RT_MACRO, 'literate▷\n', {'tokenizer': 'Literate'}],
+    # [RT.MACRO, 'literate▷\n', {'tokenizer': 'Literate'}],
 
-    [RT_TOKEN, ['', '', '', '', '',
+    [RT.ISOLATED_CONSTITUENT, ['', '', '', '', '',
                '', '', '', '', '', '', ''],],
 
-    [RT_PUNCTUATION, [':', ';', ',',]],
+    [RT.PUNCTUATION, [':', ';', ',',]],
 
-    [RT_TOKEN, [".", "", "" "", "", "~", "*", "", "", "", "&", '', "\\", "$", "/", "⫽", # 1st priority
+    [RT.ISOLATED_CONSTITUENT, [".", "", "" "", "", "~", "*", "", "", "", "&", '', "\\", "$", "/", "⫽", # 1st priority
 
                "'", '', '!', '&', '\\@', '~@',
                '', '', '%',
@@ -87,13 +80,13 @@ default_lyc_readtable = make_read_table([
                ':=', '+=', '-=', '×=', '÷=', '%=', '>>=', '<<=', '&=', '^=', '|=', '≤ₜ', 'and=', 'or=']],
 
 
-    [RT_INVALID, ["\t"], {'error-message': "Tabs are not allowed as whitespace."}],
+    [RT.INVALID, ["\t"], {'error-message': "Tabs are not allowed as whitespace."}],
 
-    [RT_WHITESPACE, ' '],
-    [RT_NEWLINE, [chr(0x0A), chr(0x0D), chr(0x0A) + chr(0x0D), chr(0x0D) + chr(0x0A)],],
+    [RT.WHITESPACE, ' '],
+    [RT.NEWLINE, [chr(0x0A), chr(0x0D), chr(0x0A) + chr(0x0D), chr(0x0D) + chr(0x0A)],],
 
     ['DEFAULT',
-        {'type': RT_CONSTITUENT}],
+        {'type': RT.CONSTITUENT}],
 ])
 #endregion
 

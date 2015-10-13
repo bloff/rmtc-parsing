@@ -5,7 +5,7 @@ from Streams.CharacterStream import CharacterStream
 from Streams.StreamPosition import StreamPosition
 from Streams.StringStream import StringStream
 from Syntax.Node import Node
-from Tokenization.Readtable import RT_CLOSING
+from Tokenization.Readtable import RT
 from Transducers.TreeTransducer import apply_transducer_chain
 
 
@@ -53,7 +53,7 @@ class RMTCParser(object):
 
         if not self.tokenization_context.stream.next_is_EOF():
             seq, properties = self.tokenization_context.readtable.probe(stream)
-            if properties.type == RT_CLOSING:
+            if properties.type == RT.CLOSING:
                 raise TokenizingError(stream.absolute_position_of_unread_seq(seq), "Uncaptured closing sequence “%s”." % seq)
             raise TokenizingError(stream.absolute_position_of_unread_seq(seq), "Failed to Tokenize all of the text!")
 
