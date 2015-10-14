@@ -56,9 +56,9 @@ return the ``u`` character):
 ::
 
     a b u
-    v w
-      x y
-    z
+        v w
+          x y
+        z
     c d
 
 Then what happens is that any subsequent call to read will skip all

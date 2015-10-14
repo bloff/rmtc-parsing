@@ -29,6 +29,7 @@ class Element(object):
         """The ``Code`` associated with this element. May be ``None``."""
 
 
+
         if code_or_element is None or isinstance(code_or_element, Code):
             self.code = code_or_element
         else:
@@ -59,13 +60,13 @@ class Element(object):
         """
         Whether this element is the last of its Node. Returns ``False`` if parent is ``None``.
         """
-        return self.parent is not None and self.next is None
+        return self.parent is not None and self.parent.last is self
 
     def is_first(self):
         """
         Whether this element is the first of its Node. Returns ``False`` if parent is ``None``.
         """
-        return self.parent is not None and self.prev is None
+        return self.parent is not None and self.parent.first is self
 
     @property
     def number(self) -> int:

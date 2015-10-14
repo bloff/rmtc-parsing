@@ -36,7 +36,7 @@ class DelimiterTokenizer(Tokenizer):
         opening_delimiter_token = token_BEGIN_MACRO(self.opening_delimiter, self.opening_delimiter_position, self.opening_delimiter_position_after)
         yield opening_delimiter_token
 
-        tokenizer = self.context.StandardTokenizer(self.context)
+        tokenizer = self.context.DefaultTokenizer(self.context)
         for token in tokenizer.run():
             yield token
 
