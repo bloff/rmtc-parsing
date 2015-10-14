@@ -31,7 +31,7 @@ def is_identifier(
     else:
         if not isinstance(code, Identifier): return False
         name, semantic_extra = Identifier.split_name(name)
-        return _identifier_eq(code.name, code.semantic_extra, name, semantic_extra)
+        return _identifier_eq(code.name, code.semantic_name, name, semantic_extra)
 
 
 def identifier_in(arg: Union[Code, Element, str], collection_of_str):

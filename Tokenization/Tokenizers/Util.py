@@ -1,9 +1,7 @@
 from Common.Errors import TokenizingError
-from Streams import IndentedCharacterStream, CharacterStream
-from Tokenization.Readtable import RT_NEWLINE, RT_CONSTITUENT, Readtable
-from Tokenization.Readtable import RT_WHITESPACE
+from Streams import CharacterStream
+from Tokenization.Readtable import Readtable, RT
 from Tokenization.Tokenizers.Tokenizer import TokenizationContext, Tokenizer
-from Tokenization.Tokenizers.TokenizerRegistry import get_tokenizer_class
 
 
 def tokenize_macro(context:TokenizationContext, seq, properties):
@@ -37,9 +35,9 @@ def skip_white_lines(stream:CharacterStream, readtable:Readtable):
     while not stream.next_is_EOF():
         seq, properties = readtable.probe(stream)
         seq_type = properties.type
-        if seq_type == RT_NEWLINE:
+        if seq_type == RT.NEWLINE:
             continue
-        if seq_type != RT_WHITESPACE:
+        if seq_type != RT.WHITESPACE:
             stream.unread_seq(seq)
             return
 
@@ -48,7 +46,7 @@ def read_and_concatenate_constituent_sequences(stream:CharacterStream, readtable
     while not stream.next_is_EOF():
         seq, properties = readtable.probe(stream)
 
-        if properties.type != RT_CONSTITUENT:
+        if properties.type != RT.CONSTITUENT:
             stream.unread_seq(seq)
             return concatenation
         else:

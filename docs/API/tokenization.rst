@@ -4,3 +4,11 @@ Tokenization
 ============
 
 
+
+.. _Readtable:
+
+Readtable
+---------
+
+.. automodule:: Tokenization.Readtable
+   :members:

@@ -1,9 +1,6 @@
 from Common.Errors import TokenizingError
-from Streams.CharacterStream import CharacterStream
 from Streams.StreamPosition import StreamPosition
-from Streams.StreamRange import StreamRange
-from Tokenization.Readtable import RT_TOKEN, RT_MACRO, RT_CONSTITUENT, RT_WHITESPACE, RT_PUNCTUATION, RT_NEWLINE, \
-    RT_CLOSING, RT_INVALID
+from Tokenization.Readtable import RT
 from Tokenization.Tokenizers import Util
 from .Tokenizer import Tokenizer, TokenizationContext
 from Syntax.Token import token_BEGIN_MACRO, token_END_MACRO, token_COMMENT, token_CONSTITUENT
@@ -75,23 +72,23 @@ class CommentTokenizer(Tokenizer):
             assert 'type' in properties
             seq_type = properties.type
 
-            if seq_type == RT_TOKEN:
+            if seq_type == RT.ISOLATED_CONSTITUENT:
                 yield token_CONSTITUENT(seq, stream.absolute_position_of_unread_seq(seq), stream.copy_absolute_position())
-            elif seq_type == RT_MACRO:
+            elif seq_type == RT.MACRO:
                 assert 'tokenizer' in properties
                 for token in Util.tokenize_macro(self.context, seq, properties):
                     yield token
-            elif seq_type == RT_CONSTITUENT:
+            elif seq_type == RT.CONSTITUENT:
                 first_position = stream.absolute_position_of_unread_seq(seq)
                 concatenation =  seq + Util.read_and_concatenate_constituent_sequences(stream, readtable)
                 yield token_CONSTITUENT(concatenation, first_position, stream.copy_absolute_position())
 
             # Step 3
-            elif (seq_type == RT_WHITESPACE or
-                  seq_type == RT_PUNCTUATION or
-                  seq_type == RT_NEWLINE or
-                  seq_type == RT_CLOSING or
-                  seq_type == RT_INVALID
+            elif (seq_type == RT.WHITESPACE or
+                  seq_type == RT.PUNCTUATION or
+                  seq_type == RT.NEWLINE or
+                  seq_type == RT.CLOSING or
+                  seq_type == RT.INVALID
                   ):
                 first_position = stream.absolute_position_of_unread_seq(seq)
                 error_message = properties.error_message if 'error_message' in properties else "Unexpected sequence after comment interpolation character '$'."

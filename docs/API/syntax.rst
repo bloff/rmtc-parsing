@@ -111,7 +111,7 @@ NodeIterator
 Token
 -----
 
-.. autoclass:: Syntax.Token.Token
+.. automodule:: Syntax.Token
    :members: 
 
 .. _LispPrinter:

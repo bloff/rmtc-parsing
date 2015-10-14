@@ -1,8 +1,7 @@
 from typing import Union
-from Streams.StreamRange import StreamRange
-from .Code import *
-from Syntax.Code import Code
 
+from Streams.StreamRange import StreamRange
+from Syntax.Code import Code
 
 
 class Element(object):
@@ -96,6 +95,12 @@ class Element(object):
 
 
 class NodeIterator(object):
+    """
+    An iterator over the elements of a node. After iterating over some element,
+    it is OK to change the node up to (and including) that element, but
+    changing the node after that element might result in unexpected behavior
+    (the iterator's behavior becomes undefined).
+    """
     def __init__(self, first_element:Element):
         self.current = first_element
         self.next = first_element.next if first_element is not None else None
