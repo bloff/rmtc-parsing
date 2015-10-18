@@ -1,6 +1,5 @@
 from Syntax.Tuple import Tuple
 
-__author__ = 'bruno'
 
 
 class PreTuple(Tuple):

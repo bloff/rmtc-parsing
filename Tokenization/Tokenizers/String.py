@@ -1,16 +1,19 @@
 from Common.Errors import TokenizingError
-from Streams.CharacterStream import CharacterStream
 from Streams.StreamPosition import StreamPosition
 from Streams.StreamRange import StreamRange
-from Tokenization.Readtable import Readtable, RT
+from Tokenization.Readtable import RT
 from Tokenization.Tokenizers import Util
-from Tokenization.Tokenizers.Tokenizer import TokenizationContext
-from .Tokenizer import Tokenizer
+from Tokenization.TokenizationContext import TokenizationContext
+from Tokenization.Tokenizer import Tokenizer
 from Syntax.Token import token_STRING, token_BEGIN_MACRO, token_END_MACRO, token_CONSTITUENT
-from .TokenizerRegistry import def_tokenizer_class, get_tokenizer_class
 
 
 class StringTokenizer(Tokenizer):
+    """
+    Reads strings with interpolated code.
+
+    See `<https://bloff.github.io/lyc/2015/10/04/lexer-3.html>`_.
+    """
     def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
         Tokenizer.__init__(self, context)
 
@@ -102,7 +105,4 @@ class StringTokenizer(Tokenizer):
 
 
 
-
-
-def_tokenizer_class('String', StringTokenizer)
 

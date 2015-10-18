@@ -1,11 +1,17 @@
 from Syntax.__exports__ import Form, Identifier
 from Syntax.Node import Element
 from Syntax.Token import is_token, TOKEN
-from Transducers.Arrangements.ArrangementRule import ArrangementRule
+from Transducers.ArrangementRule import ArrangementRule
 
 
 class RawComment(ArrangementRule):
-    # TODO: escape
+    """
+    Arrangement for comments without interpolated code. Does the transformation::
+
+      BEGIN_MACRO("##")⋅  END_MACRO  ⋅
+
+    (i.e., removes everything between ``BEGIN_MACRO`` and ``END_MACRO``).
+    """
     def __init__(self):
         ArrangementRule.__init__(self, "Raw Comment")
 
@@ -21,6 +27,13 @@ class RawComment(ArrangementRule):
 
 
 class Comment(ArrangementRule):
+    """
+    Arrangement for comments without interpolated code. Does the transformation::
+
+      BEGIN_MACRO("#")⋅  END_MACRO  ⦅debug-values ⦆⋅
+
+    where ```` removes all COMMENT tokens.
+    """
     def __init__(self):
         ArrangementRule.__init__(self, "Comment")
 

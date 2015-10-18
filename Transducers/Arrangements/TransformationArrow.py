@@ -3,7 +3,7 @@ from Syntax.PreForm import PreForm
 from Syntax.Node import Element
 from Syntax.Util import is_identifier
 from Syntax.Token import is_token, TOKEN
-from Transducers.Arrangements.ArrangementRule import ArrangementRule
+from Transducers.ArrangementRule import ArrangementRule
 
 # CONVERTS:
 #     ... special_head ... INDENT ...

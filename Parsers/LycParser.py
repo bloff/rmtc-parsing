@@ -3,16 +3,16 @@ from typing import Union
 from Parsers.RMTCParser import RMTCParser
 from Streams.CharacterStream import CharacterStream
 from Streams.IndentedCharacterStream import IndentedCharacterStream
-from Tokenization.Readtable import make_read_table, RT
+from Tokenization.Readtable import make_readtable, RT
 from Tokenization.Tokenizers.RawComment import RawCommentTokenizer
 from Tokenization.Tokenizers.Comment import CommentTokenizer
-from Tokenization.Tokenizers.DelimitedSymbolTokenizer import DelimitedSymbolTokenizer
+from Tokenization.Tokenizers.DelimitedIdentifierTokenizer import DelimitedIdentifierTokenizer
 from Tokenization.Tokenizers.Delimiter import DelimiterTokenizer
 from Tokenization.Tokenizers.IndentationReadtable import IndentationReadtableTokenizer
 from Tokenization.Tokenizers.String import StringTokenizer
-from Tokenization.Tokenizers.Tokenizer import TokenizationContext
+from Tokenization.TokenizationContext import TokenizationContext
 from Transducers.Arrangements.ApplyToRest import ApplyToRest
-from Transducers.Arrangements.Arrangement import Arrangement
+from Transducers.Arrangement import Arrangement
 from Transducers.Arrangements.LeftRightBinaryOperator import LeftRightBinaryOperator
 from Transducers.TopDownTreeTransducer import TopDownTreeTransducer
 from Transducers.ConvertPreForms import ConvertPreforms
@@ -42,7 +42,7 @@ from Transducers.Arrangements.TransformationArrow import TransformationArrow
 
 #region Default lyc readtable
 
-default_lyc_readtable = make_read_table([
+default_lyc_readtable = make_readtable([
     [RT.MACRO,
         ['(', '⦅', '[', '⟦', '{', '⦃', '‘', '⟨'],
         {'tokenizer': 'DelimiterTokenizer'}],
@@ -288,7 +288,7 @@ class LycParser(RMTCParser):
             # Tokenizer classes
             DelimiterTokenizer = DelimiterTokenizer,
             StringTokenizer = StringTokenizer,
-            DelimitedSymbolTokenizer = DelimitedSymbolTokenizer,
+            DelimitedSymbolTokenizer = DelimitedIdentifierTokenizer,
             CommentTokenizer = CommentTokenizer,
             RawCommentTokenizer = RawCommentTokenizer,
             )

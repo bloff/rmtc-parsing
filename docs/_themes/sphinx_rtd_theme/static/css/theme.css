@@ -1,0 +1,24 @@
+@import "theme_default.css";
+
+@font-face {
+    font-family: 'lyc source code';
+    font-weight: normal;
+    src: url(../fonts/LycSourceCode.ttf.woff) format('woff');
+}
+
+
+code, .rst-content tt, .rst-content code {
+    font-family: 'lyc source code', monospace;
+}
+
+div[class^='highlight'] pre {
+    font-family: 'lyc source code', monospace;
+}
+
+.linenodiv pre {
+    font-family: 'lyc source code', monospace;
+}
+
+footer span.commit code, footer span.commit .rst-content tt, .rst-content footer span.commit tt {
+    font-family: 'lyc source code', monospace;
+}

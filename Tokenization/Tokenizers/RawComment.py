@@ -1,13 +1,14 @@
 from Common.Errors import TokenizingError
-from Streams.CharacterStream import CharacterStream
 from Streams.StreamPosition import StreamPosition
-from Tokenization.Tokenizers.Tokenizer import TokenizationContext
-from .Tokenizer import Tokenizer
+from Tokenization.TokenizationContext import TokenizationContext
+from Tokenization.Tokenizer import Tokenizer
 from Syntax.Token import token_BEGIN_MACRO, token_END_MACRO, token_COMMENT
-from .TokenizerRegistry import def_tokenizer_class
 
 
 class RawCommentTokenizer(Tokenizer):
+    """
+    Reads comments without interpolated code.
+    """
     def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition, readtable):
         Tokenizer.__init__(self, context)
 
@@ -34,4 +35,3 @@ class RawCommentTokenizer(Tokenizer):
                 return
             stream.read()
 
-def_tokenizer_class('Raw Comment', RawCommentTokenizer)

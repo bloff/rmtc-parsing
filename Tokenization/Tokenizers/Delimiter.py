@@ -1,11 +1,9 @@
 from Common.Errors import TokenizingError
-from Streams.CharacterStream import CharacterStream
 from Streams.StreamPosition import StreamPosition
 from Streams.StreamRange import StreamRange
-from .Tokenizer import Tokenizer, TokenizationContext
+from Tokenization.TokenizationContext import TokenizationContext
+from Tokenization.Tokenizer import Tokenizer
 from Syntax.Token import token_BEGIN_MACRO, token_END_MACRO
-from .TokenizerRegistry import def_tokenizer_class, get_tokenizer_class
-
 
 _delimiter_pairs = {
     '(' : ')',
@@ -19,6 +17,9 @@ _delimiter_pairs = {
     }
 
 class DelimiterTokenizer(Tokenizer):
+    """
+    Reads blocks of code surrounded by pairs of delimiters.
+    """
     def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
         Tokenizer.__init__(self, context)
 
@@ -54,4 +55,3 @@ class DelimiterTokenizer(Tokenizer):
         closing_delimiter_token = token_END_MACRO(opening_delimiter_token, cdem, cdem_position, stream.copy_absolute_position())
         yield closing_delimiter_token
 
-def_tokenizer_class('Delimiter', DelimiterTokenizer)

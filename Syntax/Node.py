@@ -334,7 +334,7 @@ class Node (Code):
     # ( ... (first_node ... last_node) ...)
     def wrap(self, first_element, last_element, node_class_constructor = None, *node_class_constructor_args, **node_class_constructor_kwargs):
         """
-        Replaces the sequence of elements of this node between first_element and last_element with a new node,
+        Replaces the sequence of elements of this node between first_element and end_punctuation_marker with a new node,
         containing that very same sequence.
 
         :param first_element: The first element (whose ``parent`` must be this node)

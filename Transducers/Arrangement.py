@@ -6,10 +6,16 @@ from Transducers.ReadDirection import ReadDirection
 
 
 class Arrangement(object):
+    """
+    An arrangement is defined by a list of arrangement rules (:ref:`ArrangementRule`). It traverses a single node from
+    left-to-right or right-to-left. For each child of the node, for each arrangement rule, it checks if the rule is applicable,
+    and, if so, applies it to transform the node at that child.
+    """
     def __init__(self, rules:list, direction:ReadDirection = ReadDirection.LEFT_TO_RIGHT):
         self.rules = rules
-        """:type : list(ArrangementRule)"""
+        """A list of arrangement rules."""
         self.direction = direction
+        """Whether the node should be left from left-to-right or from right-to-left."""
 
     # given a form h(a b c ...), arrange goes through its elements
     # and for each element it checks if one of the rules in the list of ArrangementRules apply; if it does, then it is applied

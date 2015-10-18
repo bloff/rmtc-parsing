@@ -2,12 +2,17 @@ from Common.Errors import TokenizingError
 from Streams.StreamPosition import StreamPosition
 from Tokenization.Readtable import RT
 from Tokenization.Tokenizers import Util
-from .Tokenizer import Tokenizer, TokenizationContext
+from Tokenization.TokenizationContext import TokenizationContext
+from Tokenization.Tokenizer import Tokenizer
 from Syntax.Token import token_BEGIN_MACRO, token_END_MACRO, token_COMMENT, token_CONSTITUENT
-from .TokenizerRegistry import def_tokenizer_class
 
 
 class CommentTokenizer(Tokenizer):
+    """
+    Reads comments with interpolated code.
+
+    See `<https://bloff.github.io/lyc/2015/10/04/lexer-3.html>`_.
+    """
     def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
         Tokenizer.__init__(self, context)
 
@@ -94,4 +99,3 @@ class CommentTokenizer(Tokenizer):
                 error_message = properties.error_message if 'error_message' in properties else "Unexpected sequence after comment interpolation character '$'."
                 raise TokenizingError(first_position, error_message)
 
-def_tokenizer_class('Comment', CommentTokenizer)

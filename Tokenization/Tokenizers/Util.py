@@ -1,7 +1,8 @@
 from Common.Errors import TokenizingError
 from Streams import CharacterStream
 from Tokenization.Readtable import Readtable, RT
-from Tokenization.Tokenizers.Tokenizer import TokenizationContext, Tokenizer
+from Tokenization.TokenizationContext import TokenizationContext
+from Tokenization.Tokenizer import Tokenizer
 
 
 def tokenize_macro(context:TokenizationContext, seq, properties):

@@ -1,9 +1,8 @@
 from Syntax.Util import identifier_in
 from Syntax.__exports__ import is_identifier, Form
 from Syntax.Node import Element
-from Transducers.Arrangements.ArrangementRule import ArrangementRule
+from Transducers.ArrangementRule import ArrangementRule
 
-__author__ = 'bruno'
 
 
 class LeftRightBinaryOperatorReversedArgs(ArrangementRule):

@@ -1,7 +1,7 @@
 from Syntax.__exports__ import Form, Identifier, Literal
 from Syntax.Node import Element
 from Syntax.Token import is_token, TOKEN
-from Transducers.Arrangements.ArrangementRule import ArrangementRule
+from Transducers.ArrangementRule import ArrangementRule
 # from Semantics.Types.Bootstrap0 import String
 
 class Strings(ArrangementRule):

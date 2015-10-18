@@ -1,22 +1,30 @@
+from typing import List
 from Common import Options
 from Common.StringStuff import indent_string
+from Syntax.Code import Code
 from Syntax.LispPrinter import indented_lisp_printer
 from Syntax.Node import Node
 
 
 class TreeTransducer(object):
+    """
+    A tree transducer defines some transformation on trees, represented by nested nodes (see :ref:`Node`).
+    """
     def __init__(self, name:str):
         self.name = name
 
-    def transduce(self, tree):
+    def transduce(self, tree:Node):
+        """
+        Modifies the given tree according to some transformation.
+        """
+
         raise NotImplementedError()
 
 
 
-def apply_transducer_chain(transducer_chain, form):
+def apply_transducer_chain(transducer_chain:List[TreeTransducer], form:Code):
     """
-    :type transducer_chain: list(TopDownTreeTransducer)
-    :type form: Code
+    Applies each tree transducer in a given list, in turn.
     """
     for tt in transducer_chain:
         if isinstance(form, Node) and len(form) > 0:

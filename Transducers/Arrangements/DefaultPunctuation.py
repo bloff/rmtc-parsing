@@ -3,16 +3,37 @@ from Syntax.Node import Node, Element
 from Syntax.Punctuator import Punctuator
 from Syntax.PreTuple import PreTuple
 from Syntax.Token import is_token, TOKEN
-from Transducers.Arrangements.ArrangementRule import ArrangementRule
+from Transducers.ArrangementRule import ArrangementRule
 
 
-# Takes something like
-# H     a b,  c d ;   e f, g, h :    x y, z
-# and outputs
-# H ( ((a b) (c d)) ((e f) g h) )  ((x y) z)
-# where H is the first punctuator.skip_count elements
+
 
 class DefaultPunctuation(ArrangementRule):
+    """
+    Processes punctuators, by organizing ,-and-;-separated lists into nested tuples.
+
+    Takes something like::
+
+        ⟨⟅H     a b,  c d ;   e f, g, h :    x y, z⟆⟩
+
+    And outputs::
+
+        ⟅H ( ((a b) (c d)) ((e f) g h) )  ((x y) z)⟆
+
+    where ``H`` is the first punctuator.skip_count elements, and ``⟅⟆`` denotes
+    some subclass of :ref:`Node`.
+
+    If the punctuator has a non-None ``end_punctuation_marker`` attribute, then takes::
+
+        ⟨⟅H     a b,  c d ;   e f, g, h :    x y, z   X ⟆⟩
+
+    And outputs::
+
+        ⟅H ( ((a b) (c d)) ((e f) g h) )  ((x y) z) ⟆
+
+    where ``X`` is the punctuator's ``end_punctuation_marker``.
+
+    """
 
     def __init__(self):
         ArrangementRule.__init__(self, "Default Punctuation")
@@ -36,8 +57,8 @@ class DefaultPunctuation(ArrangementRule):
             return parent.replace(form_element, pnode).next
 
         if len(punctuation) == 0 or len(pnode) < 2:
-            if punctuator.last_element is not None:
-                pnode.remove(punctuator.last_element)
+            if punctuator.end_punctuation_marker is not None:
+                pnode.remove(punctuator.end_punctuation_marker)
             return _replace_punctuator_with_pform()
 
         start_of_big_group = None
@@ -63,10 +84,10 @@ class DefaultPunctuation(ArrangementRule):
                 punctuation.pop(0)
 
 
-        def finish_groups(last_element):
+        def finish_groups(last_element_in_group):
             if has_groups:
                 if start_of_group:
-                    new = pnode.wrap(start_of_group, last_element, PreTuple)
+                    new = pnode.wrap(start_of_group, last_element_in_group, PreTuple)
                 else:
                     new = start_of_group
                 if has_big_groups and start_of_big_group is not None:
@@ -123,9 +144,9 @@ class DefaultPunctuation(ArrangementRule):
 
 
 
-        if punctuator.last_element is not None:
-            finish_groups(punctuator.last_element)
-            pnode.remove(punctuator.last_element)
+        if punctuator.end_punctuation_marker is not None:
+            finish_groups(punctuator.end_punctuation_marker.prev)
+            pnode.remove(punctuator.end_punctuation_marker)
         else:
             finish_groups(pnode.last)
 

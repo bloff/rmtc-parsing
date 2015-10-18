@@ -2,10 +2,9 @@ from Common.Util import is_not_none
 from Syntax.Util import identifier_in
 from Syntax.__exports__ import Form, Identifier
 from Syntax.Node import Element
-from Transducers.Arrangements.ArrangementRule import ArrangementRule
+from Transducers.ArrangementRule import ArrangementRule
 from Syntax.Token import is_token, TOKEN
 
-__author__ = 'bruno'
 
 
 class LeftRightUnaryPostfixNospaceTokenCapturingOperator(ArrangementRule):

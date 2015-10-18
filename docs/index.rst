@@ -100,10 +100,34 @@ Syntax types.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Readtable-macro parsing.
 
+- :ref:`Readtable` - Readtables map sequence of characters to dictionaries of properties.
+- :ref:`TokenizationContext`
+- :ref:`Tokenizer` - A tokenizer generates tokens (:ref:`Token`) from a :ref:`CharacterStream`.
+- :ref:`IndentationReadtableTokenizer` - A tokenizer that uses a readtable to read indented blocks of code.
+- :ref:`DelimiterTokenizer` - Tokenizer for parsing blocks of code surrounded by delimiters.
+- :ref:`StringTokenizer` - Tokenizer for strings with interpolated code.
+- :ref:`CommentTokenizer` -  Tokenizer for comments with interpolated code.
+- :ref:`RawCommentTokenizer` - Comments without interpolated code.
+- :ref:`DelimitedIdentifierTokenizer` - Tokenizer for identifiers surrounded by delimiters.
+
 
 :ref:`Transducers <transducers_modules>`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Tree transducers.
+
+- :ref:`Arrangement` - A transformation of a single node.
+- :ref:`ArrangementRule` - A rule for when and how to transform a child of a node.
+- :ref:`ReadDirection` - Left-to-right or right-to-left.
+- :ref:`TreeTransducer` - A transformation of a tree (represented by nested nodes).
+    - :ref:`TopDownTreeTransducer`
+    - :ref:`BottomUpTreeTransducer`
+    - :ref:`ConvertPreForms`
+- The arrangement rules currently implemented are:
+   - :ref:`ApplyToRest` - To process a form like ``return``, which, if appearing in isolation, actually means ``return()``.
+   - :ref:`Block` - Indented blocks.
+   - :ref:`Comments` - Comments.
+   - :ref:`Constituents` - Constituents (identifiers, numerical literals, etc)
+   - :ref:`DefaultPunctuation` - Parses ,-and-;-separated lists into nested tuples.
 
 
 :ref:`Parsers <parsers_modules>`

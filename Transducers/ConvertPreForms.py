@@ -1,13 +1,15 @@
+from Common.Errors import TokenizingError
 from Syntax.Punctuator import Punctuator
 from Syntax.__exports__ import Node, Form, Tuple
 from Syntax.PreTuple import PreTuple
 from Syntax.PreForm import PreForm
 from Transducers.TreeTransducer import TreeTransducer
 
-__author__ = 'bruno'
-
-
 class ConvertPreforms(TreeTransducer):
+    """
+    Transverses the tree in a bottom-up fashion. For each PreForm or PreTuple, converts it into a Form or Tuple if more than
+    one child is present, and otherwise replaces the PreForm/PreTuple with its single child.
+    """
     def __init__(self):
         TreeTransducer.__init__(self, "Convert Preforms")
 
@@ -23,8 +25,6 @@ class ConvertPreforms(TreeTransducer):
                     node.replace(e, code.first)
                 else:
                     new_form_element = code.wrap(code.first, code.last, Form)
-                    if code.prepend_head is not None:
-                        new_form_element.code.prepend(code.prepend_head)
                     node.replace(e, new_form_element)
             elif isinstance(code, PreTuple):
                 if len(code) == 0:
@@ -35,9 +35,10 @@ class ConvertPreforms(TreeTransducer):
                     code.wrap(code.first, code.last, Tuple)
                     node.replace(e, code.first)
             elif isinstance(code, Punctuator):
-                last = e
-                for subelm in code:
-                    code.remove(subelm)
-                    node.insert(last, subelm)
-                    last = subelm
-                node.remove(e)
+                raise TokenizingError("Unexpected unprocessed punctuator.")
+                # last = e
+                # for subelm in code:
+                #     code.remove(subelm)
+                #     node.insert(last, subelm)
+                #     last = subelm
+                # node.remove(e)

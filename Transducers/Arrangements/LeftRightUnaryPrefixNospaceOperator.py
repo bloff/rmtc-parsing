@@ -4,9 +4,8 @@ from Syntax.Util import is_identifier, is_literal
 from Syntax.__exports__ import Form, Identifier
 from Syntax.Node import Element
 from Syntax.Token import is_token, TOKEN
-from Transducers.Arrangements.ArrangementRule import ArrangementRule
+from Transducers.ArrangementRule import ArrangementRule
 
-__author__ = 'bruno'
 
 
 class LeftRightUnaryPrefixNospaceOperator(ArrangementRule):

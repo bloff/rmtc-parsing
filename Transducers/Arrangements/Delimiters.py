@@ -4,8 +4,8 @@ from Syntax.__exports__ import Form, Identifier
 from Syntax.PreTuple import PreTuple
 from Syntax.Node import Element
 from Syntax.Token import is_token, TOKEN
-from Transducers.Arrangements.ArrangementRule import ArrangementRule
-from Common.Errors import ArrangementError
+from Transducers.ArrangementRule import ArrangementRule
+from Common.Errors import ArrangementError, TokenizingError
 from Transducers.Arrangements.Block import Block
 
 
@@ -85,6 +85,12 @@ class DelimiterUtil:
 
 
 class ApplyParenthesis(ArrangementRule):
+    """
+    Applies the transformation::
+
+      BEGIN_MACRO("⦅") BEGIN  END END_MACRO  ⟨⦅⦆⟩
+
+    """
     def __init__(self):
         ArrangementRule.__init__(self, "Application Parenthesis")
         self.block_arrangement = Block(Form)
@@ -100,15 +106,16 @@ class ApplyParenthesis(ArrangementRule):
             next_element = element.next
             parent.remove(element) # remove BEGIN_MACRO '('
             parent.remove(element.end) # remove END_MACRO ')'
-            return next_element
+            return self.block_arrangement.apply(next_element)
         else:
-            # BEGIN_MACRO BEGIN ... END BEGIN ... END END_MACRO => block( BEGIN ... END BEGIN ... END )
-            new_pre_block_element = element.parent.wrap(element, element.end, Form)
-            pre_block = new_pre_block_element.code
-            pre_block.remove(element) # remove BEGIN_MACRO '('
-            pre_block.remove(element.end) # remove END_MACRO '('
-            pre_block.prepend(Identifier("block"))
-            return new_pre_block_element.next
+            raise TokenizingError(element.range, "Unexpected multiple blocks inside double-parenthesis.")
+            # # BEGIN_MACRO BEGIN ... END BEGIN ... END END_MACRO => block( BEGIN ... END BEGIN ... END )
+            # new_pre_block_element = element.parent.wrap(element, element.end, Form)
+            # pre_block = new_pre_block_element.code
+            # pre_block.remove(element) # remove BEGIN_MACRO '('
+            # pre_block.remove(element.end) # remove END_MACRO '('
+            # pre_block.prepend(Identifier("block"))
+            # return new_pre_block_element.next
 
 
 # head( [BEGIN ... END]* ) => ⦅head <...>*))

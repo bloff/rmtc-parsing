@@ -9,7 +9,7 @@ This is described in the following three blog posts:
  * *[Parsing via chains of tree-transducers](http://bloff.github.io/lyc/blog/drafts.html)* (yet to be written).
  
 
-[Read the docs here!](https://rmtc-parsing.readthedocs.org/en/master/)
+[Read the docs here!](https://bloff.github.io/rmtc-parsing-docs/index.html)
 
 ##Dependencies
 
@@ -21,7 +21,7 @@ sudo easy_install3 pip
 ```
 * Sphinx (for documentation)
 ```
-sudo pip3 install Sphinx sphinx-rtd-theme sphinxcontrib-inlinesyntaxhighlight sphinx-autobuild
+sudo pip3 install Sphinx
 ```
 
 ##To test

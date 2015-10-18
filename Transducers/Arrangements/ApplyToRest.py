@@ -1,22 +1,17 @@
 from Syntax.__exports__ import Form
 from Syntax.Node import Element
 from Syntax.Util import is_identifier
-from Transducers.Arrangements.ArrangementRule import ArrangementRule
-
-# converts
-# ... return ...
-# to
-# ... (return (...))
-# and
-# ... return
-# to
-# ... return()
-# ! NO-BREAK e => (! e)
-# e +. e => +(e e).
-
-
+from Transducers.ArrangementRule import ArrangementRule
 
 class ApplyToRest(ArrangementRule):
+    """
+    ::
+
+       name ⋅    ⦅name ⦆ ⋅
+       name ⋅   ⦅name⦆ ⋅
+
+    Used, for example, to convert ``return`` into ``return()``.
+    """
 
     def __init__(self, names):
         ArrangementRule.__init__(self, "Apply to Rest")

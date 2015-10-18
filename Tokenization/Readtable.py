@@ -118,7 +118,7 @@ class Readtable(object):
         assert False
 
 
-def make_read_table(definition:list):
+def make_readtable(definition:list):
     """
     Creates a new readtable.
 

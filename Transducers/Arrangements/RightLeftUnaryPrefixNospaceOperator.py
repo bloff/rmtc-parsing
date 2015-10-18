@@ -1,9 +1,8 @@
 from Syntax.__exports__ import Form
 from Syntax.Node import Element
 from Syntax.Util import is_identifier, identifier_in
-from Transducers.Arrangements.ArrangementRule import ArrangementRule
+from Transducers.ArrangementRule import ArrangementRule
 
-__author__ = 'bruno'
 
 
 class RightLeftUnaryPrefixNospaceOperator(ArrangementRule):
