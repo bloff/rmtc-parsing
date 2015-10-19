@@ -6,7 +6,11 @@ from Transducers.ArrangementRule import ArrangementRule
 
 
 class LeftRightUnaryPostfixNospaceOperator(ArrangementRule):
-    # e++ => (++ e)
+    """
+    ::
+
+       a X ⋅  ⦅X a⦆ ⋅
+    """
 
     def __init__(self, sym_vals):
         ArrangementRule.__init__(self, "Left-Right Unary Postfix No-Space Operator")

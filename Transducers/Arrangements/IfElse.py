@@ -6,11 +6,15 @@ from Transducers.ArrangementRule import ArrangementRule
 
 
 class InfixIfElse(ArrangementRule):
-    # if set has key-value pair ('x', 'y'),
-    # then convert:
-    # a x b y . c => (x b a (y c)) .
-    # e.g. for x = if, y = else
-    # a if b else c => (if b a (else c))
+    """
+    Applies the transformation::
+
+      a X b Y ⋅ c  ⦅X b a ⦅Y c⦆⦆ ⋅
+
+    E.g. for X = if, Y = else::
+
+      a if b else ⋅ c  ⦅if b a ⦅else c⦆⦆ ⋅
+    """
 
     def __init__(self, set_vals):
         ArrangementRule.__init__(self, "Infix If-Else")
@@ -49,6 +53,14 @@ class InfixIfElse(ArrangementRule):
 
 class IfElifElse(ArrangementRule):
     # (if a b) . [(elif a b)]* [(else b)]? => (if a b (elif a b)* (else b)?)
+    """
+    Applies the transformation::
+
+      ⦅if ⦆ ⋅ ⦅elif ⦆* ⦅else ⦆?  ⦅if  ⦅elif ⦆* ⦅else ⦆?⦆⋅
+
+    (i.e. places the elifs and else forms inside the preceeding if form)
+    """
+
     def __init__(self):
         ArrangementRule.__init__(self, "If-Elif-Else")
 

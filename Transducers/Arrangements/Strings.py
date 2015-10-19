@@ -5,6 +5,16 @@ from Transducers.ArrangementRule import ArrangementRule
 # from Semantics.Types.Bootstrap0 import String
 
 class Strings(ArrangementRule):
+    """
+    Processes the string macro. If a single STRING token is inside it, converts into a string literal. Otherwise,
+    converts into an ``str`` form.
+
+    ::
+
+       BEGIN_MACRO("“") ⋅ STRING END_MACRO   Literal(string, value)
+
+       BEGIN_MACRO("“") ⋅  END_MACRO   ⦅str ⦆ ⋅
+    """
     def __init__(self):
         ArrangementRule.__init__(self, "Strings")
 
@@ -32,7 +42,7 @@ class Strings(ArrangementRule):
             elm = new_form[1] # first element
             while elm is not None:
                 if is_token(elm, TOKEN.STRING):
-                    elm.code = Literal(String, elm.value, elm.range)
+                    elm.code = Literal("STRING(PLACEHOLDER)", elm.value, elm.range)
                 if is_token(elm, TOKEN.BEGIN_MACRO):
                     elm = elm.end.next
                 else:

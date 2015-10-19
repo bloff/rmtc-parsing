@@ -5,6 +5,11 @@ from Transducers.ArrangementRule import ArrangementRule
 
 
 class LeftRightBinaryOperator(ArrangementRule):
+    """
+    ::
+
+       a X ⋅ b  ⦅X a b⦆ ⋅
+    """
 
     def __init__(self, sym_vals):
         ArrangementRule.__init__(self, "Left-Right Binary Operator")

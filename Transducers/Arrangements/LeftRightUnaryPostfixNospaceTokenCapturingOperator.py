@@ -8,7 +8,14 @@ from Syntax.Token import is_token, TOKEN
 
 
 class LeftRightUnaryPostfixNospaceTokenCapturingOperator(ArrangementRule):
-    # e++ => (++ e)
+    """
+    ::
+
+       a X ⋅  ⦅X a⦆ ⋅
+
+    when there is no whitespace between ``a`` and ``X``. ``a`` can be of the form ``BEGIN  END`` or
+    ``BEGIN_MACRO  END_MACRO``, and it will be captured as a unit.
+    """
 
     def __init__(self, sym_vals):
         ArrangementRule.__init__(self, "Left-Right Unary Postfix No-Space Token-Capturing Operator")

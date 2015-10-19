@@ -6,7 +6,11 @@ from Transducers.ArrangementRule import ArrangementRule
 
 
 class LeftRightNaryOperator(ArrangementRule):
+    """
+    ::
 
+       a X ⋅ b1 X b2 X  X bn  ⦅X a b1 b2  bn⦆ ⋅
+    """
     def __init__(self, sym_vals):
         ArrangementRule.__init__(self, "Left-Right N-Ary Operator")
         self.sym_vals = sym_vals

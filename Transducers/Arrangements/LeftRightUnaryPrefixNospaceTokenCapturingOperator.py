@@ -9,8 +9,13 @@ from Transducers.ArrangementRule import ArrangementRule
 
 
 class LeftRightUnaryPrefixNospaceTokenCapturingOperator(ArrangementRule):
-    # $something => ($ something)
-    # $(...) => ($ (...))
+    """
+    ::
+
+       X ⋅ b  ⦅X b⦆ ⋅
+
+    ``b`` can be of the form ``BEGIN  END`` or ``BEGIN_MACRO  END_MACRO``, and it will be captured as a unit.
+    """
 
     def __init__(self, token_vals):
         ArrangementRule.__init__(self, "Left-Right Unary Prefix No-Space Token-Capturing Operator")

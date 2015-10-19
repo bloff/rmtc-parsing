@@ -278,6 +278,83 @@ define_default_lyc_transducer_chain()
 
 
 class LycParser(RMTCParser):
+    r"""
+    The parser for lyc. 
+    
+    ::
+    
+        readtable default-readtable:
+            macro “(” “⦅” “[” “⟦” “{” “⦃” “‘” “⟨”:
+                tokenizer := tokenizers⫽delimiter
+
+            closing::
+                “\”” “)” “⦆” “]” “⟧”
+                “}” “⦄” “◁” “’” “⟩”
+
+            macro ““”:
+                tokenizer := tokenizers⫽delimited-symbol
+                preserve-leading-whitespace
+
+            macro “‘”:
+                tokenizer := tokenizers⫽quote
+
+            macro ““”:
+                tokenizer := tokenizers⫽string
+                preserve-leading-whitespace
+
+            macro “#”:
+                tokenizer := tokenizers⫽comment
+                preserve-leading-whitespace
+
+            macro “##”:
+                tokenizer := tokenizers⫽raw-comment
+                preserve-leading-whitespace
+
+            macro “literate▷\n”:
+                tokenizer := tokenizers⫽literate
+                
+            isolated-constituent::
+                “” “” “” “” “” “”
+                “” “” “” “” “” “”
+                “.” “” ““ “” “” “~”
+                “*” “” “” “” “&” ““, “\\”
+                “$” “/” “⫽”
+                ““” “” “!” “&” “\\@” “~@”
+                “” “” “%”
+                “” “”
+                “<<” “>>”
+                “<” “>” “≤” “≥” “∈” “∉”
+                “=” “≠”
+                “^”
+                “|” “” # second | is meta-|
+                “”     # meta-&
+                “:=” “+=” “-=” “×=” “÷=” “%=” “>>=”
+                “<<=” “&=” “^=” “|=” “≤ₜ” “and=” “or=“
+
+            punctuation:: “:” “;” “,”
+
+            invalid “\t”:
+                error-message := “Tabs are not allowed as whitespace.”
+
+            whitespace “ ”
+
+            newline “\n”
+
+            default-properties:
+                type := 'constituent
+
+        transducer-chain default-transducer-chain:
+            primary:
+                «Comment»
+                «Raw Comment»
+                «Left-Right Unary Prefix No-space Operator» “\\”
+                «Left-Right Unary Prefix No-space Operator» “~”
+                «Left-Right Unary Prefix No-space Operator» “$”
+                «Left-Right Unary Prefix No-space Operator» “”
+                «Left-Right Unary Prefix No-space Operator» “”
+                
+                etc
+    """
 
     def __init__(self):
         RMTCParser.__init__(self, TokenizationContext("Lyc Tokenization Context"),

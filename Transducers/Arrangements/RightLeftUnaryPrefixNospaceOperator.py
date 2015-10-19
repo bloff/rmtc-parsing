@@ -6,7 +6,13 @@ from Transducers.ArrangementRule import ArrangementRule
 
 
 class RightLeftUnaryPrefixNospaceOperator(ArrangementRule):
-    # !e => (! e)
+    """
+    ::
+
+       ⋅ ⦅X a⦆  ⋅ X a
+
+    when there is no space between ``X`` and ``a``.
+    """
     def __init__(self, sym_vals):
         ArrangementRule.__init__(self, "Right-Left Unary Prefix No-Space Operator")
         self.sym_vals = sym_vals

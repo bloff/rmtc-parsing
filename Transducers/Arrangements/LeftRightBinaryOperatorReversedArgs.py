@@ -6,7 +6,11 @@ from Transducers.ArrangementRule import ArrangementRule
 
 
 class LeftRightBinaryOperatorReversedArgs(ArrangementRule):
-    # a for. b => (for b a).
+    """
+    ::
+
+       a X ⋅ b  ⦅X b a⦆ ⋅
+    """
 
     def __init__(self, sym_vals):
         ArrangementRule.__init__(self, "Left-Right Binary Operator Reversed Args")

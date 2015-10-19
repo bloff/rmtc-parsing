@@ -3,10 +3,17 @@ from Syntax.Node import Element
 from Syntax.Util import is_identifier
 from Transducers.ArrangementRule import ArrangementRule
 
-# a not in b => (not-in a b)
-# TODO: replace with
-# a not in b => (not (in a b))
 class LeftRightBinaryOperatorTwoSymbols(ArrangementRule):
+    """
+    ::
+
+       a X Y ⋅ b  ⦅X-Y a b⦆ ⋅
+
+    E.g. for X = is, Y = not::
+
+       a is not ⋅ b  ⦅is-not a b⦆ ⋅
+
+    """
 
     def __init__(self, sym_vals):
         ArrangementRule.__init__(self, "Left-Right Binary Operator - Two Symbols")
