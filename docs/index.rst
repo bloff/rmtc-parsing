@@ -123,11 +123,28 @@ Tree transducers.
     - :ref:`BottomUpTreeTransducer`
     - :ref:`ConvertPreForms`
 - The arrangement rules currently implemented are:
-   - :ref:`ApplyToRest` - To process a form like ``return``, which, if appearing in isolation, actually means ``return()``.
-   - :ref:`Block` - Indented blocks.
-   - :ref:`Comments` - Comments.
-   - :ref:`Constituents` - Constituents (identifiers, numerical literals, etc)
-   - :ref:`DefaultPunctuation` - Parses ,-and-;-separated lists into nested tuples.
+    - :ref:`ApplyToRest` - To process a form like ``return``, which, if appearing in isolation, actually means ``return()``.
+    - :ref:`Block` - Indented blocks.
+    - :ref:`Comments` - Comments.
+    - :ref:`Constituents` - Constituents (identifiers, numerical literals, etc)
+    - :ref:`DefaultPunctuation` - Parses ,-and-;-separated lists into nested tuples.
+    - :ref:`Delimiters`
+    - :ref:`IfElse`
+    - :ref:`LeftRightBinaryOperator`
+    - :ref:`LeftRightBinaryOperatorReversedArgs`
+    - :ref:`LeftRightBinaryOperatorTwoSymbols`
+    - :ref:`LeftRightBinaryTokenCapturingOperator`
+    - :ref:`LeftRightNaryOperator`
+    - :ref:`LeftRightUnaryPostfixNospaceOperator`
+    - :ref:`LeftRightUnaryPostfixNospaceTokenCapturingOperator`
+    - :ref:`LeftRightUnaryPrefixNospaceOperator`
+    - :ref:`LeftRightUnaryPrefixNospaceTokenCapturingOperator`
+    - :ref:`RightLeftBinaryOperator`
+    - :ref:`RightLeftUnaryPrefixNospaceOperator`
+    - :ref:`RightLeftUnaryPrefixOperator`
+    - :ref:`Strings`
+
+
 
 
 :ref:`Parsers <parsers_modules>`
