@@ -24,6 +24,14 @@ This is described in the following three blog posts:
    You may jump to the full `Table of contents`_ below. Following is an overview of the source code.
 
 
+To-do list
+==========
+
+- Refactor various tokenizers for reuse by different languages.
+- Document default punctuation better.
+- Experiment with custom punctuation to find a nice solution.
+
+
 Structure of the source code
 ============================
 

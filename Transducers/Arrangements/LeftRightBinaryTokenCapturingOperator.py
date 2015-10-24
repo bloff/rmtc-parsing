@@ -30,15 +30,21 @@ class LeftRightBinaryTokenCapturingOperator(ArrangementRule):
 
     def apply(self, element):
         form = element.parent
-        next = element.next
-        prev = element.prev
+        next = element.next # this is 'b'
+        prev = element.prev # this is 'a'
         if is_identifier(next) or is_literal(next):
             new_form_element = form.wrap(prev, next, Form)
         elif is_token(next, TOKEN.BEGIN_MACRO):
+            # a . BEGIN_MACRO something END_MACRO dont want => (. a BEGIN_MACRO) something END_MACRO
+            # actually want
+            # a . BEGIN_MACRO something END_MACRO => (. a BEGIN_MACRO something END_MACRO)
             new_form_element = form.wrap(prev, next.end, Form)
         else:
             raise ArrangementError(next.range.first_position, "Expected identifier, literal or begin-macro-token after '%s' token in position %s." %(element.value, element.range.first_position.nameless_str))
         new_form = new_form_element.code
+        # at this point new_form = ⦅a X b⦆
         new_form.remove(element)
+        # at this point new_form = ⦅a b⦆
         new_form.prepend(element)
-        return new_form_element.next
+        # at this point new_form = ⦅X a b⦆
+        return new_form_element.next # return the next position to be read

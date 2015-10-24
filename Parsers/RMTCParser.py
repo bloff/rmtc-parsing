@@ -61,9 +61,9 @@ class RMTCParser(object):
 
 
 
-    def tokenize_into_node(self, stream:CharacterStream) -> Node:
+    def tokenize_into_node(self, code_or_stream:Union[str, CharacterStream]) -> Node:
         node = Node()
-        for token in self.tokenize(stream):
+        for token in self.tokenize(code_or_stream):
             node.append(token)
         return node
 

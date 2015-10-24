@@ -1,9 +1,5 @@
-a b
-    c
+# a b, c; d:: c
 
-aa b, c:
-    d e
-        f
+for a, b, c : iter
+   bla bla
 
-⦅a b b, c:
-   d⦆

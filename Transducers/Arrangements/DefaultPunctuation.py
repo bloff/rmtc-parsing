@@ -126,6 +126,8 @@ class DefaultPunctuation(ArrangementRule):
             if value == ":":
                 if seen_colon:
                     raise ArrangementError(punctuation_token.range.first_position, "Argument sequence should have a single colon ':'.")
+                if start_of_group is punctuation_token:
+                    raise ArrangementError(punctuation_token.range.first_position, "Unexpected punctuation '%s'."  % punctuation_token.value)
                 seen_colon = True
                 finish_groups(punctuation_token.prev)
                 has_groups = False

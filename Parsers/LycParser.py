@@ -66,7 +66,7 @@ default_lyc_readtable = make_readtable([
 
     [RT.PUNCTUATION, [':', ';', ',',]],
 
-    [RT.ISOLATED_CONSTITUENT, [".", "", "" "", "", "~", "*", "", "", "", "&", '', "\\", "$", "/", "⫽", # 1st priority
+    [RT.ISOLATED_CONSTITUENT, ["+o", ".", "", "" "", "", "~", "*", "", "", "", "&", '', "\\", "$", "/", "⫽", # 1st priority
 
                "'", '', '!', '&', '\\@', '~@',
                '', '', '%',
@@ -98,19 +98,24 @@ def define_default_lyc_transducer_chain():
     global default_lyc_transducer_chain
 
     #region Transducers
-    tt_constituent = TopDownTreeTransducer("Constituent", Arrangement([Constituent()]))
+    tt_constituent = \
+        TopDownTreeTransducer("Constituent",
+            Arrangement([Constituent()]))
 
 
     tt_primary = TopDownTreeTransducer("Primary",
                    Arrangement([
                        Comment(),
                        RawComment(),
-                       LeftRightUnaryPrefixNospaceTokenCapturingOperator({'\\', '~', '$', '', ''}),
+                       LeftRightUnaryPrefixNospaceTokenCapturingOperator(
+                           {'\\', '~', '$',
+                            '', ''}),
+                       # etc
                        LeftRightBinaryTokenCapturingOperator({'.', '/'}),
-                       LeftRightUnaryPostfixNospaceOperator({'', '', '', '', '', ''}),
+                       LeftRightUnaryPostfixNospaceOperator({'+o', '', '', '', '', '', ''}),
 
                        Block(),
-                       ParenthesisWithHead(),
+                       ParenthesisWithHead(), #head( args ) => (head args)
                        ParenthesisNoHead(),
 
                        ApplyParenthesis(),
@@ -374,5 +379,5 @@ class LycParser(RMTCParser):
     def _get_stream(self, code_or_stream:Union[str, CharacterStream]):
         stream = RMTCParser._get_stream(self, code_or_stream)
         if not isinstance(stream, IndentedCharacterStream):
-            stream = IndentedCharacterStream(code_or_stream)
+            stream = IndentedCharacterStream(stream)
         return stream

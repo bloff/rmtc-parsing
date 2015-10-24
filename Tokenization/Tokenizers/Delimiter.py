@@ -48,6 +48,7 @@ class DelimiterTokenizer(Tokenizer):
             raise TokenizingError(StreamRange(self.opening_delimiter_position, stream.copy_absolute_position()), "Expected closing delimiter «%s», matching opening delimiter «%s» at position %s." % (cdem, self.opening_delimiter, self.opening_delimiter_position.nameless_str))
 
         # Make sure that the previous stream ended when it read a closing delimiter matching our opening delimiter
+        # FIXME: use readtable
         for i in range(len(cdem)):
             if stream.read() != cdem[i]:
                 raise TokenizingError(StreamRange(self.opening_delimiter_position, stream.absolute_position_of_unread()), "Expected closing delimiter «%s», matching opening delimiter «%s» at position (%s)." % (cdem, self.opening_delimiter, self.opening_delimiter_position.nameless_str))
