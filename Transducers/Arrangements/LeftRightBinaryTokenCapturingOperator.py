@@ -2,7 +2,8 @@ from Common.Errors import ArrangementError
 from Syntax.Util import is_identifier, identifier_in, is_literal
 from Syntax.__exports__ import Form
 from Syntax.Node import Element
-from Syntax.Token import is_token, TOKEN
+from Syntax.Token import is_token
+import Syntax.Tokens as Tokens
 from Transducers.ArrangementRule import ArrangementRule
 
 
@@ -34,7 +35,7 @@ class LeftRightBinaryTokenCapturingOperator(ArrangementRule):
         prev = element.prev # this is 'a'
         if is_identifier(next) or is_literal(next):
             new_form_element = form.wrap(prev, next, Form)
-        elif is_token(next, TOKEN.BEGIN_MACRO):
+        elif is_token(next, Tokens.BEGIN_MACRO):
             # a . BEGIN_MACRO something END_MACRO dont want => (. a BEGIN_MACRO) something END_MACRO
             # actually want
             # a . BEGIN_MACRO something END_MACRO => (. a BEGIN_MACRO something END_MACRO)

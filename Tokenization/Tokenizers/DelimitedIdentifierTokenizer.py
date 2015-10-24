@@ -2,7 +2,7 @@ from Common.Errors import TokenizingError
 from Streams.StreamPosition import StreamPosition
 from Tokenization.TokenizationContext import TokenizationContext
 from Tokenization.Tokenizer import Tokenizer
-from Syntax.Token import token_CONSTITUENT
+import Syntax.Tokens as Tokens
 
 
 # _multiple_escape_delimiter_pairs = {
@@ -30,7 +30,7 @@ class DelimitedIdentifierTokenizer(Tokenizer):
         stream = self.context.stream
         seen_escape = False
 
-        # opening_string_token = token_BEGIN_MACRO(self.opening_delimiter, self.opening_delimiter_position, stream.position)
+        # opening_string_token = Tokens.BEGIN_MACRO(self.opening_delimiter, self.opening_delimiter_position, stream.position)
         # yield opening_string_token
 
         value = ""
@@ -51,8 +51,8 @@ class DelimitedIdentifierTokenizer(Tokenizer):
                         raise TokenizingError(stream.absolute_position_of_unread(), "Unknown escape code sequence “%s”." % char)
                 else:
                     if char == self.closing_delimiter:
-                        yield token_CONSTITUENT(value, self.opening_delimiter_position, stream.copy_absolute_position())
-                        # yield token_END_MACRO(opening_string_token, self.closing_delimiter, stream.position_of_unread(), stream.position)
+                        yield Tokens.CONSTITUENT(value, self.opening_delimiter_position, stream.copy_absolute_position())
+                        # yield Tokens.END_MACRO(opening_string_token, self.closing_delimiter, stream.position_of_unread(), stream.position)
                         return
                     elif char == '␤': value += '\n'
                     elif char == '␉': value += '\t'

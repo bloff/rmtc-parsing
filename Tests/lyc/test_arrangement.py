@@ -6,7 +6,6 @@ from Syntax.Code import Code
 from Syntax.Identifier import Identifier
 from Syntax.Literal import Literal
 from Syntax.Node import Node
-from Syntax.Util import _identifier_eq
 
 lyc_parser = LycParser()
 arrange = lyc_parser.arrange
@@ -50,6 +49,11 @@ class TestArrangement(TestCase):
 
     def test_bad_punct_3(self):
         self.assertRaises(ArrangementError, arrange, "a b; d;: c")
+
+    def test_bad_punct_4(self):
+        self.assertRaises(ArrangementError, arrange, "a b, c; d:: c")
+
+
 
 
 

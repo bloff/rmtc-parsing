@@ -4,7 +4,7 @@ from Tokenization.Readtable import RT
 from Tokenization.Tokenizers import Util
 from Tokenization.TokenizationContext import TokenizationContext
 from Tokenization.Tokenizer import Tokenizer
-from Syntax.Token import token_BEGIN_MACRO, token_END_MACRO, token_COMMENT, token_CONSTITUENT
+import Syntax.Tokens as Tokens
 
 
 class CommentTokenizer(Tokenizer):
@@ -31,15 +31,15 @@ class CommentTokenizer(Tokenizer):
         stream = self.context.stream
         seen_escape = False
 
-        opening_comment_token = token_BEGIN_MACRO(self.opening_delimiter, self.opening_delimiter_position, self.opening_delimiter_position_after)
+        opening_comment_token = Tokens.BEGIN_MACRO(self.opening_delimiter, self.opening_delimiter_position, self.opening_delimiter_position_after)
         yield opening_comment_token
 
         value = ""
         value_first_position = stream.copy_absolute_position()
         while True:
             if stream.next_is_EOF():
-                yield token_COMMENT(value, value_first_position, stream.copy_absolute_position())
-                yield token_END_MACRO(opening_comment_token, "", stream.copy_absolute_position(), stream.copy_absolute_position())
+                yield Tokens.COMMENT(value, value_first_position, stream.copy_absolute_position())
+                yield Tokens.END_MACRO(opening_comment_token, "", stream.copy_absolute_position(), stream.copy_absolute_position())
                 return
             char = stream.read()
             if char == '\\':
@@ -54,11 +54,11 @@ class CommentTokenizer(Tokenizer):
                     seen_escape = False
                 else:
                     if char == self.closing_delimiter:
-                        yield token_COMMENT(value, value_first_position, stream.absolute_position_of_unread())
-                        yield token_END_MACRO(opening_comment_token, self.closing_delimiter, stream.absolute_position_of_unread(), stream.copy_absolute_position())
+                        yield Tokens.COMMENT(value, value_first_position, stream.absolute_position_of_unread())
+                        yield Tokens.END_MACRO(opening_comment_token, self.closing_delimiter, stream.absolute_position_of_unread(), stream.copy_absolute_position())
                         return
                     elif char == '$':
-                        yield token_COMMENT(value, value_first_position, stream.absolute_position_of_unread())
+                        yield Tokens.COMMENT(value, value_first_position, stream.absolute_position_of_unread())
                         for token in self.escape():
                             yield token
                         value = ""
@@ -78,7 +78,7 @@ class CommentTokenizer(Tokenizer):
             seq_type = properties.type
 
             if seq_type == RT.ISOLATED_CONSTITUENT:
-                yield token_CONSTITUENT(seq, stream.absolute_position_of_unread_seq(seq), stream.copy_absolute_position())
+                yield Tokens.CONSTITUENT(seq, stream.absolute_position_of_unread_seq(seq), stream.copy_absolute_position())
             elif seq_type == RT.MACRO:
                 assert 'tokenizer' in properties
                 for token in Util.tokenize_macro(self.context, seq, properties):
@@ -86,7 +86,7 @@ class CommentTokenizer(Tokenizer):
             elif seq_type == RT.CONSTITUENT:
                 first_position = stream.absolute_position_of_unread_seq(seq)
                 concatenation =  seq + Util.read_and_concatenate_constituent_sequences(stream, readtable)
-                yield token_CONSTITUENT(concatenation, first_position, stream.copy_absolute_position())
+                yield Tokens.CONSTITUENT(concatenation, first_position, stream.copy_absolute_position())
 
             # Step 3
             elif (seq_type == RT.WHITESPACE or

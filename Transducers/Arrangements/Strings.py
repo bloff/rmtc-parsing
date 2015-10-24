@@ -1,6 +1,7 @@
 from Syntax.__exports__ import Form, Identifier, Literal
 from Syntax.Node import Element
-from Syntax.Token import is_token, TOKEN
+from Syntax.Token import is_token
+import Syntax.Tokens as Tokens
 from Transducers.ArrangementRule import ArrangementRule
 # from Semantics.Types.Bootstrap0 import String
 
@@ -19,10 +20,10 @@ class Strings(ArrangementRule):
         ArrangementRule.__init__(self, "Strings")
 
     def applies(self, element):
-        return is_token(element, TOKEN.BEGIN_MACRO, token_text="“")
+        return is_token(element, Tokens.BEGIN_MACRO, token_text="“")
 
     def apply(self, element) -> Element:
-        assert is_token(element.next, TOKEN.STRING)
+        assert is_token(element.next, Tokens.STRING)
         if element.next.next is element.end:
             parent = element.parent
             string_token = element.next
@@ -41,9 +42,9 @@ class Strings(ArrangementRule):
 
             elm = new_form[1] # first element
             while elm is not None:
-                if is_token(elm, TOKEN.STRING):
+                if is_token(elm, Tokens.STRING):
                     elm.code = Literal("STRING(PLACEHOLDER)", elm.value, elm.range)
-                if is_token(elm, TOKEN.BEGIN_MACRO):
+                if is_token(elm, Tokens.BEGIN_MACRO):
                     elm = elm.end.next
                 else:
                     elm = elm.next

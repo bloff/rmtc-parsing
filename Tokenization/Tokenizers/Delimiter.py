@@ -3,7 +3,7 @@ from Streams.StreamPosition import StreamPosition
 from Streams.StreamRange import StreamRange
 from Tokenization.TokenizationContext import TokenizationContext
 from Tokenization.Tokenizer import Tokenizer
-from Syntax.Token import token_BEGIN_MACRO, token_END_MACRO
+import Syntax.Tokens as Tokens
 
 _delimiter_pairs = {
     '(' : ')',
@@ -34,7 +34,7 @@ class DelimiterTokenizer(Tokenizer):
 
     def run(self):
         stream = self.context.stream
-        opening_delimiter_token = token_BEGIN_MACRO(self.opening_delimiter, self.opening_delimiter_position, self.opening_delimiter_position_after)
+        opening_delimiter_token = Tokens.BEGIN_MACRO(self.opening_delimiter, self.opening_delimiter_position, self.opening_delimiter_position_after)
         yield opening_delimiter_token
 
         tokenizer = self.context.DefaultTokenizer(self.context)
@@ -53,6 +53,6 @@ class DelimiterTokenizer(Tokenizer):
             if stream.read() != cdem[i]:
                 raise TokenizingError(StreamRange(self.opening_delimiter_position, stream.absolute_position_of_unread()), "Expected closing delimiter «%s», matching opening delimiter «%s» at position (%s)." % (cdem, self.opening_delimiter, self.opening_delimiter_position.nameless_str))
 
-        closing_delimiter_token = token_END_MACRO(opening_delimiter_token, cdem, cdem_position, stream.copy_absolute_position())
+        closing_delimiter_token = Tokens.END_MACRO(opening_delimiter_token, cdem, cdem_position, stream.copy_absolute_position())
         yield closing_delimiter_token
 

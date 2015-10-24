@@ -6,7 +6,7 @@ from Tokenization.Readtable import RT
 from Tokenization.Tokenizers import Util
 from Tokenization.TokenizationContext import TokenizationContext
 from Tokenization.Tokenizer import Tokenizer
-from Syntax.Token import token_BEGIN, token_END, token_INDENT, token_CONSTITUENT, token_PUNCTUATION
+import Syntax.Tokens as Tokens
 
 
 class IndentationReadtableTokenizer(Tokenizer):
@@ -44,7 +44,7 @@ class IndentationReadtableTokenizer(Tokenizer):
 
 
             # emit a BEGIN token, and remember it
-            self.last_begin_token = token_BEGIN(stream.copy_absolute_position())
+            self.last_begin_token = Tokens.BEGIN(stream.copy_absolute_position())
             yield self.last_begin_token
 
 
@@ -53,7 +53,7 @@ class IndentationReadtableTokenizer(Tokenizer):
 
                 # 2.1
                 if stream.next_is_EOF():
-                    yield token_END(self.last_begin_token, stream.copy_absolute_position())
+                    yield Tokens.END(self.last_begin_token, stream.copy_absolute_position())
                     return
                 else:
                     seq, properties = readtable.probe(stream)
@@ -64,7 +64,7 @@ class IndentationReadtableTokenizer(Tokenizer):
                     # 2.1
                     if seq_type == RT.CLOSING:
                         stream.unread_seq(seq)
-                        yield token_END(self.last_begin_token, stream.copy_absolute_position())
+                        yield Tokens.END(self.last_begin_token, stream.copy_absolute_position())
                         return
                     # 2.2
                     elif seq_type == RT.WHITESPACE:
@@ -74,10 +74,10 @@ class IndentationReadtableTokenizer(Tokenizer):
                         break # goto Stage 2
                     # 2.4
                     elif seq_type == RT.ISOLATED_CONSTITUENT:
-                        yield token_CONSTITUENT(seq, stream.absolute_position_of_unread_seq(seq), stream.copy_absolute_position())
+                        yield Tokens.CONSTITUENT(seq, stream.absolute_position_of_unread_seq(seq), stream.copy_absolute_position())
                     # 2.5
                     elif seq_type == RT.PUNCTUATION:
-                        yield token_PUNCTUATION(self.last_begin_token, seq, stream.absolute_position_of_unread_seq(seq), stream.copy_absolute_position())
+                        yield Tokens.PUNCTUATION(self.last_begin_token, seq, stream.absolute_position_of_unread_seq(seq), stream.copy_absolute_position())
                     # 2.6
                     elif seq_type == RT.MACRO:
                         assert 'tokenizer' in properties
@@ -87,7 +87,7 @@ class IndentationReadtableTokenizer(Tokenizer):
                     elif seq_type == RT.CONSTITUENT:
                         first_position = stream.absolute_position_of_unread_seq(seq)
                         concatenation =  seq + Util.read_and_concatenate_constituent_sequences(stream, readtable)
-                        yield token_CONSTITUENT(concatenation, first_position, stream.copy_absolute_position())
+                        yield Tokens.CONSTITUENT(concatenation, first_position, stream.copy_absolute_position())
                     # 2.8
                     elif seq_type == RT.INVALID:
                         first_position = stream.absolute_position_of_unread_seq(seq)
@@ -101,25 +101,25 @@ class IndentationReadtableTokenizer(Tokenizer):
                 relative_column_number = stream.visual_column
                 # 3.2
                 if stream.next_is_EOF():
-                    yield token_END(self.last_begin_token, stream.copy_absolute_position())
+                    yield Tokens.END(self.last_begin_token, stream.copy_absolute_position())
                     return
                 # 3.2.1
                 if relative_column_number == 1:
-                    yield token_END(self.last_begin_token, stream.copy_absolute_position())
+                    yield Tokens.END(self.last_begin_token, stream.copy_absolute_position())
                     break # goto Stage 1 again
                 # 3.2.2
                 elif relative_column_number > W:
                     seq, properties = readtable.probe(stream)
 
                     if properties.type == RT.CLOSING:
-                        yield token_END(self.last_begin_token, stream.absolute_position_of_unread_seq(seq))
+                        yield Tokens.END(self.last_begin_token, stream.absolute_position_of_unread_seq(seq))
                         stream.unread_seq(seq)
                         return
                     else:
                         raise TokenizingError(stream.absolute_position_of_unread_seq(seq), "Unexpected indentation when parsing sub-blocks.")
                 # 3.2.3
                 elif relative_column_number < W:
-                    yield token_INDENT(self.last_begin_token, stream.copy_absolute_position())
+                    yield Tokens.INDENT(self.last_begin_token, stream.copy_absolute_position())
                     W = relative_column_number
                 # 3.2.4
                 else:
@@ -127,7 +127,7 @@ class IndentationReadtableTokenizer(Tokenizer):
                     seq, properties = readtable.probe(stream)
 
                     if properties.type == RT.CLOSING:
-                        yield token_END(self.last_begin_token, stream.absolute_position_of_unread_seq(seq))
+                        yield Tokens.END(self.last_begin_token, stream.absolute_position_of_unread_seq(seq))
                         stream.unread_seq(seq)
                         return
                     else:

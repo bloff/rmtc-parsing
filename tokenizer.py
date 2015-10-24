@@ -6,7 +6,7 @@ from Common.Errors import LycError, TokenizingError
 from Common.SysArgsParser import SysArgsParser
 from Parsers.LycParser import LycParser
 from Streams.StringStream import StringStream
-from Syntax.Token import TOKEN
+from Syntax.Token import TokenTypes
 from Common.Record import Record
 
 
@@ -60,7 +60,7 @@ def tokenize(options):
         if 'output' in options:
             output = options.output
             encoder = options.encoder
-            filler_token_value = TOKEN.WHITESPACE.value if options.binary else TOKEN.WHITESPACE.name
+            filler_token_value = Tokens.WHITESPACE.value if options.binary else Tokens.WHITESPACE.name
             for token, first_index, index_after in parser.tokenize_with_intervals(stream):
                 if token is None:
                     bytes_ = encoder((filler_token_value, first_index, index_after))

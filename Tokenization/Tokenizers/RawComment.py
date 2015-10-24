@@ -2,7 +2,7 @@ from Common.Errors import TokenizingError
 from Streams.StreamPosition import StreamPosition
 from Tokenization.TokenizationContext import TokenizationContext
 from Tokenization.Tokenizer import Tokenizer
-from Syntax.Token import token_BEGIN_MACRO, token_END_MACRO, token_COMMENT
+import Syntax.Tokens as Tokens
 
 
 class RawCommentTokenizer(Tokenizer):
@@ -23,15 +23,15 @@ class RawCommentTokenizer(Tokenizer):
     def run(self):
         stream = self.context.stream
 
-        opening_comment_token = token_BEGIN_MACRO(self.opening_delimiter, self.opening_delimiter_position, self.opening_delimiter_position_after)
+        opening_comment_token = Tokens.BEGIN_MACRO(self.opening_delimiter, self.opening_delimiter_position, self.opening_delimiter_position_after)
         yield opening_comment_token
 
         value = ""
         value_first_position = stream.copy_absolute_position()
         while True:
             if stream.next_is_EOF():
-                yield token_COMMENT(value, value_first_position, stream.copy_absolute_position())
-                yield token_END_MACRO(opening_comment_token, "", stream.copy_absolute_position(), stream.copy_absolute_position())
+                yield Tokens.COMMENT(value, value_first_position, stream.copy_absolute_position())
+                yield Tokens.END_MACRO(opening_comment_token, "", stream.copy_absolute_position(), stream.copy_absolute_position())
                 return
             stream.read()
 

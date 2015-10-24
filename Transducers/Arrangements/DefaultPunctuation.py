@@ -2,7 +2,8 @@ from Common.Errors import ArrangementError
 from Syntax.Node import Node, Element
 from Syntax.Punctuator import Punctuator
 from Syntax.PreTuple import PreTuple
-from Syntax.Token import is_token, TOKEN
+from Syntax.Token import is_token
+import Syntax.Tokens as Tokens
 from Transducers.ArrangementRule import ArrangementRule
 
 
@@ -73,7 +74,7 @@ class DefaultPunctuation(ArrangementRule):
             raise ArrangementError(punctuation[0].range.first_position, "Unexpected punctuation '%s' before start of argument sequence."  % punctuation[0].value)
 
         start_of_group = pnode[punctuator.skip_count]
-        if is_token(start_of_group, TOKEN.PUNCTUATION):
+        if is_token(start_of_group, Tokens.PUNCTUATION):
             if start_of_group.value != ':':
                 raise ArrangementError(start_of_group.range.first_position, "Unexpected punctuation '%s' at start of argument sequence."  % start_of_group.value)
             else:

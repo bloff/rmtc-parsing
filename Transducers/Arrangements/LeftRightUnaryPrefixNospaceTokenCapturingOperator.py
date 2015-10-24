@@ -3,7 +3,8 @@ from Common.Util import is_not_none
 from Syntax.Util import is_identifier, is_literal, identifier_in
 from Syntax.__exports__ import Form
 from Syntax.Node import Element
-from Syntax.Token import is_token, TOKEN
+from Syntax.Token import is_token
+import Syntax.Tokens as Tokens
 from Transducers.ArrangementRule import ArrangementRule
 
 
@@ -28,7 +29,7 @@ class LeftRightUnaryPrefixNospaceTokenCapturingOperator(ArrangementRule):
                 element.code.range.position_after.index == next.code.range.first_position.index)
 
         def _is_begin_macro_token_immediately_after(next, element):
-            return (is_token(next, TOKEN.BEGIN_MACRO) and
+            return (is_token(next, Tokens.BEGIN_MACRO) and
                 is_not_none(next, ".range.first_position.index") and
                 element.code.range.position_after.index == next.range.first_position.index)
 
@@ -48,7 +49,7 @@ class LeftRightUnaryPrefixNospaceTokenCapturingOperator(ArrangementRule):
         next = element.next
         if is_identifier(next) or is_literal(next):
             new_form_element = form.wrap(element, next, Form)
-        elif is_token(next, TOKEN.BEGIN_MACRO):
+        elif is_token(next, Tokens.BEGIN_MACRO):
             new_form_element = form.wrap(element, next.end, Form)
         else:
             raise ArrangementError(next.range.first_position, "Expected identifier, literal or begin-macro-token after '%s' identifier in position %s." %(element.value, element.range.first_position.nameless_str))

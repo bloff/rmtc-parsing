@@ -3,7 +3,8 @@ from Syntax.__exports__ import Form
 from Syntax.PreForm import PreForm
 from Syntax.Node import Element
 from Syntax.Util import is_identifier
-from Syntax.Token import is_token, TOKEN
+from Syntax.Token import is_token
+import Syntax.Tokens as Tokens
 from Transducers.ArrangementRule import ArrangementRule
 
 class TransformationArrow(ArrangementRule):
@@ -33,7 +34,7 @@ class TransformationArrow(ArrangementRule):
         form.wrap(form.first, element.prev, PreTuple)
         if element.next is not None:
             first_indent = element.next
-            while first_indent is not None and not is_token(first_indent, TOKEN.INDENT):
+            while first_indent is not None and not is_token(first_indent, Tokens.INDENT):
                 first_indent = first_indent.next
             if first_indent is not None:
                 new_form = form.wrap(element.next, first_indent, PreTuple).code

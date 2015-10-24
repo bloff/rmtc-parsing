@@ -3,7 +3,7 @@ from Common.Util import is_not_none
 from Syntax.Util import is_identifier, is_literal
 from Syntax.__exports__ import Form, Identifier
 from Syntax.Node import Element
-from Syntax.Token import is_token, TOKEN
+from Syntax.Token import is_token, TokenTypes
 from Transducers.ArrangementRule import ArrangementRule
 
 
@@ -34,7 +34,7 @@ class LeftRightUnaryPrefixNospaceOperator(ArrangementRule):
         next = element.next
         if is_identifier(next) or is_literal(next):
             new_form_element = form.wrap(element, next, Form)
-        elif is_token(next, TOKEN.BEGIN_MACRO):
+        elif is_token(next, Tokens.BEGIN_MACRO):
             new_form_element = form.wrap(element, next.end, Form)
         else:
             raise ArrangementError(next.range.first_position, "Expected identifier, literal or begin-macro-token after '%s' identifier in position %s." %(element.value, element.range.first_position.nameless_str))

@@ -1,6 +1,7 @@
 from Syntax.__exports__ import Literal, Identifier
 from Syntax.Node import Element
-from Syntax.Token import is_token, TOKEN
+from Syntax.Token import is_token
+import Syntax.Tokens as Tokens
 from Transducers.ArrangementRule import ArrangementRule
 # from Semantics.Types.Bootstrap0 import Float, Int
 
@@ -13,7 +14,7 @@ class Constituent(ArrangementRule):
         # self.stalling_identifiers = stalling_identifiers if stalling_identifiers is not None else {}
 
     def applies(self, element):
-        return is_token(element, TOKEN.CONSTITUENT) and element.code is None
+        return is_token(element, Tokens.CONSTITUENT) and element.code is None
 
     @staticmethod
     def is_float(string:str):

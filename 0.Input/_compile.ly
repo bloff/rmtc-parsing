@@ -1,5 +1,1 @@
-# a b, c; d:: c
-
-for a, b, c : iter
-   bla bla
-
+a b, c; d:: c

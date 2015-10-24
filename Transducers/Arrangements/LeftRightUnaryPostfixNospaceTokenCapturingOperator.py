@@ -3,7 +3,7 @@ from Syntax.Util import identifier_in
 from Syntax.__exports__ import Form, Identifier
 from Syntax.Node import Element
 from Transducers.ArrangementRule import ArrangementRule
-from Syntax.Token import is_token, TOKEN
+from Syntax.Token import is_token, TokenTypes
 
 
 
@@ -24,7 +24,7 @@ class LeftRightUnaryPostfixNospaceTokenCapturingOperator(ArrangementRule):
     def applies(self, element:Element):
         return (
             not element.is_first() and
-            is_token(element, TOKEN.CONSTITUENT) and
+            is_token(element, Tokens.CONSTITUENT) and
             identifier_in(element.value, self.sym_vals) and
             is_not_none(element.prev, ".code.range.position_after.index", element, ".range.first_position.index") and
             element.prev.code.range.position_after.index == element.range.first_position.index

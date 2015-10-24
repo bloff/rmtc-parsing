@@ -3,7 +3,8 @@ from Syntax.Punctuator import Punctuator
 from Syntax.__exports__ import Form, Identifier
 from Syntax.PreTuple import PreTuple
 from Syntax.Node import Element
-from Syntax.Token import is_token, TOKEN
+from Syntax.Token import is_token
+import Syntax.Tokens as Tokens
 from Transducers.ArrangementRule import ArrangementRule
 from Common.Errors import ArrangementError, TokenizingError
 from Transducers.Arrangements.Block import Block
@@ -16,14 +17,14 @@ class _delimiter_util:
         """
         Returns ``True`` if the given element is a ``BEGIN_MACRO`` token with ``text == opening_delimiter_str``.
         """
-        return is_token(element, TOKEN.BEGIN_MACRO, token_text=opening_delimiter_str)
+        return is_token(element, Tokens.BEGIN_MACRO, token_text=opening_delimiter_str)
 
     @staticmethod
     def is_opening_delimiter_among(element:Element, opening_delimiters:set):
         """
         Returns ``True`` if the given element is a ``BEGIN_MACRO`` token with ``text in opening_delimiters``.
         """
-        return is_token(element, TOKEN.BEGIN_MACRO) and element.text in opening_delimiters
+        return is_token(element, Tokens.BEGIN_MACRO) and element.text in opening_delimiters
 
     @staticmethod
     def has_head_element(opening_delimiter:Element):
@@ -46,10 +47,10 @@ class _delimiter_util:
         """
         closing_delimiter_element = opening_delimiter_element.end
         begin_element = opening_delimiter_element.next
-        assert is_token(begin_element, TOKEN.BEGIN)
+        assert is_token(begin_element, Tokens.BEGIN)
         assert begin_element.end is not None
         end_element = begin_element.end
-        assert end_element.next is closing_delimiter_element or is_token(end_element.next, TOKEN.BEGIN)
+        assert end_element.next is closing_delimiter_element or is_token(end_element.next, Tokens.BEGIN)
 
         return end_element.next is closing_delimiter_element
 
@@ -58,7 +59,7 @@ class _delimiter_util:
         """
         Skips ``BEGIN_MACRO`` / ``END_MACRO`` and ``BEGIN`` / ``END`` pairs.
         """
-        if is_token(element, TOKEN.BEGIN_MACRO) or is_token(element, TOKEN.BEGIN):
+        if is_token(element, Tokens.BEGIN_MACRO) or is_token(element, Tokens.BEGIN):
             return element.end.next
         else:
             return element.next
@@ -81,10 +82,10 @@ class _delimiter_util:
 
         punctuation = []
         while begin_element is not None:
-            assert is_token(begin_element, TOKEN.BEGIN)
+            assert is_token(begin_element, Tokens.BEGIN)
             assert begin_element.end is not None
             end_element = begin_element.end
-            assert is_token(end_element, TOKEN.END)
+            assert is_token(end_element, Tokens.END)
             if len(begin_element.indents) > 0:
                 raise ArrangementError(begin_element.indents[0].range.first_position, "Unexpected indentation inside %s." % block_name)
             punctuation.extend(begin_element.punctuation[0])
@@ -179,8 +180,8 @@ class ParenthesisNoHead(ArrangementRule):
 
     def apply(self, element) -> Element:
         first_begin = element.next
-        assert is_token(first_begin, TOKEN.BEGIN)
-        has_colon = any(is_token(p, TOKEN.PUNCTUATION, ':') for p in first_begin.punctuation[0])
+        assert is_token(first_begin, Tokens.BEGIN)
+        has_colon = any(is_token(p, Tokens.PUNCTUATION, ':') for p in first_begin.punctuation[0])
         if has_colon:
             return self.apply_parenthesis_arrangement.apply(element)
         else:
