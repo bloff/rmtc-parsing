@@ -14,16 +14,18 @@ class DelimitedIdentifierTokenizer(Tokenizer):
     """
     Reads identifiers surrounded by delimiters. Hence one can write identifiers with special chararacters, e.g., ``«1234 some identifier»``.
     """
+
+    OPENING_DELIMITER = "«"
+    CLOSING_DELIMITER = "»"
+
     def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
         Tokenizer.__init__(self, context)
 
-        if opening_delimiter != "«":
+        if opening_delimiter != self.__class__.OPENING_DELIMITER:
             raise TokenizingError(opening_delimiter_position, "Multiple-escape tokenizer called with unknown opening sequence “%s”" % opening_delimiter)
 
-        self.opening_delimiter = opening_delimiter
         self.opening_delimiter_position = opening_delimiter_position
         self.opening_delimiter_position_after = opening_delimiter_position_after
-        self.closing_delimiter = "»"
 
 
     def run(self):
@@ -46,11 +48,11 @@ class DelimitedIdentifierTokenizer(Tokenizer):
                     if char == 'n': value += '\n'
                     elif char == 't': value += '\t'
                     elif char in ('␤', '␉',): value += char
-                    elif char == self.closing_delimiter: value += self.closing_delimiter
+                    elif char == self.__class__.CLOSING_DELIMITER: value += self.__class__.CLOSING_DELIMITER
                     else:
                         raise TokenizingError(stream.absolute_position_of_unread(), "Unknown escape code sequence “%s”." % char)
                 else:
-                    if char == self.closing_delimiter:
+                    if char == self.__class__.CLOSING_DELIMITER:
                         yield Tokens.CONSTITUENT(value, self.opening_delimiter_position, stream.copy_absolute_position())
                         # yield Tokens.END_MACRO(opening_string_token, self.closing_delimiter, stream.position_of_unread(), stream.position)
                         return

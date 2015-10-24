@@ -13,25 +13,27 @@ class CommentTokenizer(Tokenizer):
 
     See `<https://bloff.github.io/lyc/2015/10/04/lexer-3.html>`_.
     """
+
+    OPENING_DELIMITER = '#'
+    CLOSING_DELIMITER = '◁'
+
     def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
         Tokenizer.__init__(self, context)
 
-        if opening_delimiter != '#':
+        if opening_delimiter != self.__class__.OPENING_DELIMITER:
             raise TokenizingError(opening_delimiter_position, "Comment tokenizer called with unknown opening sequence “%s”" % opening_delimiter)
 
-        self.opening_delimiter = opening_delimiter
         self.opening_delimiter_position = opening_delimiter_position
         self.opening_delimiter_position_after = opening_delimiter_position_after
-        self.closing_delimiter = '◁'
 
-        assert len(opening_delimiter) == 1 and len(self.closing_delimiter) == 1 # TODO: handle larger string delimiters?
+        assert len(self.__class__.CLOSING_DELIMITER) == 1 # TODO: handle larger closing delimiters?
 
 
     def run(self):
         stream = self.context.stream
         seen_escape = False
 
-        opening_comment_token = Tokens.BEGIN_MACRO(self.opening_delimiter, self.opening_delimiter_position, self.opening_delimiter_position_after)
+        opening_comment_token = Tokens.BEGIN_MACRO(self.__class__.OPENING_DELIMITER, self.opening_delimiter_position, self.opening_delimiter_position_after)
         yield opening_comment_token
 
         value = ""
@@ -47,15 +49,15 @@ class CommentTokenizer(Tokenizer):
                 else: seen_escape = True
             else:
                 if seen_escape:
-                    if char == self.closing_delimiter: value += self.closing_delimiter
+                    if char == self.__class__.CLOSING_DELIMITER: value += self.__class__.CLOSING_DELIMITER
                     elif char == '$': value += '$'
                     else:
                         raise TokenizingError(stream.absolute_position_of_unread(), "Unknown escape code sequence “%s”." % char)
                     seen_escape = False
                 else:
-                    if char == self.closing_delimiter:
+                    if char == self.__class__.CLOSING_DELIMITER:
                         yield Tokens.COMMENT(value, value_first_position, stream.absolute_position_of_unread())
-                        yield Tokens.END_MACRO(opening_comment_token, self.closing_delimiter, stream.absolute_position_of_unread(), stream.copy_absolute_position())
+                        yield Tokens.END_MACRO(opening_comment_token, self.__class__.CLOSING_DELIMITER, stream.absolute_position_of_unread(), stream.copy_absolute_position())
                         return
                     elif char == '$':
                         yield Tokens.COMMENT(value, value_first_position, stream.absolute_position_of_unread())

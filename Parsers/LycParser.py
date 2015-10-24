@@ -91,6 +91,30 @@ default_lyc_readtable = make_readtable([
 #endregion
 
 
+#region lyc tokenizers
+class LycDelimiterTokenizer(DelimiterTokenizer):
+    DELIMITER_PAIRS = {
+        '(' : ')',
+        '⦅' : '⦆',
+        '[' : ']',
+        '⟦' : '⟧',
+        '{' : '}',
+        '⦃' : '⦄',
+        '‘' : '’',
+        '⟨' : '⟩',
+        }
+
+class LycStringTokenizer(StringTokenizer):
+    """
+    Reads “strings” with interpolated code.
+
+    See `<https://bloff.github.io/lyc/2015/10/04/lexer-3.html>`_.
+    """
+    MY_OPENING_DELIMITER = '“'
+    MY_CLOSING_DELIMITER = '”'
+
+#endregion
+
 #region Lyc Transducer Chain
 default_lyc_transducer_chain = None
 
@@ -282,6 +306,8 @@ define_default_lyc_transducer_chain()
 #endregion
 
 
+
+
 class LycParser(RMTCParser):
     r"""
     The parser for lyc. 
@@ -368,8 +394,8 @@ class LycParser(RMTCParser):
                             default_lyc_transducer_chain)
         self.tokenization_context.set(
             # Tokenizer classes
-            DelimiterTokenizer = DelimiterTokenizer,
-            StringTokenizer = StringTokenizer,
+            DelimiterTokenizer = LycDelimiterTokenizer,
+            StringTokenizer = LycStringTokenizer,
             DelimitedSymbolTokenizer = DelimitedIdentifierTokenizer,
             CommentTokenizer = CommentTokenizer,
             RawCommentTokenizer = RawCommentTokenizer,

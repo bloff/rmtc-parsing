@@ -5,31 +5,27 @@ from Tokenization.TokenizationContext import TokenizationContext
 from Tokenization.Tokenizer import Tokenizer
 import Syntax.Tokens as Tokens
 
-_delimiter_pairs = {
-    '(' : ')',
-    '⦅' : '⦆',
-    '[' : ']',
-    '⟦' : '⟧',
-    '{' : '}',
-    '⦃' : '⦄',
-    '‘' : '’',
-    '⟨' : '⟩',
-    }
-
 class DelimiterTokenizer(Tokenizer):
     """
     Reads blocks of code surrounded by pairs of delimiters.
     """
+
+    DELIMITER_PAIRS = {
+        '(' : ')',
+        '[' : ']',
+        '{' : '}',
+        "'" : "'"}
+
     def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
         Tokenizer.__init__(self, context)
 
-        if opening_delimiter not in _delimiter_pairs:
+        if opening_delimiter not in self.__class__.DELIMITER_PAIRS:
             raise TokenizingError(opening_delimiter_position, "Unregistered delimiter pair, for opening sequence “%s”" % opening_delimiter)
 
         self.opening_delimiter = opening_delimiter
         self.opening_delimiter_position = opening_delimiter_position
         self.opening_delimiter_position_after = opening_delimiter_position_after
-        self.closing_delimiter = _delimiter_pairs[opening_delimiter]
+        self.closing_delimiter = self.__class__.DELIMITER_PAIRS[opening_delimiter]
 
 
     def run(self):
@@ -55,4 +51,3 @@ class DelimiterTokenizer(Tokenizer):
 
         closing_delimiter_token = Tokens.END_MACRO(opening_delimiter_token, cdem, cdem_position, stream.copy_absolute_position())
         yield closing_delimiter_token
-

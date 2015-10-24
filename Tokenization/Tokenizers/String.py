@@ -10,12 +10,12 @@ import Syntax.Tokens as Tokens
 
 class StringTokenizer(Tokenizer):
     """
-    Reads strings with interpolated code.
+    Reads "strings" with interpolated code.
 
     See `<https://bloff.github.io/lyc/2015/10/04/lexer-3.html>`_.
     """
-    MY_OPENING_DELIMITER = '“'
-    MY_CLOSING_DELIMITER = '”'
+    MY_OPENING_DELIMITER = '"'
+    MY_CLOSING_DELIMITER = '"'
 
     def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
         Tokenizer.__init__(self, context)
@@ -26,7 +26,7 @@ class StringTokenizer(Tokenizer):
         self.opening_delimiter_position = opening_delimiter_position
         self.opening_delimiter_position_after = opening_delimiter_position_after
 
-        assert len(opening_delimiter) == 1 and len(self.closing_delimiter) == 1 # FIXME
+        assert len(self.__class__.MY_OPENING_DELIMITER) == 1 and len(self.__class__.MY_CLOSING_DELIMITER) == 1 # TODO: Support larger opening and closing delimiters
 
 
     def run(self):
@@ -52,14 +52,14 @@ class StringTokenizer(Tokenizer):
                     if char == 'n': value += '\n'
                     elif char == 't': value += '\t'
                     elif char in ('␤', '␉', '$'): value += char
-                    elif char == self.closing_delimiter: value += self.closing_delimiter
+                    elif char == self.__class__.MY_CLOSING_DELIMITER: value += self.__class__.MY_CLOSING_DELIMITER
                     else:
                         raise TokenizingError(stream.absolute_position_of_unread(), "Unknown escape code sequence “%s”." % char)
                     seen_escape = False
                 else:
-                    if char == self.closing_delimiter:
+                    if char == self.__class__.MY_CLOSING_DELIMITER:
                         yield Tokens.STRING(value, value_first_position, stream.absolute_position_of_unread())
-                        yield Tokens.END_MACRO(opening_string_token, self.closing_delimiter, stream.absolute_position_of_unread(), stream.copy_absolute_position())
+                        yield Tokens.END_MACRO(opening_string_token, self.__class__.MY_CLOSING_DELIMITER, stream.absolute_position_of_unread(), stream.copy_absolute_position())
                         return
                     elif char == '$':
                         yield Tokens.STRING(value, value_first_position, stream.absolute_position_of_unread())
@@ -77,7 +77,7 @@ class StringTokenizer(Tokenizer):
 
         if stream.next_is_EOF():
             raise TokenizingError(StreamRange(self.opening_delimiter_position, stream.copy_absolute_position()),
-                                  "Expected closing string-delimiter «%s», matching opening delimiter «%s» at position %s." % (self.closing_delimiter, self.opening_delimiter, self.opening_delimiter_position.nameless_str))
+                                  "Expected closing string-delimiter «%s», matching opening delimiter «%s» at position %s." % (self.__class__.MY_CLOSING_DELIMITER, self.__class__.MY_OPENING_DELIMITER, self.opening_delimiter_position.nameless_str))
         else:
             seq, properties = readtable.probe(stream)
 
@@ -105,7 +105,4 @@ class StringTokenizer(Tokenizer):
                 first_position = stream.absolute_position_of_unread_seq(seq)
                 error_message = properties.error_message if 'error_message' in properties else "Unexpected sequence after string interpolation character '$'."
                 raise TokenizingError(first_position, error_message)
-
-
-
 
