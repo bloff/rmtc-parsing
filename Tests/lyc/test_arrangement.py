@@ -60,7 +60,13 @@ class TestArrangement(TestCase):
     def test_arrangement_equals_1(self):
         self._test_arrangement_equals("a b, c; d", "⦅a (b c) d⦆")
 
-
-
-
-# "(ing: “print” )"
+    def test_arrangement_equals_2(self):
+        self._test_arrangement_equals(
+            r"""
+            (a, b, c,
+             d, e, f)
+            """,
+            r"""
+            (a b c
+             d e f)
+            """)
