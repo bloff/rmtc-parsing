@@ -2,13 +2,13 @@ import sys
 
 import msgpack
 
-from Common.Record import Record
-from Common.SysArgsParser import SysArgsParser
-from Common.Errors import LycError
-from Parsers.LycParser import LycParser
-from Streams.FileStream import FileStream
-from Syntax.LispPrinter import indented_lisp_printer
-from Common import Options
+from rmtc.Common.Record import Record
+from rmtc.Common.SysArgsParser import SysArgsParser
+from rmtc.Parsers.LycParser import LycParser
+from rmtc.Streams.FileStream import FileStream
+from rmtc.Syntax.LispPrinter import indented_lisp_printer
+import rmtc.Common.Options as Options
+
 
 def unicode_encoder(obj):
     return (str(obj)+"\n").encode()

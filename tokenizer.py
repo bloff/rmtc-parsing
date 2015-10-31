@@ -2,12 +2,13 @@ import sys
 
 #import msgpack
 
-from Common.Errors import LycError, TokenizingError
-from Common.SysArgsParser import SysArgsParser
-from Parsers.LycParser import LycParser
-from Streams.StringStream import StringStream
-import Syntax.Tokens as Tokens
-from Common.Record import Record
+
+from rmtc.Common.SysArgsParser import SysArgsParser
+from rmtc.Common.Errors import ErrorInPosition
+from rmtc.Parsers.LycParser import LycParser
+from rmtc.Streams.StringStream import StringStream
+from rmtc.Common.Record import Record
+import rmtc.Syntax.Tokens as Tokens
 
 
 def unicode_encoder(obj):
@@ -72,7 +73,7 @@ def tokenize(options):
             for token in parser.tokenize(stream):
                 print(str(token))
 
-    except LycError as e:
+    except ErrorInPosition as e:
         print(e.trace)
 
 def main():
