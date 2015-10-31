@@ -6,7 +6,7 @@ from Common.Errors import LycError, TokenizingError
 from Common.SysArgsParser import SysArgsParser
 from Parsers.LycParser import LycParser
 from Streams.StringStream import StringStream
-from Syntax.Token import TokenTypes
+import Syntax.Tokens as Tokens
 from Common.Record import Record
 
 
