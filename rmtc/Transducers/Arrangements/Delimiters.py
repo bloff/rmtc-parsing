@@ -229,11 +229,15 @@ class Delimiters(ArrangementRule):
             new_form.prepend(Identifier(element.text + element.end.text, element.range))
             # @[] BEGIN_MACRO('[') begin head ... end END_MACRO(']')
 
+
         begin_element = element.next
+        last_element = new_form.last
         new_form.remove(element) # remove BEGIN_MACRO('[')
         new_form.remove(new_form.last)  # remove END_MACRO(']')
-
-        return _delimiter_util.join_all_args(new_form_element, begin_element, "head-prefixed parenthesized form", 2 if has_head else 1)
+        if begin_element is last_element: # if we have something like a[] or a{} or so...
+            return new_form_element.next
+        else:
+            return _delimiter_util.join_all_args(new_form_element, begin_element, "head-prefixed parenthesized form", 2 if has_head else 1)
 
 
 

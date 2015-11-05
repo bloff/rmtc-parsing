@@ -407,3 +407,4 @@ class LycParser(RMTCParser):
         if not isinstance(stream, IndentedCharacterStream):
             stream = IndentedCharacterStream(stream)
         return stream
+

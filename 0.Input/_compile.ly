@@ -1,5 +1,3 @@
-(a, b, c,
- d, e, f)
-
-(a b c
- d e f)
+# Adds `v + v` to the last element of `a`
+def add-twice-to-last( Int[] a, Int v ):
+    a[-1] += vv

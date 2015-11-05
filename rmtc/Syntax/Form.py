@@ -22,6 +22,7 @@ class Form(Node):
         raise NotImplementedError()
 
     def __str__(self):
-        return rmtc.Syntax.LispPrinter.lisp_printer(self)
+        import rmtc.Syntax.LispPrinter as LispPrinter
+        return LispPrinter.lisp_printer(self)
 
 

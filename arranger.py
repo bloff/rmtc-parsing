@@ -1,6 +1,7 @@
 import sys
 
 import msgpack
+from rmtc.Common.Errors import ErrorInPosition
 
 from rmtc.Common.Record import Record
 from rmtc.Common.SysArgsParser import SysArgsParser
@@ -58,7 +59,7 @@ def arrange(options):
         file_node = parser.arrange(stream)
         print(indented_lisp_printer(file_node))
 
-    except LycError as e:
+    except ErrorInPosition as e:
         print(e.trace)
 
 def main():
