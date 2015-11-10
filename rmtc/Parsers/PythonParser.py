@@ -143,7 +143,8 @@ def define_default_python_transducer_chain():
     # comments, \, indentation, strings
     tt_primary = TopDownTreeTransducer("Primary",
                                        Arrangement([
-                                           Comment(),
+                                           #Comment(),
+                                           RawComment(),
                                            
                                            Block(),
                                            
@@ -166,6 +167,9 @@ def define_default_python_transducer_chain():
 
 
     #tt_await??
+
+    tt_punctuation = TopDownTreeTransducer("Punctuation",
+                                           Arrangement([DefaultPunctuation()]))
     
 
     tt_exponentiation = TopDownTreeTransducer("Exponentiation",
@@ -240,20 +244,27 @@ def define_default_python_transducer_chain():
     default_python_transducer_chain = [ tt_constituent,
                                         tt_primary,
                                         #tt_,
+                                        
+                                        tt_punctuation,
+                                        
                                         tt_exponentiation,
                                         tt_multiplication,
                                         tt_addition,
+                                        
                                         tt_bit_shift,
                                         tt_bit_and,
                                         tt_bit_xor,
                                         tt_bit_or,
+                                        
                                         tt_comparisons,
                                         tt_not,
                                         tt_and,
                                         tt_or,
-                                        tt_conditional, ]
+                                        tt_conditional,
+                                        
                                         #tt_lambda,
-                                        #ConvertPreforms() ]
+                                        
+                                        ConvertPreforms() ]
 
 
 
