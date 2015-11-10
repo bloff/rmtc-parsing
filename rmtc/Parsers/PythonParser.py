@@ -152,7 +152,7 @@ def define_default_python_transducer_chain():
                                            ParenthesisNoHead(),
                                            Delimiters({'[','{'}),
                                            
-                                           Strings(),
+                                           Strings({"'",'"'}),
                                            ]))
 
     

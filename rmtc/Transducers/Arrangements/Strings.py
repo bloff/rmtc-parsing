@@ -19,11 +19,13 @@ class Strings(ArrangementRule):
 
        BEGIN_MACRO("“") ⋅  END_MACRO   ⦅str ⦆ ⋅
     """
-    def __init__(self):
+    def __init__(self, string_delimiters):
         ArrangementRule.__init__(self, "Strings")
+        self.str_delims = string_delimiters
 
     def applies(self, element):
-        return is_token(element, Tokens.BEGIN_MACRO, token_text="“")
+        #return is_token(element, Tokens.BEGIN_MACRO, token_text="“")
+        return any([is_token(element, Tokens.BEGIN_MACRO, token_text=c) for c in self.str_delims])
 
     def apply(self, element) -> Element:
         assert is_token(element.next, Tokens.STRING)
