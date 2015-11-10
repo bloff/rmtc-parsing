@@ -185,7 +185,9 @@ def define_default_python_transducer_chain():
 
 
     # "subscription, slicing, call, attribute reference"
-    #tt_tertiary
+    tt_tertiary = TopDownTreeTransducer("Tertiary",
+                                        Arrangement([
+                                            LeftRightBinaryOperator({'.'}) ]))
 
 
     #tt_await??
@@ -260,12 +262,23 @@ def define_default_python_transducer_chain():
     
 
     #tt_lambda = TopDownTreeTransducer("Lambdas", Arrangement([ ]))
+
+
+    tt_assignment = TopDownTreeTransducer("Assignments",
+                                          Arrangement([
+                                              RightLeftBinaryOperator({'=',
+                                                                       '+=', '-=', '*=', '/=',
+                                                                       '//=', '%=', '@=',
+                                                                       '<<=', '>>=',
+                                                                       '&=', '^=', '|=' })]))
+                                              
     
 
 
     default_python_transducer_chain = [ tt_constituent,
                                         tt_primary,
                                         #tt_,
+                                        tt_tertiary,
                                         
                                         tt_punctuation,
                                         
@@ -285,6 +298,8 @@ def define_default_python_transducer_chain():
                                         tt_conditional,
                                         
                                         #tt_lambda,
+
+                                        tt_assignment,
                                         
                                         ConvertPreforms() ]
 
