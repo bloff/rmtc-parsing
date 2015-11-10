@@ -148,7 +148,7 @@ def make_readtable(definition:list):
             for seq in seqs:
                 existing_properties, _ = read_table.query(seq)
                 if existing_properties is not read_table.default_properties:
-                    assert existing_properties['type'] == spec[0]
+                    #assert existing_properties['type'] == spec[0]
                     existing_properties.update(properties)
                 else:
                     new_seq_properties = Record({'type': spec[0]})
