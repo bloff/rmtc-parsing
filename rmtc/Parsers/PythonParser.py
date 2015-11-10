@@ -60,12 +60,24 @@ default_python_readtable = make_readtable( [
       'preserve-leading-whitespace': True}],
 
     
+    # [RT.MACRO, "'''",
+    #  {'tokenizer': 'TripleSingleQuoteStringTokenizer',
+    #   'preserve-leading-whitespace': True}],
+
+    # [RT.MACRO, '"""',
+    #  {'tokenizer': 'TripleDoubleQuoteStringTokenizer',
+    #   'preserve-leading-whitespace': True}],
+
+    
+
+    
     [RT.MACRO, '#',
      {'tokenizer': 'CommentTokenizer',
       'preserve-leading-whitespace': True}],
 
 
     [RT.CLOSING, ['"', "'",
+                  # "'''", '"""',
                   ')', ']', '}'], ],
 
 
@@ -79,7 +91,10 @@ default_python_readtable = make_readtable( [
       '+', '-', '*', '/', '//', '%', '**', '@',
       '&', '^', '<<', '>>', '~',
       '==', '!=', '<', '>', '<=', '>=',
+      '->',
       ':', ';' ], ],
+
+    
 
     # space, tab, "vertical tab", "formfeed"
     [RT.WHITESPACE, [' ', '\t', '\x0b', '\x0c' ], ],
@@ -119,7 +134,13 @@ class PythonDoubleQuoteStringTokenizer(StringTokenizer):
     MY_CLOSING_DELIMITER = '"'
 
 
+# class PythonTripleSingleQuoteStringTokenizer(StringTokenizer):
+#     MY_OPENING_DELIMITER = "'''"
+#     MY_CLOSING_DELIMITER = "'''"
 
+# class PythonTripleDoubleQuoteStringTokenizer(StringTokenizer):
+#     MY_OPENING_DELIMITER = '"""'
+#     MY_CLOSING_DELIMITER = '"""'
 
 
 
@@ -152,7 +173,8 @@ def define_default_python_transducer_chain():
                                            ParenthesisNoHead(),
                                            Delimiters({'[','{'}),
                                            
-                                           Strings({"'",'"'}),
+                                           Strings({"'",'"'}), # "'''",'"""'}),
+                                           
                                            ]))
 
     
@@ -294,6 +316,8 @@ class PythonParser(RMTCParser):
             DelimiterTokenizer = PythonDelimiterTokenizer,
             SingleQuoteStringTokenizer = PythonSingleQuoteStringTokenizer,
             DoubleQuoteStringTokenizer = PythonDoubleQuoteStringTokenizer,
+            # TripleSingleQuoteStringTokenizer = PythonTripleSingleQuoteStringTokenizer,
+            # TripleDoubleQuoteStringTokenizer = PythonTripleDoubleQuoteStringTokenizer,
             CommentTokenizer = RawCommentTokenizer,
             )
 
