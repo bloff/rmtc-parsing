@@ -81,7 +81,7 @@ class RMTCParser(object):
 
             yield (token, current_index, token_after)
 
-    def arrange(self, code_or_stream:Union[str, CharacterStream]) -> Node:
+    def parse(self, code_or_stream:Union[str, CharacterStream]) -> Node:
         code_node = self.tokenize_into_node(code_or_stream)
         apply_transducer_chain(self.transducer_chain, code_node)
         return code_node

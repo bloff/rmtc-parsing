@@ -1,9 +1,9 @@
 from unittest import TestCase
 
 from rmtc.Common.Errors import TokenizingError
-from rmtc.Parsers import LycParser
+from rmtc.Parsers import _LycParser
 
-parser = LycParser()
+parser = _LycParser()
 
 class TestTokenizer(TestCase):
     def test_no_token(self):

@@ -5,7 +5,7 @@ from rmtc.Common.Errors import ErrorInPosition
 
 from rmtc.Common.Record import Record
 from rmtc.Common.SysArgsParser import SysArgsParser
-from rmtc.Parsers.LycParser import LycParser
+from rmtc.Parsers._LycParser import LycParser
 from rmtc.Streams.FileStream import FileStream
 from rmtc.Syntax.LispPrinter import indented_lisp_printer
 import rmtc.Common.Options as Options
@@ -56,7 +56,7 @@ def arrange(options):
 
         stream = FileStream(filename)
 
-        file_node = parser.arrange(stream)
+        file_node = parser.parse(stream)
         print(indented_lisp_printer(file_node))
 
     except ErrorInPosition as e:

@@ -159,9 +159,13 @@ class ParenthesisWithHead(ArrangementRule):
         new_form = new_form_element.code
 
         begin_element = element.next
-        new_form.remove(element) # remove BEGIN_MACRO '('
-        new_form.remove(element.end)  # remove END_MACRO ')'
-        return _delimiter_util.join_all_args(new_form_element, begin_element, "head-prefixed parenthesized form", 1)
+        last_element = new_form.last
+        new_form.remove(element) # remove BEGIN_MACRO('(')
+        new_form.remove(last_element)  # remove END_MACRO(')')
+        if begin_element is last_element: # if we have something like a[] or a{} or so...
+            return new_form_element.next
+        else:
+            return _delimiter_util.join_all_args(new_form_element, begin_element, "head-prefixed parenthesized form", 1)
 
 class ParenthesisNoHead(ArrangementRule):
     """
@@ -194,9 +198,13 @@ class ParenthesisNoHead(ArrangementRule):
         new_tuple = new_tuple_element.code
 
         begin_element = element.next
-        new_tuple.remove(element) # remove BEGIN_MACRO '('
-        new_tuple.remove(element.end)  # remove END_MACRO ')'
-        return _delimiter_util.join_all_args(new_tuple_element, begin_element, "tuple", 0)
+        last_element = new_tuple.last
+        new_tuple.remove(element) # remove BEGIN_MACRO('(')
+        new_tuple.remove(last_element)  # remove END_MACRO(')')
+        if begin_element is last_element: # if we have something like a[] or a{} or so...
+            return new_tuple_element.next
+        else:
+            return _delimiter_util.join_all_args(new_tuple_element, begin_element, "tuple", 0)
 
 
 class Delimiters(ArrangementRule):

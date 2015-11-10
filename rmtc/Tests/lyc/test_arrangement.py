@@ -1,14 +1,14 @@
 from unittest import TestCase
 
 from rmtc.Common.Errors import ArrangementError
-from rmtc.Parsers.LycParser import LycParser
+from rmtc.Parsers._LycParser import LycParser
 from rmtc.Syntax.Code import Code
 from rmtc.Syntax.Identifier import Identifier
 from rmtc.Syntax.Literal import Literal
 from rmtc.Syntax.Node import Node
 
 lyc_parser = LycParser()
-arrange = lyc_parser.arrange
+arrange = lyc_parser.parse
 
 
 class TestArrangement(TestCase):
@@ -37,8 +37,8 @@ class TestArrangement(TestCase):
 
 
     def _test_arrangement_equals(self, code:str, lisp_form:str):
-        code1 = lyc_parser.arrange(code)
-        code2 = lyc_parser.arrange(lisp_form)
+        code1 = lyc_parser.parse(code)
+        code2 = lyc_parser.parse(lisp_form)
         self.assertTrue(self._code_equals(code1, code2))
 
     def test_bad_punct_1(self):
