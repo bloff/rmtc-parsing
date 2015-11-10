@@ -49,11 +49,16 @@ default_python_readtable = make_readtable( [
 
 
     
-
 # """ strings
-    [RT.MACRO, ['"', "'"],
-     {'tokenizer': 'StringTokenizer',
+    
+    [RT.MACRO, "'",
+     {'tokenizer': 'SingleQuoteStringTokenizer',
       'preserve-leading-whitespace': True}],
+
+    [RT.MACRO, '"',
+     {'tokenizer': 'DoubleQuoteStringTokenizer',
+      'preserve-leading-whitespace': True}],
+
     
     [RT.MACRO, '#',
      {'tokenizer': 'CommentTokenizer',
