@@ -2,7 +2,7 @@
 # from rmtc.Syntax.lisp_printer import lisp_printer
 import types as pytypes
 
-from rmtc.Syntax.lisp_printer import lisp_printer
+from rmtc.Syntax.LispPrinter import lisp_printer
 
 
 class InstanceMethod:

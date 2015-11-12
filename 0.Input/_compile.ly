@@ -1,3 +1,5 @@
-# Adds `v + v` to the last element of `a`
-def add-twice-to-last( Int[] a, Int v ):
-    a[-1] += vv
+declare function
+    remove(CString)  Int32
+    rename(CString, CString)  Int32
+    renameat(Int32, CString, Int32, CString)  Int32
+    tmpfile()  FILE*

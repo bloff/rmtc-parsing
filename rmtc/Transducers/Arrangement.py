@@ -19,7 +19,7 @@ class Arrangement(object):
         self.direction = direction
         """Whether the node should be left from left-to-right or from right-to-left."""
 
-    # given a form h(a b c ...), arrange goes through its elements
+    # given a form h(a b c ...), parse goes through its elements
     # and for each element it checks if one of the rules in the list of ArrangementRules apply; if it does, then it is applied
     # the application of the rule returns the next element to be scanned
     # if no rule applies, the next element scanned is either the next or previous element (given by element.next and element.prev)

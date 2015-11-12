@@ -136,7 +136,7 @@ def define_default_lyc_transducer_chain():
                             '', ''}),
                        # etc
                        LeftRightBinaryTokenCapturingOperator({'.', '/'}),
-                       LeftRightUnaryPostfixNospaceOperator({'+o', '', '', '', '', '', ''}),
+                       LeftRightUnaryPostfixNospaceOperator({'+o', '', '', '', '*', '', '', ''}),
 
                        Block(),
                        ParenthesisWithHead(), #head( args ) => (head args)

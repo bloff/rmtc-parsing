@@ -49,12 +49,11 @@ def lisp_printer(code_or_element) -> str:
         lisp_form += " ".join(elms)
         lisp_form += right
         return lisp_form
-    elif isinstance(code, Identifier) or isinstance(code, Literal):
-        return str(code)
     elif isinstance(code, Node):
         return "NODE:\n" + (u"\n".join(lisp_printer(elm) for elm in code)) + u"\n"
     else:
-        raise ErrorInPosition(None, "ERROR PRODUCING LISP FORM!")
+        return str(code)
+        # raise ErrorInPosition(None, "ERROR PRODUCING LISP FORM!")
 
 def indented_lisp_printer(code_or_element, current_line = None) -> str:
     if current_line is None:
@@ -87,13 +86,11 @@ def indented_lisp_printer(code_or_element, current_line = None) -> str:
                 else:
                     ret += "('" + text[:32] + "'...)"
         return line_prefix + ret
-    elif isinstance(code_or_element, Identifier) or isinstance(code_or_element, Literal):
-        return line_prefix + str(code_or_element)
     elif isinstance(code_or_element, Node):
         node_elms = [indented_lisp_printer(elm, current_line) for elm in code_or_element]
         return line_prefix + "NODE:\n" + u"\n".join(node_elms) + u"\n"
     elif isinstance(code_or_element, Element):
         return line_prefix +indented_lisp_printer(code_or_element.code, current_line)
     else:
-        raise ErrorInPosition(None, "ERROR PRODUCING LISP FORM!")
-
+        return line_prefix + str(code_or_element)
+        # raise ErrorInPosition(None, "ERROR PRODUCING LISP FORM!")
