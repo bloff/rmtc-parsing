@@ -1,8 +1,9 @@
 def f(a, b):
     a.c
-    d = b + e
+    d = (b + e0) * e1
     while y:
-        g("dog")
+        g(0)
+        g1("dog")
     s = {s0, s1, s2}
     if h:
         i = 'cat'

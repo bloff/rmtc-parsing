@@ -38,6 +38,8 @@ from rmtc.Transducers.Arrangements.RightLeftUnaryPrefixOperator import RightLeft
 from rmtc.Transducers.Arrangements.Strings import Strings
 from rmtc.Transducers.Arrangements.TransformationArrow import TransformationArrow
 
+from rmtc.Transducers.Arrangements.Delimiters import BracketsWithHead
+
 
 
 ## READTABLE ##
@@ -83,6 +85,7 @@ default_python_readtable = make_readtable( [
 
 
     [RT.PUNCTUATION, [',' ], ],
+    # [RT.ISOLATED_CONSTITUENT, ','],
 
     
     
@@ -171,6 +174,9 @@ def define_default_python_transducer_chain():
                                            
                                            ParenthesisWithHead(),
                                            ParenthesisNoHead(),
+                                           
+                                           #BracketsWithHead({'['}),
+                                           
                                            Delimiters({'[','{'}),
                                            
                                            Strings({"'",'"'}), # "'''",'"""'}),
@@ -187,13 +193,18 @@ def define_default_python_transducer_chain():
     # "subscription, slicing, call, attribute reference"
     tt_tertiary = TopDownTreeTransducer("Tertiary",
                                         Arrangement([
-                                            LeftRightBinaryOperator({'.'}) ]))
+                                            LeftRightBinaryOperator({'.'}), ]))
+                                            # BracketsWithHead({'['}),
+                                            # Delimiters({'[','{'})]))
 
 
     #tt_await??
 
     tt_punctuation = TopDownTreeTransducer("Punctuation",
                                            Arrangement([DefaultPunctuation()]))
+
+    # tt_commaoperator = TopDownTreeTransducer("Comma as binary operator",
+    #                                          Arrangement([RightLeftBinaryOperator({','})]))
     
 
     tt_exponentiation = TopDownTreeTransducer("Exponentiation",
@@ -281,6 +292,7 @@ def define_default_python_transducer_chain():
                                         tt_tertiary,
                                         
                                         tt_punctuation,
+                                        # tt_commaoperator,
                                         
                                         tt_exponentiation,
                                         tt_multiplication,
