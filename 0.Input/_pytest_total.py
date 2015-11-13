@@ -12,8 +12,8 @@ def f(a, b):
     elif h.h1():
         i.l([2, 4, 5])
     k = [f1(i) for i in m]
-    kc = [f1(i) for i in m if f2(i)]
-    n = {'a': o1, 8: o2}
-    p0 = p1; p2 = p3
-    t = lambda x, y: x**y + k[0]
+    # kc = [f1(i) for i in m if f2(i)]
+    # n = {'a': o1, 8: o2}
+    # p0 = p1; p2 = p3
+    # t = lambda x, y: x**y + k[0]
     return q0, q1

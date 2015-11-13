@@ -57,7 +57,7 @@ def arrange(options):
 
         stream = FileStream(filename)
 
-        file_node = parser.arrange(stream)
+        file_node = parser.parse(stream)
         print(indented_lisp_printer(file_node))
 
     except ErrorInPosition as e:

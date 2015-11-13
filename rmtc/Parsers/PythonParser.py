@@ -38,7 +38,7 @@ from rmtc.Transducers.Arrangements.RightLeftUnaryPrefixOperator import RightLeft
 from rmtc.Transducers.Arrangements.Strings import Strings
 from rmtc.Transducers.Arrangements.TransformationArrow import TransformationArrow
 
-from rmtc.Transducers.Arrangements.Delimiters import BracketsWithHead
+#from rmtc.Transducers.Arrangements.Delimiters import BracketsWithHead
 
 
 
@@ -147,6 +147,11 @@ class PythonDoubleQuoteStringTokenizer(StringTokenizer):
 
 
 
+class PythonCommentTokenizer(RawCommentTokenizer):
+    OPENING_DELIMITER = '#'
+
+
+
 
 
 
@@ -180,6 +185,8 @@ def define_default_python_transducer_chain():
                                            Delimiters({'[','{'}),
                                            
                                            Strings({"'",'"'}), # "'''",'"""'}),
+
+                                           LeftRightBinaryOperator({'.'}), 
                                            
                                            ]))
 
@@ -191,9 +198,9 @@ def define_default_python_transducer_chain():
 
 
     # "subscription, slicing, call, attribute reference"
-    tt_tertiary = TopDownTreeTransducer("Tertiary",
-                                        Arrangement([
-                                            LeftRightBinaryOperator({'.'}), ]))
+    # tt_tertiary = TopDownTreeTransducer("Tertiary",
+    #                                     Arrangement([
+    #                                         )
                                             # BracketsWithHead({'['}),
                                             # Delimiters({'[','{'})]))
 
@@ -289,7 +296,7 @@ def define_default_python_transducer_chain():
     default_python_transducer_chain = [ tt_constituent,
                                         tt_primary,
                                         #tt_,
-                                        tt_tertiary,
+                                        #tt_tertiary,
                                         
                                         tt_punctuation,
                                         # tt_commaoperator,
@@ -345,7 +352,7 @@ class PythonParser(RMTCParser):
             DoubleQuoteStringTokenizer = PythonDoubleQuoteStringTokenizer,
             # TripleSingleQuoteStringTokenizer = PythonTripleSingleQuoteStringTokenizer,
             # TripleDoubleQuoteStringTokenizer = PythonTripleDoubleQuoteStringTokenizer,
-            CommentTokenizer = RawCommentTokenizer,
+            CommentTokenizer = PythonCommentTokenizer,
             )
 
         # For Python we do not make use of DelimitedIdentifiers or non-raw Comments.
