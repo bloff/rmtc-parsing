@@ -70,3 +70,14 @@ class TestArrangement(TestCase):
             (a b c
              d e f)
             """)
+
+
+    def test_arrangement_apply_parenthesis(self):
+        self._test_arrangement_equals(
+            r"""
+            a ⦅elif ⦆
+            """,
+            r"""
+            ⦅a ⦅ ⦅elif ⦆⦆⦆
+            """)
+
