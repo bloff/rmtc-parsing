@@ -123,8 +123,10 @@ class ApplyParenthesis(ArrangementRule):
             # BEGIN_MACRO BEGIN ... END END_MACRO => BEGIN ... END
             parent = element.parent
             next_element = element.next
-            parent.remove(element) # remove BEGIN_MACRO '('
-            parent.remove(element.end) # remove END_MACRO ')'
+            next_element.range.first_position = element.range.first_position
+            next_element.end.range.position_after = element.end.range.position_after
+            parent.remove(element) # remove BEGIN_MACRO '⦅'
+            parent.remove(element.end) # remove END_MACRO '⦆'
             return self.block_arrangement.apply(next_element)
         else:
             raise TokenizingError(element.range, "Unexpected multiple blocks inside double-parenthesis.")
