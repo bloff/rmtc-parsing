@@ -39,8 +39,10 @@ class LeftRightBinaryTokenCapturingOperator(ArrangementRule):
             # actually want
             # a . BEGIN_MACRO something END_MACRO => (. a BEGIN_MACRO something END_MACRO)
             new_form_element = form.wrap(prev, next.end, Form)
+        elif is_token(next, Tokens.PUNCTUATION):
+            raise ArrangementError(next.range.first_position, "Unexpected punctuation after '%s' in position %s." %(element.code.name, element.range.first_position.nameless_str))
         else:
-            raise ArrangementError(next.range.first_position, "Expected identifier, literal or begin-macro-token after '%s' token in position %s." %(element.value, element.range.first_position.nameless_str))
+            raise ArrangementError(next.range.first_position, "Expected identifier, literal or begin-macro-token after '%s' in position %s." %(element.code.name, element.range.first_position.nameless_str))
         new_form = new_form_element.code
         # at this point new_form = ⦅a X b⦆
         new_form.remove(element)
