@@ -39,6 +39,9 @@ class Readtable(object):
     sequence has properties ``{'type': 'macro', 'tokenizer': 'CommentTokenizer'}``, and the '##' sequence has properties
     ``{'type': 'macro', 'tokenizer':'RawCommentTokenizer'}``; it also means that there is no way of extending '##' into a larger
     entry of the readtable.
+
+    .. note: Currently the readtable allows one to unread a certain number of characters from the end of the read sequence, by specifying
+       the property 'unread-chars'. This will become unnecessary if the readtable implementation is upgraded to allow for regular expressions.
     """
     def __init__(self):
         self.root_node = {}
@@ -112,11 +115,17 @@ class Readtable(object):
             else:
                 if seq != "":
                     stream.unread()
-                    return seq, self._return_properties(node_properties_pair[1])
+                    properties = self._return_properties(node_properties_pair[1])
+                    if "unread_chars" in properties:
+                        stream.unread(properties.unread_chars)
+                    return seq, properties
                 else:
                     return char, self._return_properties(None)
         if seq != "":
-            return seq, self._return_properties(node_properties_pair[1])
+            properties = self._return_properties(node_properties_pair[1])
+            if "unread_chars" in properties:
+                stream.unread(properties.unread_chars)
+            return seq, properties
         assert False
 
 
