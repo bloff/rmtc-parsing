@@ -55,6 +55,13 @@ def lisp_printer(code_or_element) -> str:
         return str(code)
         # raise ErrorInPosition(None, "ERROR PRODUCING LISP FORM!")
 
+def succinct_lisp_printer(code_or_element, max_length:int=40) -> str:
+    s = lisp_printer(code_or_element)
+    if max_length >= len(s):
+        return s
+    else:
+        return s[0:max_length] + "..."
+
 def indented_lisp_printer(code_or_element, current_line = None) -> str:
     if current_line is None:
         current_line = [0]
