@@ -16,6 +16,7 @@ class Punctuator(Node):
     :param end_punctuation_marker: An element marking the position after the last element in the child_node to which
     punctuation applies. Usually the INDENT token of an indented code block.
     """
+
     def __init__(self, child_node, punctuation, skip_count, end_punctuation_marker=None):
         Node.__init__(self, child_node)
         self.punctuation = punctuation
@@ -23,4 +24,5 @@ class Punctuator(Node):
         self.end_punctuation_marker = end_punctuation_marker
 
     def __str__(self):
-        return rmtc.Syntax.LispPrinter.lisp_printer(self)
+        from rmtc.Syntax.LispPrinter import lisp_printer
+        return lisp_printer(self)
