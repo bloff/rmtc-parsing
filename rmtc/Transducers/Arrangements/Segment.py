@@ -61,6 +61,7 @@ class Segment(ArrangementRule):
 
 
     def _single_indented_segment_apply(self, begin_token) -> Element:
+        # First we wrap everything from BEGIN to END in a new Node (of the given wrap_class, which is usually PreForm)
         new_form_element = begin_token.parent.wrap(begin_token, begin_token.end, self.wrap_class)
         new_form = new_form_element.code
 
@@ -73,7 +74,10 @@ class Segment(ArrangementRule):
 
         has_colon = any(is_token(p, Tokens.PUNCTUATION, ':') for p in punctuation)
 
-        if not has_colon: # list-of-args mode
+        if not has_colon: # If the segment does not have a colon, then we are in list-of-args mode
+            # In list-of-args mode, we replace every newline with a comma, and "open-up"
+            # every segment in the indented block that doesn't have indented sub-blocks or a colon
+
             first_begin_after_indentation = indent.next
 
             # replace indent with comma
@@ -87,7 +91,7 @@ class Segment(ArrangementRule):
             punctuation.extend(extra_punctuation)
 
             punctuator = Punctuator(new_form_element.code, punctuation, 1)
-        else: # list-of-forms mode
+        else: # otherwise, we are in list-of-forms mode
             punctuator = Punctuator(new_form_element.code, punctuation, 1, indent)
 
         return new_form_element.parent.replace(new_form_element, punctuator).next
