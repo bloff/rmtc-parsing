@@ -1,0 +1,44 @@
+// Use http://www.nomnoml.com to get the image
+
+#title:UML type diagram for Anoky code representation
+#spacing: 80
+#font: Source Code Pro
+#fontSize:10
+#arrowSize:.7
+
+[Code
+//|
+//range*
+]
+
+// [<note> * Positional information of corresponding written code. ]
+
+[Node|
+first : Element;
+last  : Element
+]
+
+[Element|
+parent : Node;
+prev   : Element;
+next   : Element;
+code   : Code
+]
+
+[Form]
+[Tuple]
+
+[Identifier|
+ name : str
+]
+
+[Literal|value]
+
+
+[Code]<:-[Node]
+[Code]<:-[Identifier]
+[Code]<:-[Literal]
+[Node]<:-[Form]
+[Node]<:-[Tuple]
+
+[Node]-[Element]
