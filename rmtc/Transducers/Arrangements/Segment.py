@@ -14,9 +14,9 @@ def _element_after(element) -> Element:
     else:
         return element.next
 
-class Block(ArrangementRule):
+class Segment(ArrangementRule):
     """
-    Arrangement for blocks, triggered on the pattern ``BEGIN ⋅``.
+    Arrangement for Segments, triggered on the pattern ``BEGIN ⋅``.
 
     If the ``BEGIN`` token has zero ``INDENT`` tokens, does the transformation::
 
@@ -34,25 +34,25 @@ class Block(ArrangementRule):
     Currently more than one INDENT token is unimplemented (and raises ``NotImplementedError``).
     """
     def __init__(self, wrap_class = PreForm):
-        ArrangementRule.__init__(self, "Single-Indented Block")
+        ArrangementRule.__init__(self, "Segment")
         self.wrap_class = wrap_class
-        """The type of node to wrap block in. Usually ``PreForm``."""
+        """The type of node to wrap segment in. Usually ``PreForm``."""
 
     def applies(self, element):
         return is_token(element, Tokens.BEGIN)
 
     def apply(self, element) -> Element:
         if len(element.indents) == 0:
-            return self._unindented_block_apply(element)
+            return self._unindented_segment_apply(element)
         elif len(element.indents) == 1:
-            return self._single_indented_block_apply(element)
+            return self._single_indented_segment_apply(element)
         elif len(element.indents) == 2:
-            return self._double_indented_block_apply(element)
+            return self._double_indented_segment_apply(element)
         else:
             raise ArrangementError(element.indents[2].range.first_position,
                                  "Only two indentation levels are allowed in (default) block (%d indentation levels found in block that begins in position %s)." % (len(element.indents), element.range.first_position.nameless_str))
 
-    def _unindented_block_apply(self, element) -> Element:
+    def _unindented_segment_apply(self, element) -> Element:
         new_form_element = element.parent.wrap(element, element.end, self.wrap_class)
         new_form = new_form_element.code
 
@@ -65,7 +65,7 @@ class Block(ArrangementRule):
         return new_form_element.parent.replace(new_form_element, punctuator).next
 
 
-    def _single_indented_block_apply(self, element) -> Element:
+    def _single_indented_segment_apply(self, element) -> Element:
         new_form_element = element.parent.wrap(element, element.end, self.wrap_class)
         new_form = new_form_element.code
 
@@ -85,7 +85,7 @@ class Block(ArrangementRule):
     # b  BEGIN  END  ⟨⟩
     # b  BEGIN  INDENT  END  error
     # out[2].punctuation := in[0].punctuation
-    def _double_indented_block_apply(self, element) -> Element:
+    def _double_indented_segment_apply(self, element) -> Element:
         # new_form_element = element.parent.wrap(element, element.end, self.wrap_class)
         # new_form = new_form_element.code
 

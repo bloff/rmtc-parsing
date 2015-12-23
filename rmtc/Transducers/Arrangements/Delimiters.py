@@ -8,7 +8,7 @@ from rmtc.Syntax.Token import is_token
 import rmtc.Syntax.Tokens as Tokens
 from rmtc.Transducers.ArrangementRule import ArrangementRule
 from rmtc.Common.Errors import ArrangementError, TokenizingError
-from rmtc.Transducers.Arrangements.Block import Block
+from rmtc.Transducers.Arrangements.Segment import Segment
 
 
 class _delimiter_util:
@@ -112,7 +112,7 @@ class ApplyParenthesis(ArrangementRule):
     """
     def __init__(self):
         ArrangementRule.__init__(self, "Application Parenthesis")
-        self.block_arrangement = Block(Form)
+        self.block_arrangement = Segment(Form)
 
     def applies(self, element):
         return _delimiter_util.is_opening_delimiter(element, '⦅')
