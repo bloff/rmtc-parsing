@@ -48,7 +48,7 @@ class IndentationReadtableTokenizer(Tokenizer):
             yield self.last_begin_token
 
 
-            # Stage 2 (Parsing of block header)
+            # Stage 2 (Parsing of segment's first line)
             while True:
 
                 # 2.1

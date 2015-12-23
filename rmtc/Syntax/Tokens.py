@@ -22,7 +22,7 @@ class _TokenTypes(Enum):
 
 class BEGIN(Token):
     """
-    A token representing the beginning of a block of code.
+    A token representing the beginning of a segment.
     """
     def __init__(self, position:StreamPosition):
         Token.__init__(self, _TokenTypes.BEGIN, StreamRange(position, position))
@@ -43,7 +43,7 @@ class BEGIN(Token):
 
 class END(Token):
     """
-    A token representing the end of a block of code.
+    A token representing the end of a segment.
     """
     def __init__(self, begin_token, position:StreamPosition):
         Token.__init__(self, _TokenTypes.END, StreamRange(position, position))
@@ -53,7 +53,7 @@ class END(Token):
 
 class INDENT(Token):
     """
-    A token representing an indentation inside a block of code.
+    A token representing an indentation inside a segment.
     """
     def __init__(self, begin_token, position:StreamPosition):
         assert isinstance(begin_token, BEGIN)
