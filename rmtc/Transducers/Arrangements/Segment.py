@@ -1,18 +1,13 @@
-from rmtc.Syntax.Punctuator import Punctuator
-from rmtc.Syntax.PreForm import PreForm
-from rmtc.Syntax.Node import Element
-from rmtc.Syntax.Token import is_token
 import rmtc.Syntax.Tokens as Tokens
-from rmtc.Transducers.ArrangementRule import ArrangementRule
 from rmtc.Common.Errors import ArrangementError
-
+from rmtc.Syntax.Node import Element
+from rmtc.Syntax.PreForm import PreForm
+from rmtc.Syntax.Punctuator import Punctuator
+from rmtc.Syntax.Token import is_token
+from rmtc.Transducers.ArrangementRule import ArrangementRule
+import rmtc.Transducers.Arrangements.Util as Util
 
 # returns element after the head
-def _element_after(element) -> Element:
-    if is_token(element, Tokens.BEGIN_MACRO) or is_token(element, Tokens.BEGIN):
-        return element.end.next
-    else:
-        return element.next
 
 class Segment(ArrangementRule):
     """
@@ -50,13 +45,13 @@ class Segment(ArrangementRule):
             return self._double_indented_segment_apply(element)
         else:
             raise ArrangementError(element.indents[2].range.first_position,
-                                 "Only two indentation levels are allowed in (default) block (%d indentation levels found in block that begins in position %s)." % (len(element.indents), element.range.first_position.nameless_str))
+                                 "Only two indentation levels are allowed in segment (%d indentation levels found in segment that begins in position %s)." % (len(element.indents), element.range.first_position.nameless_str))
 
-    def _unindented_segment_apply(self, element) -> Element:
-        new_form_element = element.parent.wrap(element, element.end, self.wrap_class)
+    def _unindented_segment_apply(self, begin_token) -> Element:
+        new_form_element = begin_token.parent.wrap(begin_token, begin_token.end, self.wrap_class)
         new_form = new_form_element.code
 
-        punctuation = element.punctuation[0]
+        punctuation = begin_token.punctuation
         new_form.remove(new_form.first) # remove BEGIN
         new_form.remove(new_form.last)  # remove END
 
@@ -65,18 +60,35 @@ class Segment(ArrangementRule):
         return new_form_element.parent.replace(new_form_element, punctuator).next
 
 
-    def _single_indented_segment_apply(self, element) -> Element:
-        new_form_element = element.parent.wrap(element, element.end, self.wrap_class)
+    def _single_indented_segment_apply(self, begin_token) -> Element:
+        new_form_element = begin_token.parent.wrap(begin_token, begin_token.end, self.wrap_class)
         new_form = new_form_element.code
 
-        indent  = element.indents[0]
-        assert len(element.punctuation) == 2 and element.punctuation[1] == []
-        punctuation = element.punctuation[0]
+        indent  = begin_token.indents[0]
+        punctuation = begin_token.punctuation
 
         new_form.remove(new_form.first) # remove BEGIN
         new_form.remove(new_form.last)  # remove END
 
-        punctuator = Punctuator(new_form_element.code, punctuation, 1, indent)
+
+        has_colon = any(is_token(p, Tokens.PUNCTUATION, ':') for p in punctuation)
+
+        if not has_colon: # list-of-args mode
+            first_begin_after_indentation = indent.next
+
+            # replace indent with comma
+            new_comma = Tokens.PUNCTUATION(None, ",", None, None)
+            new_form.insert(indent, new_comma)
+            punctuation.append(new_comma)
+            new_form.remove(indent)
+
+            # remove BEGIN/END pairs of non-indented, non-colon-having segments
+            extra_punctuation = Util.explode_list_of_args(first_begin_after_indentation)
+            punctuation.extend(extra_punctuation)
+
+            punctuator = Punctuator(new_form_element.code, punctuation, 1)
+        else: # list-of-forms mode
+            punctuator = Punctuator(new_form_element.code, punctuation, 1, indent)
 
         return new_form_element.parent.replace(new_form_element, punctuator).next
 

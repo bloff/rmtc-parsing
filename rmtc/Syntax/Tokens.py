@@ -65,11 +65,11 @@ class PUNCTUATION(Token):
     A punctuation token.
     """
     def __init__(self, begin_token, value:str, first_position:StreamPosition, position_after:StreamPosition):
-        assert isinstance(begin_token, BEGIN)
         Token.__init__(self, _TokenTypes.PUNCTUATION, StreamRange(first_position, position_after))
         self.begin = begin_token
         self.value = value
-        begin_token.add_punctuation(self)
+        if isinstance(begin_token, BEGIN):
+            begin_token.add_punctuation(self)
 
 
 class CONSTITUENT(Token):
