@@ -30,15 +30,14 @@ class BEGIN(Token):
         """The corresponding END token."""
         self.indents = []
         """A list of INDENT (indentation) tokens for this block of code."""
-        self.punctuation = [[]]
-        """A list containing, for each INDENT token, a list of PUNCTUATION tokens appearing before it in this block of code."""
+        self.punctuation = []
+        """A list containing PUNCTUATION tokens appearing in the segment's first line."""
 
     def add_indent(self, indent):
         self.indents.append(indent)
-        self.punctuation.append([])
 
     def add_punctuation(self, punctuation_token):
-        self.punctuation[-1].append(punctuation_token)
+        self.punctuation.append(punctuation_token)
 
 
 class END(Token):
