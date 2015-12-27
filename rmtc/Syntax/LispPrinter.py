@@ -1,23 +1,19 @@
 from rmtc.Common.Util import is_not_none
 from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Node import Element, Node
-from rmtc.Syntax.Identifier import Identifier
-# from Semantics.Code.Symbol import Symbol
 from rmtc.Syntax.PreForm import PreForm
 from rmtc.Syntax.Punctuator import Punctuator
 from rmtc.Syntax.Code import Code
-from rmtc.Syntax.Literal import Literal
 from rmtc.Syntax.Tuple import Tuple
 from rmtc.Syntax.PreTuple import PreTuple
 from rmtc.Syntax.Token import Token
-from rmtc.Common.Errors import ErrorInPosition
 
 _delimiters = {
-                  PreForm:("ₐ⟅", "⟆ₐ"),
-                  PreTuple:("⟅", "⟆"),
-                  Form:("⦅", "⦆"),
-                  Tuple:("(", ")"),
-                  Punctuator:('⟨', '⟩'),
+                  PreForm:("⟅", "⟆", False),
+                  PreTuple:("⟅", "⟆", True),
+                  Form:("(", ")", False),
+                  Tuple:("(", ")", True),
+                  Punctuator:('⟨', '⟩', False),
                 }
 
 # TODO: refactor all __str__ and __repr__ methods to allow for each language to choose its own representation
@@ -43,10 +39,11 @@ def lisp_printer(code_or_element) -> str:
     assert isinstance(code_or_element, Code)
     code = code_or_element
     if code.__class__ in _delimiters:
-        left, right = _delimiters[code.__class__]
+        left, right, comma_separated = _delimiters[code.__class__]
         lisp_form = left
         elms = [lisp_printer(elm) for elm in code]
-        lisp_form += " ".join(elms)
+        lisp_form += (", " if comma_separated else " ").join(elms)
+        if len(elms) == 1 and comma_separated: lisp_form += ","
         lisp_form += right
         return lisp_form
     elif isinstance(code, Node):
@@ -75,10 +72,10 @@ def indented_lisp_printer(code_or_element, current_line = None) -> str:
         line_prefix = "\n" + " " * (code_or_element.range.first_position.column - 1)
 
     if code_or_element.__class__ in _delimiters:
-        left, right = _delimiters[code_or_element.__class__]
+        left, right, comma_separated = _delimiters[code_or_element.__class__]
         lisp_form = left
         elms = [indented_lisp_printer(elm, current_line) for elm in code_or_element]
-        lisp_form += " ".join(elms)
+        lisp_form += (", " if comma_separated else  " ").join(elms)
         lisp_form += right
         return line_prefix + lisp_form
     elif isinstance(code_or_element, Token):
