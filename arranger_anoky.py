@@ -38,7 +38,7 @@ def parse_args(argv):
                 if output_name == 'stdout': options.output = sys.stdout.buffer
                 if output_name == 'stderr': options.output = sys.stderr.buffer
                 else: options.output = open(output_name, "wb")
-        elif arg.lower().endswith('.ly') or arg.lower().endswith('.py'):
+        elif arg.lower().endswith('.aky'):
             if 'filename' in options:
                 print("Multiple filenames found!")
                 exit(-1)
@@ -53,6 +53,9 @@ def parse_args(argv):
 def arrange(options):
     parser = PythonParser()
     try:
+        if "filename" not in options:
+            print("No filename specified.")
+            return
         filename = options.filename
 
         stream = FileStream(filename)

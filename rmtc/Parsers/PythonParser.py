@@ -1,42 +1,29 @@
-
 from typing import Union
 
 from rmtc.Parsers.RMTCParser import RMTCParser
 from rmtc.Streams.CharacterStream import CharacterStream
 from rmtc.Streams.IndentedCharacterStream import IndentedCharacterStream
 from rmtc.Tokenization.Readtable import make_readtable, RT
-from rmtc.Tokenization.Tokenizers.RawComment import RawCommentTokenizer
-from rmtc.Tokenization.Tokenizers.Comment import CommentTokenizer
-from rmtc.Tokenization.Tokenizers.DelimitedIdentifierTokenizer import DelimitedIdentifierTokenizer
+from rmtc.Tokenization.TokenizationContext import TokenizationContext
 from rmtc.Tokenization.Tokenizers.Delimiter import DelimiterTokenizer
 from rmtc.Tokenization.Tokenizers.IndentationReadtable import IndentationReadtableTokenizer
+from rmtc.Tokenization.Tokenizers.RawComment import RawCommentTokenizer
 from rmtc.Tokenization.Tokenizers.String import StringTokenizer
-from rmtc.Tokenization.TokenizationContext import TokenizationContext
-from rmtc.Transducers.Arrangements.ApplyToRest import ApplyToRest
 from rmtc.Transducers.Arrangement import Arrangement
-from rmtc.Transducers.Arrangements.LeftRightBinaryOperator import LeftRightBinaryOperator
-from rmtc.Transducers.TopDownTreeTransducer import TopDownTreeTransducer
-from rmtc.Transducers.ConvertPreForms import ConvertPreforms
-from rmtc.Transducers.ReadDirection import ReadDirection
-from rmtc.Transducers.Arrangements.Block import Block
-from rmtc.Transducers.Arrangements.Comments import Comment, RawComment
+from rmtc.Transducers.Arrangements.Comments import RawComment
 from rmtc.Transducers.Arrangements.Constituents import Constituent
 from rmtc.Transducers.Arrangements.DefaultPunctuation import DefaultPunctuation
 from rmtc.Transducers.Arrangements.Delimiters import ParenthesisWithHead, ParenthesisNoHead, \
-    ApplyParenthesis, Delimiters
+    Delimiters
 from rmtc.Transducers.Arrangements.IfElse import InfixIfElse, IfElifElse
-from rmtc.Transducers.Arrangements.LeftRightBinaryOperatorReversedArgs import LeftRightBinaryOperatorReversedArgs
+from rmtc.Transducers.Arrangements.LeftRightBinaryOperator import LeftRightBinaryOperator
 from rmtc.Transducers.Arrangements.LeftRightBinaryOperatorTwoSymbols import LeftRightBinaryOperatorTwoSymbols
-from rmtc.Transducers.Arrangements.LeftRightBinaryTokenCapturingOperator import LeftRightBinaryTokenCapturingOperator
-from rmtc.Transducers.Arrangements.LeftRightNaryOperator import LeftRightNaryOperator
-from rmtc.Transducers.Arrangements.LeftRightUnaryPostfixNospaceOperator import LeftRightUnaryPostfixNospaceOperator
-from rmtc.Transducers.Arrangements.LeftRightUnaryPrefixNospaceTokenCapturingOperator import \
-    LeftRightUnaryPrefixNospaceTokenCapturingOperator
 from rmtc.Transducers.Arrangements.RightLeftBinaryOperator import RightLeftBinaryOperator
-from rmtc.Transducers.Arrangements.RightLeftUnaryPrefixNospaceOperator import RightLeftUnaryPrefixNospaceOperator
 from rmtc.Transducers.Arrangements.RightLeftUnaryPrefixOperator import RightLeftUnaryPrefixOperator
+from rmtc.Transducers.Arrangements.Segment import Segment
 from rmtc.Transducers.Arrangements.Strings import Strings
-from rmtc.Transducers.Arrangements.TransformationArrow import TransformationArrow
+from rmtc.Transducers.ConvertPreForms import ConvertPreforms
+from rmtc.Transducers.TopDownTreeTransducer import TopDownTreeTransducer
 
 #from rmtc.Transducers.Arrangements.Delimiters import BracketsWithHead
 
@@ -61,11 +48,11 @@ default_python_readtable = make_readtable( [
      {'tokenizer': 'DoubleQuoteStringTokenizer',
       'preserve-leading-whitespace': True}],
 
-    
+    #
     # [RT.MACRO, "'''",
     #  {'tokenizer': 'TripleSingleQuoteStringTokenizer',
     #   'preserve-leading-whitespace': True}],
-
+    #
     # [RT.MACRO, '"""',
     #  {'tokenizer': 'TripleDoubleQuoteStringTokenizer',
     #   'preserve-leading-whitespace': True}],
@@ -175,7 +162,7 @@ def define_default_python_transducer_chain():
                                            #Comment(),
                                            RawComment(),
                                            
-                                           Block(),
+                                           Segment(),
                                            
                                            ParenthesisWithHead(),
                                            ParenthesisNoHead(),
