@@ -6,7 +6,7 @@ import sys
 from rmtc.Common.SysArgsParser import SysArgsParser
 from rmtc.Common.Errors import ErrorInPosition
 #from rmtc.Parsers.LycParser import LycParser
-from rmtc.Parsers.PythonParser import PythonParser
+from rmtc.Parsers.AnokyParser import PythonParser
 from rmtc.Streams.StringStream import StringStream
 from rmtc.Common.Record import Record
 import rmtc.Syntax.Tokens as Tokens

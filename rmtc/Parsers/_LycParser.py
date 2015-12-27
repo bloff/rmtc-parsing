@@ -146,7 +146,7 @@ def define_default_lyc_transducer_chain():
                        # ArgSeqArrangement(),
                        Delimiters({'[', '⟦', '{', '⦃'}),
                        #Quote('‘'),
-                       Strings(),
+                       #Strings(),
                        ]))
 
     # tt_block = TopDownTreeTransducer("Block", Arrangement([Block()]))

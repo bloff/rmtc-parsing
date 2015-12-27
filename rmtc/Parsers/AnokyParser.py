@@ -71,7 +71,7 @@ default_python_readtable = make_readtable( [
 
 
 
-    [RT.PUNCTUATION, [',' ], ],
+    [RT.PUNCTUATION, [',', ':' ], ],
     # [RT.ISOLATED_CONSTITUENT, ','],
 
     
@@ -81,8 +81,7 @@ default_python_readtable = make_readtable( [
       '+', '-', '*', '/', '//', '%', '**', '@',
       '&', '^', '<<', '>>', '~',
       '==', '!=', '<', '>', '<=', '>=',
-      '->',
-      ':', ';' ], ],
+      '->' ], ],
 
     
 
