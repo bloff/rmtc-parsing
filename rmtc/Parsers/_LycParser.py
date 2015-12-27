@@ -17,7 +17,7 @@ from rmtc.Transducers.Arrangements.LeftRightBinaryOperator import LeftRightBinar
 from rmtc.Transducers.TopDownTreeTransducer import TopDownTreeTransducer
 from rmtc.Transducers.ConvertPreForms import ConvertPreforms
 from rmtc.Transducers.ReadDirection import ReadDirection
-from rmtc.Transducers.Arrangements.Block import Block
+from rmtc.Transducers.Arrangements.Segment import Segment
 from rmtc.Transducers.Arrangements.Comments import Comment, RawComment
 from rmtc.Transducers.Arrangements.Constituents import Constituent
 from rmtc.Transducers.Arrangements.DefaultPunctuation import DefaultPunctuation
@@ -138,7 +138,7 @@ def define_default_lyc_transducer_chain():
                        LeftRightBinaryTokenCapturingOperator({'.', '/'}),
                        LeftRightUnaryPostfixNospaceOperator({'+o', '', '', '', '*', '', '', ''}),
 
-                       Block(),
+                       Segment(),
                        ParenthesisWithHead(), #head( args ) => (head args)
                        ParenthesisNoHead(),
 

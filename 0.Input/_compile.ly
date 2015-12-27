@@ -1,5 +1,5 @@
-declare function
-    remove(CString)  Int32
-    rename(CString, CString)  Int32
-    renameat(Int32, CString, Int32, CString)  Int32
-    tmpfile()  FILE*
+a b, c:
+  d e
+
+a b, c
+  d e, f
