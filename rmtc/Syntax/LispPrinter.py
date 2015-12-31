@@ -4,15 +4,15 @@ from rmtc.Syntax.Node import Element, Node
 from rmtc.Syntax.PreForm import PreForm
 from rmtc.Syntax.Punctuator import Punctuator
 from rmtc.Syntax.Code import Code
-from rmtc.Syntax.Tuple import Tuple
-from rmtc.Syntax.PreTuple import PreTuple
+from rmtc.Syntax.Seq import Seq
+from rmtc.Syntax.PreSeq import PreSeq
 from rmtc.Syntax.Token import Token
 
 _delimiters = {
                   PreForm:("⟅", "⟆", False),
-                  PreTuple:("⟅", "⟆", True),
+                  PreSeq:("⟅", "⟆", True),
                   Form:("(", ")", False),
-                  Tuple:("(", ")", True),
+                  Seq:("(", ")", True),
                   Punctuator:('⟨', '⟩', False),
                 }
 

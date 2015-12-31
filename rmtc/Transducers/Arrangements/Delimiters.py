@@ -3,7 +3,7 @@ from rmtc.Common.Errors import TokenizingError
 from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Identifier import Identifier
 from rmtc.Syntax.Node import Element
-from rmtc.Syntax.PreTuple import PreTuple
+from rmtc.Syntax.PreSeq import PreSeq
 from rmtc.Syntax.Token import is_token
 from rmtc.Transducers.ArrangementRule import ArrangementRule
 from rmtc.Transducers.Arrangements.Segment import Segment
@@ -104,7 +104,7 @@ class ParenthesisNoHead(ArrangementRule):
 
 
     def _as_tuple(self, element) -> Element:
-        new_tuple_element = element.parent.wrap(element, element.end, PreTuple)
+        new_tuple_element = element.parent.wrap(element, element.end, PreSeq)
         new_tuple = new_tuple_element.code
 
         begin_element = element.next

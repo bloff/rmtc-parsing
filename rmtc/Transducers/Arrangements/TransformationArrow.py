@@ -1,4 +1,4 @@
-from rmtc.Syntax.PreTuple import PreTuple
+from rmtc.Syntax.PreSeq import PreSeq
 from rmtc.Syntax.Form import Form
 from rmtc.Syntax.PreForm import PreForm
 from rmtc.Syntax.Node import Element
@@ -32,16 +32,16 @@ class TransformationArrow(ArrangementRule):
 
     def apply(self, element):
         form = element.parent
-        form.wrap(form.first, element.prev, PreTuple)
+        form.wrap(form.first, element.prev, PreSeq)
         if element.next is not None:
             first_indent = element.next
             while first_indent is not None and not is_token(first_indent, Tokens.INDENT):
                 first_indent = first_indent.next
             if first_indent is not None:
-                new_form = form.wrap(element.next, first_indent, PreTuple).code
+                new_form = form.wrap(element.next, first_indent, PreSeq).code
                 new_form.remove(first_indent)
             else:
-                form.wrap(element.next, form.last, PreTuple)
+                form.wrap(element.next, form.last, PreSeq)
         form.remove(element)
         if isinstance(form, PreForm):
             form.prepend(element)

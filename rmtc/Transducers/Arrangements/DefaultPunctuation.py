@@ -1,7 +1,7 @@
 from rmtc.Common.Errors import ArrangementError
 from rmtc.Syntax.Node import Node, Element
 from rmtc.Syntax.Punctuator import Punctuator
-from rmtc.Syntax.PreTuple import PreTuple
+from rmtc.Syntax.PreSeq import PreSeq
 from rmtc.Syntax.Token import is_token
 import rmtc.Syntax.Tokens as Tokens
 from rmtc.Transducers.ArrangementRule import ArrangementRule
@@ -86,11 +86,11 @@ class DefaultPunctuation(ArrangementRule):
         def finish_groups(last_element_in_group):
             if has_groups:
                 if start_of_group:
-                    new = pnode.wrap(start_of_group, last_element_in_group, PreTuple)
+                    new = pnode.wrap(start_of_group, last_element_in_group, PreSeq)
                 else:
                     new = start_of_group
                 if has_big_groups and start_of_big_group is not None:
-                    pnode.wrap(start_of_big_group, new, PreTuple)
+                    pnode.wrap(start_of_big_group, new, PreSeq)
 
 
         for punctuation_token in punctuation:
@@ -102,7 +102,7 @@ class DefaultPunctuation(ArrangementRule):
                 if start_of_group is punctuation_token:
                     raise ArrangementError(punctuation_token.range.first_position, "Unexpected punctuation '%s'."  % punctuation_token.value)
 
-                new_group = pnode.wrap(start_of_group, punctuation_token.prev, PreTuple)
+                new_group = pnode.wrap(start_of_group, punctuation_token.prev, PreSeq)
                 if first_small_group is None:
                     first_small_group = new_group
                 if start_of_big_group is None:
@@ -117,7 +117,7 @@ class DefaultPunctuation(ArrangementRule):
                 if start_of_big_group:
                     if start_of_big_group is punctuation_token:
                         raise ArrangementError(punctuation_token.range.first_position, "Unexpected punctuation '%s'."  % punctuation_token.value)
-                    new_big_group = pnode.wrap(start_of_big_group, punctuation_token.prev, PreTuple)
+                    new_big_group = pnode.wrap(start_of_big_group, punctuation_token.prev, PreSeq)
                     if first_big_group is None:
                         first_big_group = new_big_group
                 start_of_big_group = None
@@ -137,7 +137,7 @@ class DefaultPunctuation(ArrangementRule):
                     first = first_small_group
                 else:
                     first = first_big_group
-                pnode.wrap(first, punctuation_token.prev, PreTuple)
+                pnode.wrap(first, punctuation_token.prev, PreSeq)
                 start_of_group = punctuation_token.next
                 start_of_big_group = None
 

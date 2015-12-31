@@ -42,7 +42,9 @@ class StringTokenizer(Tokenizer):
         value_first_position = stream.copy_absolute_position()
         while True:
             if stream.next_is_EOF():
-                raise TokenizingError(StreamRange(self.opening_delimiter_position, stream.copy_absolute_position()), "Expected closing string-delimiter «%s», matching opening delimiter «%s» at position %s." % (self.closing_delimiter, self.opening_delimiter, self.opening_delimiter_position.nameless_str))
+                raise TokenizingError(StreamRange(self.opening_delimiter_position, stream.copy_absolute_position()),
+                                      "Expected closing string-delimiter «%s», matching opening delimiter «%s» at position %s." %
+                                      (self.__class__.MY_CLOSING_DELIMITER, self.__class__.MY_OPENING_DELIMITER, self.opening_delimiter_position.nameless_str))
             char = stream.read()
             if char == '\\':
                 if seen_escape: value += '\\'

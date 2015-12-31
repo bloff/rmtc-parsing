@@ -2,8 +2,8 @@ from rmtc.Common.Errors import TokenizingError
 from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Punctuator import Punctuator
 from rmtc.Syntax.Node import Node
-from rmtc.Syntax.Tuple import Tuple
-from rmtc.Syntax.PreTuple import PreTuple
+from rmtc.Syntax.Seq import Seq
+from rmtc.Syntax.PreSeq import PreSeq
 from rmtc.Syntax.PreForm import PreForm
 from rmtc.Transducers.TreeTransducer import TreeTransducer
 
@@ -28,13 +28,13 @@ class ConvertPreforms(TreeTransducer):
                 else:
                     new_form_element = code.wrap(code.first, code.last, Form)
                     node.replace(e, new_form_element)
-            elif isinstance(code, PreTuple):
+            elif isinstance(code, PreSeq):
                 if len(code) == 0:
                     node.remove(e)
                 elif len(code) <= 1:
                     node.replace(e, code.first)
                 else:
-                    code.wrap(code.first, code.last, Tuple)
+                    code.wrap(code.first, code.last, Seq)
                     node.replace(e, code.first)
             elif isinstance(code, Punctuator):
                 raise TokenizingError("Unexpected unprocessed punctuator.")

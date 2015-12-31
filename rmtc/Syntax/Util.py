@@ -5,7 +5,7 @@ from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Identifier import Identifier
 from rmtc.Syntax.Literal import Literal
 from rmtc.Syntax.Node import Element
-from rmtc.Syntax.Tuple import Tuple
+from rmtc.Syntax.Seq import Seq
 
 
 def _identifier_eq(name, semantic_extra, equal_to_name, equal_to_semantic_extra):
@@ -80,7 +80,7 @@ def is_form(
 def is_tuple(code_or_element: Union[Code, Element]) -> bool:
     if code_or_element is None: return False
     code = get_code(code_or_element)
-    return isinstance(code, Tuple)
+    return isinstance(code, Seq)
 
 
 def is_head(element:Element):
