@@ -6,7 +6,7 @@ import sys
 from rmtc.Common.SysArgsParser import SysArgsParser
 from rmtc.Common.Errors import ErrorInPosition
 #from rmtc.Parsers.LycParser import LycParser
-from rmtc.Parsers.AnokyParser import PythonParser
+from rmtc.Parsers.AnokyParser import AnokyParser
 from rmtc.Streams.StringStream import StringStream
 from rmtc.Common.Record import Record
 import rmtc.Syntax.Tokens as Tokens
@@ -57,7 +57,7 @@ def tokenize(options):
         code = open(filename, encoding='utf-8').read()
         stream = StringStream(code)
 
-        parser = PythonParser()
+        parser = AnokyParser()
 
         if 'output' in options:
             output = options.output

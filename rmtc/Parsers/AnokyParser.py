@@ -31,7 +31,7 @@ from rmtc.Transducers.TopDownTreeTransducer import TopDownTreeTransducer
 
 ## READTABLE ##
 
-default_python_readtable = make_readtable( [
+default_readtable = make_readtable( [
 
     [RT.MACRO, ['(', '[', '{' ],
      {'tokenizer': 'DelimiterTokenizer'}],
@@ -106,7 +106,7 @@ default_python_readtable = make_readtable( [
 
 ## TOKENIZERS ##
 
-class PythonDelimiterTokenizer(DelimiterTokenizer):
+class AnokyDelimiterTokenizer(DelimiterTokenizer):
     DELIMITER_PAIRS = { '(' : ')',
                         '[' : ']',
                         '{' : '}'}
@@ -114,11 +114,11 @@ class PythonDelimiterTokenizer(DelimiterTokenizer):
 
 
 
-class PythonSingleQuoteStringTokenizer(StringTokenizer):
+class AnokySingleQuoteStringTokenizer(StringTokenizer):
     MY_OPENING_DELIMITER = "'"
     MY_CLOSING_DELIMITER = "'"
 
-class PythonDoubleQuoteStringTokenizer(StringTokenizer):
+class AnokyDoubleQuoteStringTokenizer(StringTokenizer):
     MY_OPENING_DELIMITER = '"'
     MY_CLOSING_DELIMITER = '"'
 
@@ -133,7 +133,7 @@ class PythonDoubleQuoteStringTokenizer(StringTokenizer):
 
 
 
-class PythonCommentTokenizer(RawCommentTokenizer):
+class AnokyCommentTokenizer(RawCommentTokenizer):
     OPENING_DELIMITER = '#'
 
 
@@ -148,7 +148,7 @@ class PythonCommentTokenizer(RawCommentTokenizer):
 default_python_transducer_chain = None
 
 
-def define_default_python_transducer_chain():
+def define_default_anoky_transducer_chain():
     global default_python_transducer_chain
 
 
@@ -310,7 +310,7 @@ def define_default_python_transducer_chain():
 
 
 
-define_default_python_transducer_chain()
+define_default_anoky_transducer_chain()
 
 
 
@@ -324,24 +324,24 @@ define_default_python_transducer_chain()
 
 
 
-class PythonParser(RMTCParser):
+class AnokyParser(RMTCParser):
 
     def __init__(self):
         RMTCParser.__init__(self, TokenizationContext("PTC"),
-                            default_python_readtable,
+                            default_readtable,
                             IndentationReadtableTokenizer,
                             default_python_transducer_chain)
         self.tokenization_context.set(
             # ..
-            DelimiterTokenizer = PythonDelimiterTokenizer,
-            SingleQuoteStringTokenizer = PythonSingleQuoteStringTokenizer,
-            DoubleQuoteStringTokenizer = PythonDoubleQuoteStringTokenizer,
+            DelimiterTokenizer = AnokyDelimiterTokenizer,
+            SingleQuoteStringTokenizer = AnokySingleQuoteStringTokenizer,
+            DoubleQuoteStringTokenizer = AnokyDoubleQuoteStringTokenizer,
             # TripleSingleQuoteStringTokenizer = PythonTripleSingleQuoteStringTokenizer,
             # TripleDoubleQuoteStringTokenizer = PythonTripleDoubleQuoteStringTokenizer,
-            CommentTokenizer = PythonCommentTokenizer,
+            CommentTokenizer = AnokyCommentTokenizer,
             )
 
-        # For Python we do not make use of DelimitedIdentifiers or non-raw Comments.
+        # For Anoky we do not make use of DelimitedIdentifiers or non-raw Comments.
 
         
 

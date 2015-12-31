@@ -6,7 +6,7 @@ from rmtc.Common.Errors import ErrorInPosition
 from rmtc.Common.Record import Record
 from rmtc.Common.SysArgsParser import SysArgsParser
 #from rmtc.Parsers.LycParser import LycParser
-from rmtc.Parsers.AnokyParser import PythonParser
+from rmtc.Parsers.AnokyParser import AnokyParser
 from rmtc.Streams.FileStream import FileStream
 from rmtc.Syntax.LispPrinter import indented_lisp_printer
 import rmtc.Common.Options as Options
@@ -51,7 +51,7 @@ def parse_args(argv):
 
 
 def arrange(options):
-    parser = PythonParser()
+    parser = AnokyParser()
     try:
         if "filename" not in options:
             print("No filename specified.")

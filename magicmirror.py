@@ -6,12 +6,12 @@ from rmtc.Common.Errors import TokenizingError, ErrorInPosition
 from rmtc.Streams.StreamPosition import StreamPosition
 from rmtc.Streams.StreamRange import StreamRange
 from rmtc.Streams.StringStream import StringStream
-from rmtc.Parsers.LycParser import LycParser
-import Common.Options
+from rmtc.Parsers.AnokyParser import AnokyParser
+import rmtc.Common.Options as Options
 import rmtc.Syntax.Tokens as Tokens
 
 VERBOSE = True
-Common.Options.PRINT_ERRORS_ON_CREATION = True
+Options.PRINT_ERRORS_ON_CREATION = True
 
 port = "5556"
 context = zmq.Context()
@@ -38,17 +38,18 @@ def error(arg0:Union[str, StreamPosition]) -> bytes:
 
 class MagicMirror(object):
     @staticmethod
-    def ping(message):
-        if 'message' in message and message['message'] == 'Magic mirror in my hand, who is the fairest in the land?':
-            return pack(['ping', 'My Queen, you are the fairest in the land.'])
-        else:
+    # ['ping', message ]
+    def ping(message:list) -> list:
+        if len(message) != 2 or message[1] != 'Magic mirror in my hand, who is the fairest in the land?':
             return pack(['ping', 'My Queen, you are the fairest here so true. But Snow White is a thousand times more beautiful than you.'])
+        else:
+            return pack(['ping', 'My Queen, you are the fairest in the land.'])
 
     @staticmethod
     # ['tokenize', file_name:str, file_contents:str, binary=True] -> ['tokenize', token_ranges:list(list(token_code, first_index, index_after))]
     def tokenize(message:list) -> list:
         if not 3 <= len(message) <= 4:
-            return error("Tokenization request format is:\n input: ['tokenize', file_name:str, file_contents:str, binary=False]\n output: ['tokenize', token_ranges:list(list(token_code, first_index, index_after))]")
+            return error("Tokenization request format is:\n input: ['tokenize', file_name:str, file_contents:str, binary=True]\n output: ['tokenize', token_ranges:list(list(token_code, first_index, index_after))]")
         file_name = message[1]
         file_contents = message[2]
         if not isinstance(file_name, str):
@@ -67,7 +68,7 @@ class MagicMirror(object):
 
         stream = StringStream(file_contents, name=file_name)
 
-        parser = LycParser()
+        parser = AnokyParser()
 
         token_ranges = []
         current_index = 0
