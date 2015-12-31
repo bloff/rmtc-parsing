@@ -54,6 +54,27 @@ class Element(object):
     def __setattr__(self, key, item):
         self.__dict__[key] = item
 
+    def update(self, other, **kwargs):
+        self.__dict__.update(other, **kwargs)
+
+    def wipe(self):
+        parent, prev, next, code = self.parent, self.prev, self.next, self.code
+        self.__dict__.clear()
+        self.parent, self.prev, self.next, self.code = parent, prev, next, code
+
+    def expand(self, code:Code):
+        self.wipe()
+        self.code = code
+
+    def detach(self):
+        parent, prev, next, code = self.parent, self.prev, self.next, self.code
+        detached_element = Element(None)
+        detached_element.__dict__ = self.__dict__
+        detached_element.parent, detached_element.prev, detached_element.next, detached_element.code = None, None, None, None
+        self.__dict__ = dict()
+        self.parent, self.prev, self.next, self.code = parent, prev, next, None
+        return detached_element
+
 
     def is_last(self):
         """
