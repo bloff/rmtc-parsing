@@ -73,14 +73,13 @@ class DefaultPunctuation(ArrangementRule):
 
         start_of_group = pnode[punctuator.skip_count]
         if is_token(start_of_group, Tokens.PUNCTUATION):
-            if start_of_group.value != ':':
-                raise ArrangementError(start_of_group.range.first_position, "Unexpected punctuation '%s' at start of argument sequence."  % start_of_group.value)
-            else:
+            if start_of_group.value == ':':
                 seen_colon = True
-                colon = start_of_group
-                start_of_group = colon.next
-                pnode.remove(colon)
-                punctuation.pop(0)
+            punct = start_of_group
+            start_of_group = punct.next
+            pnode.remove(punct)
+            assert punctuation[0] is punct
+            punctuation.pop(0)
 
 
         def finish_groups(last_element_in_group):
