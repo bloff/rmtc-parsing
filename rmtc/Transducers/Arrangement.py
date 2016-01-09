@@ -3,7 +3,7 @@ from rmtc.Syntax.Code import Code
 from rmtc.Syntax.Identifier import Identifier
 from rmtc.Syntax.Node import Node
 from rmtc.Syntax.LispPrinter import lisp_printer
-import rmtc.Common.Options as Options
+from rmtc.Common.Globals import G
 from rmtc.Transducers.ReadDirection import ReadDirection
 
 
@@ -41,7 +41,7 @@ class Arrangement(object):
                 if r.applies(element):
 
                     #region Debug Printing
-                    if Options.PRINT_ARRANGEMENT_OUTPUTS:
+                    if G.Options.PRINT_ARRANGEMENT_OUTPUTS:
                         node.insert(element, Identifier("⋅"))
                         out ="        Arrangement: " + r.name + "\n"
                         out += indent_string("BEFORE:", 12) + "\n"
@@ -53,7 +53,7 @@ class Arrangement(object):
                     nxt = r.apply(element)
 
                     # region Debug Printing
-                    if Options.PRINT_ARRANGEMENT_OUTPUTS:
+                    if G.Options.PRINT_ARRANGEMENT_OUTPUTS:
                         if nxt is None:
                             node.insert(node.last, Identifier("⋅"))
                         else:

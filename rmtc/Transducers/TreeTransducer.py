@@ -1,6 +1,6 @@
 from typing import List
 
-import rmtc.Common.Options as Options
+from rmtc.Common.Globals import G
 from rmtc.Common.StringStuff import indent_string
 from rmtc.Syntax.Code import Code
 from rmtc.Syntax.LispPrinter import indented_lisp_printer
@@ -30,6 +30,6 @@ def apply_transducer_chain(transducer_chain:List[TreeTransducer], form:Code):
     for tt in transducer_chain:
         if isinstance(form, Node) and len(form) > 0:
             tt.transduce(form)
-            if Options.PRINT_TREE_TRANSDUCER_OUTPUTS is True:
-                if Options.PRINT_TREE_TRANSDUCER_OUTPUTS_LIST is None or tt.name in Options.PRINT_TREE_TRANSDUCER_OUTPUTS_LIST:
+            if G.Options.PRINT_TREE_TRANSDUCER_OUTPUTS is True:
+                if G.Options.PRINT_TREE_TRANSDUCER_OUTPUTS_LIST is None or tt.name in G.Options.PRINT_TREE_TRANSDUCER_OUTPUTS_LIST:
                     print(indent_string("After transducer: " + tt.name + "\n" +indented_lisp_printer(form), 4))

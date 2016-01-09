@@ -80,11 +80,18 @@ class Segment(ArrangementRule):
 
             first_begin_after_indentation = indent.next
 
-            # replace indent with comma
-            new_comma = Tokens.PUNCTUATION(None, ",", None, None)
-            new_form.insert(indent, new_comma)
-            punctuation.append(new_comma)
+            # replace indent with comma when there are some elements
+            # between the head and the indent token
+            if indent.prev is not new_form.first:
+                new_comma = Tokens.PUNCTUATION(None, ",", None, None)
+                new_form.insert(indent, new_comma)
+                punctuation.append(new_comma)
+
             new_form.remove(indent)
+
+            # at this point, new_form was transformed like this:
+            # BEGIN head xxx INDENT BEGIN ... END END => head xxx, BEGIN ... END
+            # BEGIN head INDENT BEGIN ... END END => head BEGIN ... END
 
             # remove BEGIN/END pairs of non-indented, non-colon-having segments
             extra_punctuation = Util.explode_list_of_args(first_begin_after_indentation)

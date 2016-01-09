@@ -1,11 +1,11 @@
-from rmtc.Common.Options import PRINT_ERRORS_ON_CREATION
+from rmtc.Common.Globals import G
 
 class ErrorInPosition(Exception):
     name = "Generic Error"
     def __init__(self, range_or_pos, message:str):
         self.message = message
         self.range_or_pos = range_or_pos
-        if PRINT_ERRORS_ON_CREATION:
+        if G.Options.PRINT_ERRORS_ON_CREATION:
             print(self.trace)
 
     @property
