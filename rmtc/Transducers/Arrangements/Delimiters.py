@@ -4,6 +4,7 @@ from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Identifier import Identifier
 from rmtc.Syntax.Node import Element
 from rmtc.Syntax.PreSeq import PreSeq
+from rmtc.Syntax.Punctuator import Punctuator
 from rmtc.Syntax.Token import is_token
 from rmtc.Transducers.ArrangementRule import ArrangementRule
 from rmtc.Transducers.Arrangements.Segment import Segment
@@ -96,25 +97,21 @@ class ParenthesisNoHead(ArrangementRule):
     def apply(self, element) -> Element:
         first_begin = element.next
         assert is_token(first_begin, Tokens.BEGIN)
-        has_colon = any(is_token(p, Tokens.PUNCTUATION, ':') for p in first_begin.punctuation)
-        if has_colon:
-            return self.apply_parenthesis_arrangement.apply(element)
-        else:
-            return self._as_tuple(element)
 
-
-    def _as_tuple(self, element) -> Element:
-        new_tuple_element = element.parent.wrap(element, element.end, PreSeq)
-        new_tuple = new_tuple_element.code
+        new_seq_element = element.parent.wrap(element, element.end, PreSeq)
+        new_seq = new_seq_element.code
 
         begin_element = element.next
-        last_element = new_tuple.last
-        new_tuple.remove(element) # remove BEGIN_MACRO('(')
-        new_tuple.remove(last_element)  # remove END_MACRO(')')
-        if begin_element is last_element: # if we have something like a[] or a{} or so...
-            return new_tuple_element.next
-        else:
-            return Util.join_all_args(new_tuple_element, begin_element, "tuple", 0)
+        last_element = new_seq.last
+        new_seq.remove(element) # remove BEGIN_MACRO('(')
+        new_seq.remove(last_element)  # remove END_MACRO(')')
+        #if begin_element is last_element: # if we have something like a[] or a{} or so...
+        #    return new_tuple_element.next
+        #else:
+        #    return \
+        punctuation = Util.explode_list_of_args(begin_element)
+        punctuator = Punctuator(new_seq_element.code, punctuation, 0)
+        return new_seq_element.parent.replace(new_seq_element, punctuator).next
 
 
 class Delimiters(ArrangementRule):

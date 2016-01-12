@@ -2,6 +2,7 @@ import rmtc.Syntax.Tokens as Tokens
 from rmtc.Common.Errors import ArrangementError
 from rmtc.Syntax.Node import Element
 from rmtc.Syntax.PreForm import PreForm
+from rmtc.Syntax.PreSeq import PreSeq
 from rmtc.Syntax.Punctuator import Punctuator
 from rmtc.Syntax.Token import is_token
 from rmtc.Transducers.ArrangementRule import ArrangementRule
@@ -108,8 +109,52 @@ class Segment(ArrangementRule):
     # b  BEGIN  END  ⟨⟩
     # b  BEGIN  INDENT  END  error
     # out[2].punctuation := in[0].punctuation
-    def _double_indented_segment_apply(self, element) -> Element:
-        # new_form_element = element.parent.wrap(element, element.end, self.wrap_class)
-        # new_form = new_form_element.code
 
-        raise NotImplementedError()
+    def _double_indented_segment_apply(self, begin_token) -> Element:
+        new_form_element = begin_token.parent.wrap(begin_token, begin_token.end, self.wrap_class)
+        new_form = new_form_element.code
+
+        indent0, indent1 = begin_token.indents
+        punctuation = begin_token.punctuation
+
+        first_args_begin = indent0.next
+
+        # replace first INDENT with comma if necessary
+        if indent0.prev is not new_form.first:
+            new_comma = Tokens.PUNCTUATION(None, ",", None, None)
+            new_form.insert(indent0, new_comma)
+            punctuation.append(new_comma)
+
+        new_form.remove(indent0)
+
+
+        # explode the args
+        # (the explode function stops when it hits the second INDENT)
+        args_punctuation = Util.explode_list_of_args(first_args_begin)
+        punctuation.extend(args_punctuation)
+
+
+        # wrap everything after head and before second INDENT in preseq inside a punctuator
+
+        args_block = begin_token.parent.wrap(begin_token.next.next, indent1.prev, PreSeq)
+        punctuator = Punctuator(args_block.code, punctuation, 0)
+        new_form.replace(args_block, punctuator)
+
+        # remove second INDENT
+        new_form.remove(indent1)
+
+        # remove BEGIN and END
+        new_form.remove(new_form.first)
+        new_form.remove(new_form.last)
+
+
+        return new_form_element.next
+
+
+
+
+
+
+
+
+        #raise NotImplementedError()
