@@ -65,18 +65,22 @@ class ParenthesisWithHead(ArrangementRule):
     def applies(self, element):
         return Util.is_opening_delimiter(element, '(') and Util.has_head_element(element)
 
-    def apply(self, element) -> Element:
-        new_form_element = element.parent.wrap(element.prev, element.end, Form)
+    def apply(self, beginmacro_token) -> Element:
+        new_form_element = beginmacro_token.parent.wrap(beginmacro_token.prev, beginmacro_token.end, Form)
         new_form = new_form_element.code
 
-        begin_element = element.next
+        begin_element = beginmacro_token.next
         last_element = new_form.last
-        new_form.remove(element) # remove BEGIN_MACRO('(')
+        new_form.remove(beginmacro_token) # remove BEGIN_MACRO('(')
         new_form.remove(last_element)  # remove END_MACRO(')')
         if begin_element is last_element: # if we have something like a[] or a{} or so...
             return new_form_element.next
         else:
-            return Util.join_all_args(new_form_element, begin_element, "head-prefixed parenthesized form", 1)
+            # return Util.join_all_args(new_form_element, begin_element, "head-prefixed parenthesized form", 1)
+            punctuation = Util.explode_list_of_args(begin_element)
+            punctuator = Punctuator(new_form_element.code, punctuation, 1)
+            return new_form_element.parent.replace(new_form_element, punctuator).next
+
 
 class ParenthesisNoHead(ArrangementRule):
     """
@@ -152,8 +156,10 @@ class Delimiters(ArrangementRule):
         if begin_element is last_element: # if we have something like a[] or a{} or so...
             return new_form_element.next
         else:
-            return Util.join_all_args(new_form_element, begin_element, "head-prefixed parenthesized form", 2 if has_head else 1)
-
+            # return Util.join_all_args(new_form_element, begin_element, "head-prefixed parenthesized form", 2 if has_head else 1)
+            punctuation = Util.explode_list_of_args(begin_element)
+            punctuator = Punctuator(new_form_element.code, punctuation, 2 if has_head else 1)
+            return new_form_element.parent.replace(new_form_element, punctuator).next
 
 
 
