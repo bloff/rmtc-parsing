@@ -31,21 +31,31 @@ class DefaultExpander(Expander):
 
         code = element.code
 
-        # check if any macros apply
-        # ..or only do this for Forms?
 
-        # continue expanding downwards
+        # expand downwards by cases
+
         if isinstance(code, Form):
 
             head = code.first
+            headcode = head.code
 
-            pass
+            # check if any macros apply
+            if headcode in context.macro_table:
+
+                context[headcode].expand(element, context)
+
+            # otherwise expand recursively
+            else:
+
+                for item in code:
+                    context.expand(item)
 
 
         if isinstance(code, Seq):
             # expand all elements in the seq
 
-            pass
+            for item in code:
+                context.expand(item)
 
 
         if isinstance(code, Literal):
@@ -62,3 +72,10 @@ class DefaultExpander(Expander):
 
 
 
+
+
+def expand_macros(code:Node):
+    default_expander = DefaultExpander()
+    c = ExpansionContext(default_expander=default_expander)
+    for item in code:
+        c.expand(item)
