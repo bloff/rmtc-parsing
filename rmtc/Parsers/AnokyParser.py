@@ -25,6 +25,9 @@ from rmtc.Transducers.Arrangements.Strings import Strings
 from rmtc.Transducers.ConvertPreForms import ConvertPreforms
 from rmtc.Transducers.TopDownTreeTransducer import TopDownTreeTransducer
 
+from rmtc.Expansion.ExpansionContext import ExpansionContext
+from rmtc.Expansion.Expander import DefaultExpander
+
 #from rmtc.Transducers.Arrangements.Delimiters import BracketsWithHead
 
 

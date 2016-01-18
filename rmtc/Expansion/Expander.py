@@ -21,7 +21,11 @@ class Expander(object):
 
 
 class DefaultExpander(Expander):
+    """
+    Default macro expander.
 
+
+    """
 
     # split macro application and recursive expansion
     #   into two functions?
@@ -40,9 +44,9 @@ class DefaultExpander(Expander):
             headcode = head.code
 
             # check if any macros apply
-            if headcode in context.macro_table:
+            if headcode.value in context.macro_table:
 
-                context[headcode].expand(element, context)
+                context[headcode.value].expand(element, context)
 
             # otherwise expand recursively
             else:
