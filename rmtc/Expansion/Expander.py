@@ -44,9 +44,10 @@ class DefaultExpander(Expander):
             headcode = head.code
 
             # check if any macros apply
-            if headcode.value in context.macro_table:
 
-                context[headcode.value].expand(element, context)
+            if isinstance(headcode, Identifier) and headcode.name in context.macro_table:
+
+                context.macro_table[headcode.name].expand(element, context)
 
             # otherwise expand recursively
             else:
@@ -69,8 +70,12 @@ class DefaultExpander(Expander):
 
         if isinstance(code, Identifier):
 
-            pass
+            # IDENTIFIER MACROS
+            if code.name in context.id_macro_table:
 
+                idmac = context.id_macro_table[code.name]
+
+                element.parent.replace(element, idmac.expand(element, context))
 
 
 

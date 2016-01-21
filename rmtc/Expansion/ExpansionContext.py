@@ -6,12 +6,17 @@ class ExpansionContext(Context):
     def __init__(self, **kwargs):
         Context.__init__(self, "Macro Expansion Context")
 
-        if "expander" in kwargs:
-            self.set(expander = kwargs["expander"])
+        # JUST PASS ALL KWARGS AT ONCE
+        #for arg in kwargs:
+        self.set(**kwargs)
 
-        # do we need a MacroTable class?
-        if "macro_table" in kwargs:
-            self.set(macro_table = kwargs["macro_table"])
+
+        # if "expander" in kwargs:
+        #     self.set(expander = kwargs["expander"])
+        #
+        # # do we need a MacroTable class?
+        # if "macro_table" in kwargs:
+        #     self.set(macro_table = kwargs["macro_table"])
 
 
 
