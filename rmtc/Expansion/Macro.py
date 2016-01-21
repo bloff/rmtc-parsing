@@ -28,7 +28,7 @@ class Macro(Expander):
 
         To resume expansion downwards (to return control to the default expander,
         essentially) after applying the macro, just call
-         self.context.expander.expand(resume_at_this_node).
+         context.expander.expand(resume_at_this_node).
         """
 
         raise NotImplementedError()
