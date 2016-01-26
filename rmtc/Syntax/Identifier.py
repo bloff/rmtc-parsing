@@ -56,3 +56,8 @@ class Identifier(Code):
                 return r[0], r[1]
 
 
+    def copy(self):
+
+        copy = Identifier(self.full_name,self.range)
+
+        return copy

@@ -12,3 +12,6 @@ class Seq(Node):
     def __str__(self):
         from rmtc.Syntax.LispPrinter import lisp_printer
         return lisp_printer(self)
+
+    def copy(self):
+        return Seq(*[i.code.copy() for i in self])

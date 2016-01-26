@@ -28,3 +28,6 @@ class Literal(Code):
             # FIXME?
             return str(self.value)
 
+
+    def copy(self):
+        return Literal(self.type, self.value, self.range)

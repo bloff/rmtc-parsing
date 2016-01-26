@@ -1,3 +1,4 @@
+from rmtc.Common.Record import Record
 from rmtc.Expansion.ExpansionContext import ExpansionContext
 
 from rmtc.Syntax.Node import Node, Element
@@ -5,6 +6,8 @@ from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Seq import Seq
 from rmtc.Syntax.Literal import Literal
 from rmtc.Syntax.Identifier import Identifier
+
+
 
 
 
@@ -26,6 +29,36 @@ class DefaultExpander(Expander):
 
 
     """
+
+
+    def expand_unit(self, unit:Node, **kwargs):
+
+        from rmtc.Expansion.Macros.Alias import DefAlias
+
+        assert(isinstance(unit, Node))
+        context_root_bindings = Record(
+            default_expander = self,
+            expander = self,
+            macro_table = {"defalias":DefAlias()},
+            id_macro_table = {}
+        )
+        context_root_bindings.update(kwargs)
+        EC = ExpansionContext(**context_root_bindings.__dict__)
+        #unit.cg_context = EC
+        for element in unit:
+            EC.expand(element)
+
+        return EC
+
+
+
+
+
+
+
+
+
+
 
     # split macro application and recursive expansion
     #   into two functions?
@@ -56,26 +89,29 @@ class DefaultExpander(Expander):
                     context.expand(item)
 
 
-        if isinstance(code, Seq):
+        elif isinstance(code, Seq):
             # expand all elements in the seq
 
             for item in code:
+
                 context.expand(item)
 
 
-        if isinstance(code, Literal):
+        elif isinstance(code, Literal):
 
             pass
 
 
-        if isinstance(code, Identifier):
+        elif isinstance(code, Identifier):
 
             # IDENTIFIER MACROS
             if code.name in context.id_macro_table:
 
                 idmac = context.id_macro_table[code.name]
 
-                element.parent.replace(element, idmac.expand(element, context))
+                idmac.expand(element, context)
+
+#                element.parent.replace(element, idmac.expand(element, context))
 
 
 

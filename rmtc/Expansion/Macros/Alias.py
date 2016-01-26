@@ -16,28 +16,35 @@ class Alias(Macro):
 
         # can a code instance evaluate to False?
         #   we want to be able to alias empty-like code to identifiers
-        if id_alias and substitution != None:
+        # if id_alias and substitution != None:
+        #
+        #     self.configure_expand(id_alias, substitution)
 
-            self.configure_expand(id_alias, substitution)
-
-
-
-    def configure_expand(self, id_alias:Identifier, substitution:Code):
-
-
-        def alias_expand(self, element:Element, context:ExpansionContext):
-
-            element.expand(substitution)
-
-            # do we want to continue macro-expanding with
-            #   the freshly substituted code?
-            context.expander.expand(element, context)
-
-
-        self.expand = alias_expand
+        self.substitution = substitution
 
 
 
+
+    def expand(self, element, context):
+
+        element.expand(self.substitution.copy())
+
+        context.expand(element)
+
+
+    # def configure_expand(self, id_alias:Identifier, substitution:Code):
+    #
+    #
+    #     def alias_expand(self, element:Element, context:ExpansionContext):
+    #
+    #         element.expand(substitution)
+    #
+    #         # do we want to continue macro-expanding with
+    #         #   the freshly substituted code?
+    #         context.expander.expand(element, context)
+    #
+    #
+    #     self.expand = alias_expand
 
 
 
@@ -48,7 +55,7 @@ class Alias(Macro):
 
 class DefAlias(Macro):
 
-
+    # (defalias name form)
 
     def expand(self, element:Element, context:ExpansionContext):
 
@@ -58,14 +65,14 @@ class DefAlias(Macro):
         assert isinstance(form, Form) and len(form) == 3
 
         # extract the identifier and replacement code from the form
-        id_alias = form.head.next.code
-        substitution = form.last.code
+        id_alias = form[1].code
+        substitution = form[2].code
 
         # create an Alias instance according to the specified replacement
         alias_macro = Alias(id_alias, substitution)
 
         # add the new macro to the macro table
-        context.macro_table[id_alias.name] = alias_macro
+        context.id_macro_table[id_alias.name] = alias_macro
 
 
 
