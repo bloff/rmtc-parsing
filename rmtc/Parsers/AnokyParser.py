@@ -18,6 +18,7 @@ from rmtc.Transducers.Arrangements.Delimiters import ParenthesisWithHead, Parent
 from rmtc.Transducers.Arrangements.IfElse import InfixIfElse, IfElifElse
 from rmtc.Transducers.Arrangements.LeftRightBinaryOperator import LeftRightBinaryOperator
 from rmtc.Transducers.Arrangements.LeftRightBinaryOperatorTwoSymbols import LeftRightBinaryOperatorTwoSymbols
+from rmtc.Transducers.Arrangements.LeftRightUnaryPrefixNospaceOperator import LeftRightUnaryPrefixNospaceOperator
 from rmtc.Transducers.Arrangements.RightLeftBinaryOperator import RightLeftBinaryOperator
 from rmtc.Transducers.Arrangements.RightLeftUnaryPrefixOperator import RightLeftUnaryPrefixOperator
 from rmtc.Transducers.Arrangements.Segment import Segment
@@ -279,7 +280,13 @@ def define_default_anoky_transducer_chain():
                                                                        '<<=', '>>=',
                                                                        '&=', '^=', '|=' })]))
                                               
-    
+
+    tt_starguments = TopDownTreeTransducer("Prefixed Stars/Doublestars",
+                                           Arrangement([
+                                               LeftRightUnaryPrefixNospaceOperator({'*', '**'})
+                                           ]))
+
+
 
 
     default_python_transducer_chain = [ tt_constituent,
