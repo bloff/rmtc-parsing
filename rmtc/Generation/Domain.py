@@ -1,10 +1,9 @@
 
 
-
-
 StatementDomain = hash('StatementDomain')
 
-ExpressionDomain
+ExpressionDomain = hash('ExpressionDomain')
 
-LValueDomain
+LValueDomain = hash('LValueDomain')
 
+DeletionDomain = hash('DeletionDomain')

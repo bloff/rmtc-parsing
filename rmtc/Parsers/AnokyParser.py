@@ -281,6 +281,7 @@ def define_default_anoky_transducer_chain():
                                                                        '&=', '^=', '|=' })]))
                                               
 
+    # add to transducer chain
     tt_starguments = TopDownTreeTransducer("Prefixed Stars/Doublestars",
                                            Arrangement([
                                                LeftRightUnaryPrefixNospaceOperator({'*', '**'})

@@ -2,6 +2,9 @@ import ast
 
 from rmtc.Generation.GenerationContext import GenerationContext
 from rmtc.Generation.Generator import Generator
+from rmtc.Generation.Domain import StatementDomain as SDom,\
+    ExpressionDomain as ExDom, LValueDomain as LVDom, DeletionDomain as DelDom
+
 from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Identifier import Identifier
 from rmtc.Syntax.Literal import Literal
@@ -13,9 +16,9 @@ from rmtc.Syntax.Seq import Seq
 
 
 def ctx_from_domain(GC:GenerationContext):
-    if GC.domain == 'l':
+    if GC.domain == LVDom:
         return ast.Store()
-    elif GC.domain == 'd':
+    elif GC.domain == DelDom:
         return ast.Del()
     else:
         return ast.Load()
@@ -25,7 +28,10 @@ def ctx_from_domain(GC:GenerationContext):
 
 class SpecialForm(Generator):
 
-    pass
+    HEADTEXT = None
+
+    def generate(self, element:Element, GC:GenerationContext):
+        raise NotImplementedError()
 
 
 
@@ -42,10 +48,10 @@ class BooleanBinaryOp(SpecialForm):
         acode = element.code
         #assert isinstance(acode, Form)
 
-        if acode[0].code.name == "and":
+        if acode[0].code.full_name == "and":
             op = ast.And()
         else:
-            assert acode[0].code.name == "or"
+            assert acode[0].code.full_name == "or"
             op = ast.Or()
 
         juncts_code = []
@@ -74,10 +80,10 @@ class Subscript(SpecialForm):
 
         if isinstance(acode[2].code, Literal):
 
-            if GC.domain == 'l':
+            if GC.domain == LVDom:
                 return ast.Subscript(base_object_code, ast.Index(GC.generate(acode[2])), ast.Store())
 
-            # if GC.domain == 'd'
+            # if GC.domain == DelDom
             # else
 
         #elif slice
@@ -107,11 +113,11 @@ class Assign(SpecialForm):
         if not isinstance(targets, Seq):
             # targets is only one target
 
-            with GC.set(domain='l'):
+            with GC.set(domain=LVDom):
                 target_code = GC.generate(targets)
 
 
-        with GC.set(domain='e'):
+        with GC.set(domain=ExDom):
             expr_code = GC.generate(acode.last)
 
 
@@ -227,7 +233,7 @@ class Def(SpecialForm):
 
                     assert len(param_code) == 3
 
-                    with GC.set(domain='e'):
+                    with GC.set(domain=ExDom):
                         initializer_code = GC.generate(param_code[2])
 
                     assert isinstance(param_code[1].code, Identifier)
@@ -279,7 +285,7 @@ class Def(SpecialForm):
                 # elif isinstance(annotation_code, Literal):
                 #     annotation =
 
-                with GC.set(domain='e'):
+                with GC.set(domain=ExDom):
                     annotation_code = GC.generate(annotation_element)
 
                 # and now the arg itself..
@@ -309,12 +315,12 @@ class Lambda(SpecialForm):
 
     def generate(self, element:Element, GC:GenerationContext):
 
-        assert GC.domain == 'e'
+        assert GC.domain == ExDom
 
         acode = element.code
         #assert len(acode) == 3
 
-        with GC.let(domain='e'):
+        with GC.let(domain=ExDom):
             expression_code = GC.generate(acode[2])
 
 
@@ -358,34 +364,34 @@ class If(SpecialForm):
         # "Check that form is as above"
         #assert
 
-        with GC.let(domain='e'):
+        with GC.let(domain=ExDom):
             condition_code = GC.generate(acode[1])
 
 
         # "make sure we have only 1 body_element in each of the bodies"
-        #if GC.domain == 'e':
+        #if GC.domain == ExDom:
 
 
         body_code = []
-        if GC.domain == 'e':
+        if GC.domain == ExDom:
             body_code.append(GC.generate(acode[2]))
         else:
-            #assert GC.domain == 's'
+            #assert GC.domain == SDom
             nxtelm = acode[3]
             for nxtelm in acode.iterate_from(3):
                 #if nxtelm.code ...
                     break
 
 
-            while (not isinstance(nxtelm.code, Form)) or nxtelm.code[0].code.name not in ['elif','else']:
-                # (nxtelm.code[0].code.name in ['elif', 'else'] if isinstance(nxtelm.code, Form) else True)
+            while (not isinstance(nxtelm.code, Form)) or nxtelm.code[0].code.full_name not in ['elif','else']:
+                # (nxtelm.code[0].code.full_name in ['elif', 'else'] if isinstance(nxtelm.code, Form) else True)
                 body_code.append(GC.generate(nxtelm.code))
                 nxtelm = nxtelm.next
 
 
         #else_code =
 
-        if GC.domain == 'e':
+        if GC.domain == ExDom:
 
             return #ast.IfExp(condition_code, body_code, else_code)
 
@@ -394,7 +400,7 @@ class If(SpecialForm):
             #assert GC.domain == StatementDomain
             #assert GC.domain == StatementDomain()
             #assert isinstance(GC.domain, StatementDomain)
-            assert GC.domain == 's'
+            assert GC.domain == SDom
 
             #return ast.If(condition_code, body_code, else_code)
 
@@ -414,15 +420,15 @@ class Attribute(SpecialForm):
 
         acode = element.code
 
-        with GC.let(domain='e'):
+        with GC.let(domain=ExDom):
             base_object_code = GC.generate(acode[1])
 
-        att_name = acode[2].code.name
+        att_name = acode[2].code.full_name
 
-        if GC.domain == 'l':
+        if GC.domain == LVDom:
             return ast.Attribute(base_object_code, att_name, ast.Store())
 
-        elif GC.domain == 'd':
+        elif GC.domain == DelDom:
             return ast.Attribute(base_object_code, att_name, ast.Del())
 
         else:
@@ -439,7 +445,7 @@ class Return(SpecialForm):
 
     def generate(self, element:Element, GC:GenerationContext):
 
-        assert GC.domain == 's'
+        assert GC.domain == SDom
 
         acode = element.code
 
@@ -449,7 +455,7 @@ class Return(SpecialForm):
         else:
             assert len(acode) == 2
 
-            with GC.let(domain='e'):
+            with GC.let(domain=ExDom):
                 expression_code = GC.generate(acode[1])
 
             return ast.Return(expression_code)
@@ -471,7 +477,7 @@ class Raise(SpecialForm):
         #assert isinstance(acode, Form)
 
         if len(acode) > 1:
-            with GC.let(domain='e'):
+            with GC.let(domain=ExDom):
                 exception_obj_code = GC.generate(acode[1])
 
             return ast.Raise(exception_obj_code)

@@ -2,6 +2,8 @@ import ast
 
 from rmtc.Common.Record import Record
 from rmtc.Generation.GenerationContext import GenerationContext
+from rmtc.Generation.Domain import StatementDomain as SDom,\
+    ExpressionDomain as ExDom, LValueDomain as LVDom, DeletionDomain as DelDom
 
 from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Identifier import Identifier
@@ -27,7 +29,7 @@ class DefaultGenerator(Generator):
 
         context_root_bindings = Record(
             default_generator = self,
-            domain = 's',
+            domain = SDom,
         )
         context_root_bindings.update(kwargs)
 
@@ -53,9 +55,9 @@ class DefaultGenerator(Generator):
             head = acode.first
             headcode = head.code
 
-            if isinstance(headcode, Identifier) and headcode.name in GC.special_forms:
+            if isinstance(headcode, Identifier) and headcode.full_name in GC.special_forms:
 
-                    hcname = headcode.name
+                    hcname = headcode.full_name
 
                     special_form = GC.special_forms[hcname]
 
@@ -80,13 +82,13 @@ class DefaultGenerator(Generator):
             # are seqs ever not tuples
 
             seq_codes = []
-            with GC.let(domain='e'):
+            with GC.let(domain=ExDom):
                 # does var scope extend outside with block?
                 #seq_codes = [GC.generate(e) for e in acode]
                 for e in acode:
                     seq_codes.append(GC.generate(e))
 
-            if GC.domain == 'l':
+            if GC.domain == LVDom:
                 return ast.Tuple(seq_codes, ast.Store())
 
             else:
@@ -107,14 +109,14 @@ class DefaultGenerator(Generator):
 
         if isinstance(acode, Identifier):
 
-            if GC.domain == 'l':
-                return ast.Name(acode.name, ast.Store())
+            if GC.domain == LVDom:
+                return ast.Name(acode.full_name, ast.Store())
 
-            elif GC.domain == 'd':
-                return ast.Name(acode.name, ast.Del())
+            elif GC.domain == DelDom:
+                return ast.Name(acode.full_name, ast.Del())
 
             else:
-                return ast.Name(acode.name, ast.Load())
+                return ast.Name(acode.full_name, ast.Load())
 
 
 
