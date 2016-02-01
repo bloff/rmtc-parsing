@@ -32,8 +32,10 @@ class DefaultGenerator(Generator):
         assert(isinstance(unit, Node))
 
         from rmtc.Generation.SpecialForms.SpecialForms import Assign
+        from rmtc.Generation.SpecialForms.AugAssign import AddAssign
+        #from DefaultSpecialFormsTable import ...
 
-        special_forms = {"=":Assign()}
+        special_forms = {"=":Assign(), "+=":AddAssign()}
 
         context_root_bindings = Record(
             default_generator = self,
@@ -79,13 +81,86 @@ class DefaultGenerator(Generator):
 
             else:
                 # function call
-                raise NotImplementedError()
+                # #(func arg1 arg2 arg3 ...)
 
-                #func_code = GC.generate(headcode[0])
+                func_element = head
+                func_element_code = headcode
 
-                #args_code = [GC.generate(a) for a in headcode[1:]]
 
-                #return ast.Call(func_code, args_code, )
+                with GC.let(domain=ExDom):
+                    func_code = GC.generate(func_element)
+
+
+                if len(acode) > 1:
+                    arg_elements = acode[1:]
+
+
+                args = []
+                keywords = []
+
+                for arg_element in arg_elements:
+                    arg_element_code = arg_element.code
+
+                    if isinstance(arg_element_code, Form):
+                        if isinstance(arg_element_code[0].code, Identifier) \
+                            and arg_element_code[0].code.full_name == '=':
+                            # keyword argument
+
+                            kw_name = arg_element_code[1].code.full_name
+
+                            with GC.let(domain=ExDom):
+                                value_code = GC.generate(arg_element_code[2])
+
+                            keywords.append(ast.keyword(kw_name, value_code))
+
+
+                        elif isinstance(arg_element_code[0].code, Identifier) \
+                            and arg_element_code[0].code.full_name == '*':
+                            # starred argument
+
+                            assert len(arg_element_code) == 2
+                            # verify no other stars already?
+
+                            with GC.let(domain=ExDom):
+                                arg_code = GC.generate(arg_element_code[1])
+
+                            args.append(ast.Starred(arg_code, ast.Load()))
+
+
+
+                        elif isinstance(arg_element_code[0].code, Identifier) \
+                            and arg_element_code[0].code.full_name == '**':
+                            # double starred argument
+
+                            assert len(arg_element_code) == 2
+                            # verify no other dblstars already?
+
+                            with GC.let(domain=ExDom):
+                                arg_code = GC.generate(arg_element_code[1])
+
+                            keywords.append(ast.keyword(None, arg_code))
+
+
+                        else:
+                            # positional argument
+
+                            with GC.let(domain=ExDom):
+                                arg_code = GC.generate(arg_element)
+
+                            args.append(arg_code)
+
+                    else:
+                        # arg_element_code not a Form
+
+                        with GC.let(domain=ExDom):
+                                arg_code = GC.generate(arg_element)
+
+                        args.append(arg_code)
+
+
+
+
+                return ast.Call(func_code, args, keywords)
 
 
 

@@ -74,6 +74,7 @@ def expand(options):
         generator = DefaultGenerator()
         py_module = generator.generate_unit(file_node)
 
+        print("\nGenerated Python code:\n")
         astpp.parseprint(py_module)
 
     except ErrorInPosition as e:

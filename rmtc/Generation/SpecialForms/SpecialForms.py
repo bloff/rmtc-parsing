@@ -81,32 +81,6 @@ class BooleanBinaryOp(SpecialForm):
 
 
 
-class Subscript(SpecialForm):
-
-# #(@[] base_object id_or_seq)  ??
-#
-
-    HEADTEXT = "@[]"
-
-    def generate(self, element:Element, GC:GenerationContext):
-
-        acode = element.code
-
-        with GC.let(domain='e'):
-            base_object_code = GC.generate(acode[1])
-
-        if isinstance(acode[2].code, Literal):
-
-            if GC.domain == LVDom:
-                return ast.Subscript(base_object_code, ast.Index(GC.generate(acode[2])), ast.Store())
-
-            # if GC.domain == DelDom
-            # else
-
-        #elif slice
-
-        #else extslice
-
 
 
 
@@ -219,6 +193,7 @@ class Attribute(SpecialForm):
 # #(. base_object attribute_name)
 
     HEADTEXT = "."
+    LENGTH = 3
 
     def generate(self, element:Element, GC:GenerationContext):
 
@@ -281,30 +256,6 @@ class Raise(SpecialForm):
 #         return ast.Pass()
 
 
-
-
-
-
-
-
-
-
-
-#
-# default_special_forms_table = {
-#     "and" : BooleanBinaryOp(),
-#     "or" : BooleanBinaryOp(),
-#     "@[]" : Subscript(),
-#     "if" : If(),
-#     "." : Attribute(),
-#     "raise" : Raise(),
-#     "pass" : Pass()
-# }
-#
-# default_special_forms_table["or"] = default_special_forms_table["and"]
-#
-#
-# # "+" :
 
 
 

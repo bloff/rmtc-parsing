@@ -84,7 +84,10 @@ default_readtable = make_readtable( [
      ['.',
       '+', '-', '*', '/', '//', '%', '**', '@',
       '&', '^', '<<', '>>', '~',
+      '=',
       '==', '!=', '<', '>', '<=', '>=',
+      '+=', '-=', '*=', '/=', '//=', '%=',
+      '**=', '@=', '|=', '^=', '&=', '<<=', '>>=',
       '->' ], ],
 
     
@@ -294,9 +297,13 @@ def define_default_anoky_transducer_chain():
                                         tt_primary,
                                         #tt_,
                                         #tt_tertiary,
+
+
                                         
                                         tt_punctuation,
                                         # tt_commaoperator,
+
+                                        tt_starguments,
                                         
                                         tt_exponentiation,
                                         tt_multiplication,

@@ -411,7 +411,14 @@ class Node (Code):
             return None
 
         if isinstance(key, slice):
-            raise NotImplementedError()
+            # start, stop, step = slice.start, slice.stop, slice.step
+            # if step is not None:
+            #     raise NotImplementedError()
+
+            ii = key.indices(c)
+            return [self[i] for i in range(*ii)]
+
+            # raise NotImplementedError()
 
         if not isinstance(key, int) or key >= c or key < -c:
             raise IndexError()

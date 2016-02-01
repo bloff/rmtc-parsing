@@ -31,13 +31,10 @@ class AugAssign(SpecialForm):
             target_code = GC.generate(acode[1])
 
         with GC.let(domain=ExDom):
-            augvalue_code = GC.generate([2])
+            augvalue_code = GC.generate(acode[2])
 
 
         return ast.AugAssign(target_code, type(self).OP(), augvalue_code)
-
-        # raise NotImplementedError()
-
 
 
 
@@ -45,27 +42,8 @@ class AugAssign(SpecialForm):
 
 class AddAssign(AugAssign):
 
-# #(+= target expression)
-
     HEADTEXT = "+="
-
     OP = ast.Add
-
-    # def generate(self, element:Element, GC:GenerationContext):
-    #
-    #     acode = element.code
-    #
-    #     assert len(acode) == 3
-    #     #target_element = acode[1]
-    #
-    #     with GC.let(domain=LVDom):
-    #         target_code = GC.generate(acode[1])
-    #
-    #     with GC.let(domain=ExDom):
-    #         expression_code = GC.generate([2])
-    #
-    #     return #ast.AugAssign()
-
 
 
 class SubtractAssign(AugAssign):
