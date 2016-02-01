@@ -1,8 +1,8 @@
 import ast
 
-from rmtc.Generation.Domain import ExpressionDomain
+
 from rmtc.Generation.GenerationContext import GenerationContext
-from rmtc.Generation.SpecialForms import SpecialForm
+from rmtc.Generation.SpecialForms.SpecialForms import SpecialForm
 from rmtc.Syntax.Node import Element
 
 from rmtc.Generation.Domain import StatementDomain as SDom,\

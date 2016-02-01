@@ -1,9 +1,13 @@
 import ast
 
 from rmtc.Common.Record import Record
+
+#from rmtc.Generation.SpecialForms.SpecialForms import *
 from rmtc.Generation.GenerationContext import GenerationContext
 from rmtc.Generation.Domain import StatementDomain as SDom,\
     ExpressionDomain as ExDom, LValueDomain as LVDom, DeletionDomain as DelDom
+
+
 
 from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Identifier import Identifier
@@ -27,13 +31,19 @@ class DefaultGenerator(Generator):
 
         assert(isinstance(unit, Node))
 
+        from rmtc.Generation.SpecialForms.SpecialForms import Assign
+
+        special_forms = {"=":Assign()}
+
         context_root_bindings = Record(
             default_generator = self,
+            generator = self,
             domain = SDom,
+            special_forms = special_forms
         )
         context_root_bindings.update(kwargs)
 
-        GC = GenerationContext.generate(**context_root_bindings.__dict__)
+        GC = GenerationContext(**context_root_bindings.__dict__)
 
         body_nodes = []
         for element in unit:
@@ -61,7 +71,9 @@ class DefaultGenerator(Generator):
 
                     special_form = GC.special_forms[hcname]
 
-                    return special_form.generate(element, GC)
+                    generated_code = special_form.generate(element, GC)
+
+                    return generated_code
 
 
 
@@ -98,10 +110,10 @@ class DefaultGenerator(Generator):
 
         if isinstance(acode, Literal):
 
-            if acode.type == str:
+            if acode.type == "STRING(PLACEHOLDER)":
                 return ast.Str(acode.value)
 
-            elif acode.type in [int, float]:
+            elif acode.type in ["INT(PLACEHOLDER)", ]:
             # .. acode.type is numeric
                 return ast.Num(acode.value)
 
@@ -109,7 +121,17 @@ class DefaultGenerator(Generator):
 
         if isinstance(acode, Identifier):
 
-            if GC.domain == LVDom:
+            if acode.full_name == "True":
+                return ast.NameConstant(True)
+
+            elif acode.full_name == "False":
+                return ast.NameConstant(False)
+
+            elif acode.full_name == "None":
+                return ast.NameConstant(None)
+
+
+            elif GC.domain == LVDom:
                 return ast.Name(acode.full_name, ast.Store())
 
             elif GC.domain == DelDom:
