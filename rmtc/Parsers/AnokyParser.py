@@ -18,6 +18,7 @@ from rmtc.Transducers.Arrangements.Delimiters import ParenthesisWithHead, Parent
 from rmtc.Transducers.Arrangements.IfElse import InfixIfElse, IfElifElse
 from rmtc.Transducers.Arrangements.LeftRightBinaryOperator import LeftRightBinaryOperator
 from rmtc.Transducers.Arrangements.LeftRightBinaryOperatorTwoSymbols import LeftRightBinaryOperatorTwoSymbols
+from rmtc.Transducers.Arrangements.LeftRightNaryOperator import LeftRightNaryOperator
 from rmtc.Transducers.Arrangements.LeftRightUnaryPrefixNospaceOperator import LeftRightUnaryPrefixNospaceOperator
 from rmtc.Transducers.Arrangements.LeftRightUnaryPrefixNospaceTokenCapturingOperator import LeftRightUnaryPrefixNospaceTokenCapturingOperator
 from rmtc.Transducers.Arrangements.RightLeftBinaryOperator import RightLeftBinaryOperator
@@ -256,10 +257,10 @@ def define_default_anoky_transducer_chain():
     
 
     tt_and = TopDownTreeTransducer("And",
-                                   Arrangement([LeftRightBinaryOperator({'and'})]))
+                                   Arrangement([LeftRightNaryOperator({'and'})]))
 
     tt_or = TopDownTreeTransducer("Or",
-                                   Arrangement([LeftRightBinaryOperator({'or'})]))
+                                   Arrangement([LeftRightNaryOperator({'or'})]))
 
 
 

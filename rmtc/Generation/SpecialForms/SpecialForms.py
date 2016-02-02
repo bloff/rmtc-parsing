@@ -49,8 +49,19 @@ class SpecialForm(Generator):
             else:
                 # if range or list
                 assert len(acode) in self.LENGTH
+        if self.DOMAIN:
+            if isinstance(self.DOMAIN, int):
+                assert self.DOMAIN == GC.domain
+            else:
+                # if list or set
+                assert GC.domain in self.DOMAIN
 
 
+    @staticmethod
+    def expr_wrap(code, GC:GenerationContext):
+        if GC.domain == SDom:
+            return ast.Expr(code)
+        return code
 
 
 
@@ -68,6 +79,7 @@ class Assign(SpecialForm):
 
     HEADTEXT = "="
     LENGTH = 3
+    DOMAIN = SDom
 
     def generate(self, element:Element, GC:GenerationContext):
 
@@ -108,6 +120,7 @@ class If(SpecialForm):
 # #(if condition body_element+ (elif condition body_element+)* (else body_element+)?)))
 
     HEADTEXT = "if"
+    DOMAIN = SDom
 
     def generate(self, element:Element, GC:GenerationContext):
 

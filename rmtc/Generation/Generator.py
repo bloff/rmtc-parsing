@@ -157,6 +157,8 @@ class DefaultGenerator(Generator):
 
 
 
+                if GC.domain == SDom:
+                    return ast.Expr(ast.Call(func_code, args, keywords))
 
                 return ast.Call(func_code, args, keywords)
 
@@ -175,6 +177,8 @@ class DefaultGenerator(Generator):
 
             if GC.domain == LVDom:
                 return ast.Tuple(seq_codes, ast.Store())
+
+            # elif GC.domain == SDom:
 
             else:
                 return ast.Tuple(seq_codes, ast.Load())

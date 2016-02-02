@@ -27,7 +27,7 @@ class UnaryOp(SpecialForm):
         with GC.let(domain=ExDom):
             operand_code = GC.generate(operand_element)
 
-        return ast.UnaryOp(self.OP(), operand_code)
+        return self.expr_wrap(ast.UnaryOp(self.OP(), operand_code), GC)
 
 
 class UnaryAddOp(UnaryOp):
@@ -72,7 +72,7 @@ class BinaryOp(SpecialForm):
             left_code = GC.generate(left_element)
             right_code = GC.generate(right_element)
 
-        return ast.BinOp(left_code, self.OP(), right_code)
+        return self.expr_wrap(ast.BinOp(left_code, self.OP(), right_code), GC)
 
 
 class AddOp(BinaryOp):
@@ -176,11 +176,18 @@ class BooleanBinaryOp(SpecialForm):
         #     op = ast.Or()
 
         juncts_code = []
+
         with GC.let(domain=ExDom):
             for e in acode[1:]:
                 juncts_code.append(GC.generate(e))
 
-        return ast.BoolOp(self.OP(), juncts_code)
+        return self.expr_wrap(ast.BoolOp(self.OP(), juncts_code), GC)
+
+        # code = ast.BoolOp(self.OP(), juncts_code)
+
+        # if GC.domain == SDom:
+        #     return ast.Expr(code)
+        # return code
 
 
 

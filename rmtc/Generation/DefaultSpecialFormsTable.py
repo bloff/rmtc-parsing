@@ -49,6 +49,8 @@ default_special_forms_table = {
 
 
     "@[]" : Ct.Subscript(),
+    #"[]": Ct.List(),
+    #"{}" : Ct.Dict(), #or set?
     #"if" : If(),
 
     #"raise" : SF.Raise(),
