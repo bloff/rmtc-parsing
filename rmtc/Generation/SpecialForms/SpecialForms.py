@@ -54,32 +54,6 @@ class SpecialForm(Generator):
 
 
 
-class BooleanBinaryOp(SpecialForm):
-
-# #([and, or] expr0 expr1 additional_exprs+)
-
-    HEADTEXT = ["and", "or"]
-
-    def generate(self, element:Element, GC:GenerationContext):
-
-        acode = element.code
-        #assert isinstance(acode, Form)
-
-        if acode[0].code.full_name == "and":
-            op = ast.And()
-        else:
-            assert acode[0].code.full_name == "or"
-            op = ast.Or()
-
-        juncts_code = []
-        with GC.let(domain='e'):
-            for e in acode[1:]:
-                juncts_code.append(GC.generate(e))
-
-        return ast.BoolOp(op, juncts_code)
-
-
-
 
 
 

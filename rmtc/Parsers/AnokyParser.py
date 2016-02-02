@@ -19,6 +19,7 @@ from rmtc.Transducers.Arrangements.IfElse import InfixIfElse, IfElifElse
 from rmtc.Transducers.Arrangements.LeftRightBinaryOperator import LeftRightBinaryOperator
 from rmtc.Transducers.Arrangements.LeftRightBinaryOperatorTwoSymbols import LeftRightBinaryOperatorTwoSymbols
 from rmtc.Transducers.Arrangements.LeftRightUnaryPrefixNospaceOperator import LeftRightUnaryPrefixNospaceOperator
+from rmtc.Transducers.Arrangements.LeftRightUnaryPrefixNospaceTokenCapturingOperator import LeftRightUnaryPrefixNospaceTokenCapturingOperator
 from rmtc.Transducers.Arrangements.RightLeftBinaryOperator import RightLeftBinaryOperator
 from rmtc.Transducers.Arrangements.RightLeftUnaryPrefixOperator import RightLeftUnaryPrefixOperator
 from rmtc.Transducers.Arrangements.Segment import Segment
@@ -289,6 +290,11 @@ def define_default_anoky_transducer_chain():
                                            Arrangement([
                                                LeftRightUnaryPrefixNospaceOperator({'*', '**'})
                                            ]))
+
+
+    # tt_unaryadd = TopDownTreeTransducer("Unary Plus/Minus",
+    #                                     Arrangement([LeftRightUnaryPrefixNospaceTokenCapturingOperator({'+', '-'})
+    #                                     ]))
 
 
 

@@ -31,11 +31,14 @@ class DefaultGenerator(Generator):
 
         assert(isinstance(unit, Node))
 
-        from rmtc.Generation.SpecialForms.SpecialForms import Assign
+        from rmtc.Generation.SpecialForms.SpecialForms import Assign, \
+            Attribute
         from rmtc.Generation.SpecialForms.AugAssign import AddAssign
+        from rmtc.Generation.SpecialForms.Operation import AddOp
         #from DefaultSpecialFormsTable import ...
 
-        special_forms = {"=":Assign(), "+=":AddAssign()}
+        special_forms = {"=":Assign(), "+=":AddAssign(), ".":Attribute(),
+                         "+":AddOp()}
 
         context_root_bindings = Record(
             default_generator = self,
@@ -84,16 +87,12 @@ class DefaultGenerator(Generator):
                 # #(func arg1 arg2 arg3 ...)
 
                 func_element = head
-                func_element_code = headcode
-
+                #func_element_code = headcode
 
                 with GC.let(domain=ExDom):
                     func_code = GC.generate(func_element)
 
-
-                if len(acode) > 1:
-                    arg_elements = acode[1:]
-
+                arg_elements = acode[1:]
 
                 args = []
                 keywords = []
