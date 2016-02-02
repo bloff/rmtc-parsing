@@ -4,6 +4,7 @@ from rmtc.Generation.SpecialForms.SpecialForms import Assign, Attribute
 import rmtc.Generation.SpecialForms.Operation as Op
 import rmtc.Generation.SpecialForms.AugAssign as Aug
 import rmtc.Generation.SpecialForms.Container as Ct
+import rmtc.Generation.SpecialForms.Function as Fn
 
 
 
@@ -55,6 +56,8 @@ default_special_forms_table = {
 
     #"raise" : SF.Raise(),
     #"pass" : SF.Pass()
+
+    "def" : Fn.Def(),
 }
 
 

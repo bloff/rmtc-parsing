@@ -28,17 +28,21 @@ class Def(SpecialForm):
 #
 #   (* arg)
 #   (** arg)
+#
+#   (type, (* arg))
+#   (type, (** arg))
 
     HEADTEXT = "def"
+    DOMAIN = SDom
 
     def generate(self, element:Element, GC:GenerationContext):
 
 
         acode = element.code
 
-        func_specs = acode[1]
+        func_specs = acode[1].code
 
-        assert isinstance(func_specs[0], Identifier)
+        assert isinstance(func_specs[0].code, Identifier)
 
         function_name = func_specs[0].code.full_name
 
@@ -48,6 +52,7 @@ class Def(SpecialForm):
 
     def generate_arguments(self, *params, GC:GenerationContext):
 
+        poststar = False
 
         argslist = []
         kwonlyargslist = []
@@ -60,27 +65,34 @@ class Def(SpecialForm):
 
             param_code = param_element.code
 
-            if isinstance(param_code, Identifier):
+            if isinstance(param_code, Identifier) and param_code.full_name == '*':
+
+                poststar = True
+
+
+            elif isinstance(param_code, Identifier):
                 # arg
 
-                arg_object = ast.arg(arg=param_code.code.full_name, annotation=None)
+                arg_object = ast.arg(arg=param_code.full_name, annotation=None)
 
-                if self.vararg is not None or self.kwarg is not None:
+                #if self.vararg is not None or self.kwarg is not None:
+                if poststar:
                     # argument is keyword-only
 
                     kwonlyargslist.append(arg_object)
 
                 else:
 
-                    argslist.append(arg_object)
+                    assert not poststar
 
+                    argslist.append(arg_object)
 
 
 
             elif isinstance(param_code, Form):
 
                 #assert isinstance(param_code[0].code, Identifier) and
-                if param_code[0].code.full_name == '=':
+                if param_code[0].full_name == '=':
                     # (= arg initializer)
 
                     assert len(param_code) == 3
@@ -88,8 +100,18 @@ class Def(SpecialForm):
                     with GC.let(domain=ExDom):
                         initializer_code = GC.generate(param_code[2])
 
-                    assert isinstance(param_code[1].code, Identifier)
+                    assert isinstance(param_code[1], Identifier)
+                    arg_object = ast.arg(arg=param_code[1].full_name, annotation=None)
 
+                    if poststar:
+
+                        kwonlyargslist.append(arg_object)
+                        kw_defaults.append(initializer_code)
+
+                    else:
+
+                        argslist.append(arg_object)
+                        defaults.append(initializer_code)
 
 
                 elif param_code[0].code.full_name == '*':
@@ -99,23 +121,28 @@ class Def(SpecialForm):
 
                     starg = ast.arg(arg=param_code[1].code.full_name, annotation=None)
 
-                    assert self.vararg is None
+                    assert vararg is None
 
-                    self.vararg = starg
+                    vararg = starg
+
+                    poststar = True
 
 
 
-                elif param_code[0].code.full_name == '**':
+
+                else:
+                    assert param_code[0].code.full_name == '**'
                     # (** arg)
 
                     #assert isinstance(param_code[1].code, Identifier)
 
                     dblstarg = ast.arg(arg=param_code[1].code.full_name, annotation=None)
 
-                    assert self.kwarg is None
+                    assert kwarg is None
 
-                    self.kwarg = dblstarg
+                    kwarg = dblstarg
 
+                    poststar = True
 
 
 
@@ -142,6 +169,82 @@ class Def(SpecialForm):
 
                 # and now the arg itself..
 
+                param_code = param_code[1].code
+
+                if isinstance(param_code, Identifier):
+
+                    #assert param_code.full_name != '*'
+
+                    arg_object = ast.arg(arg=param_code.full_name, annotation=annotation_code)
+
+                    if poststar:
+
+                        kwonlyargslist.append(arg_object)
+
+                    else:
+
+                        argslist.append(arg_object)
+
+
+                else:
+
+                    assert isinstance(param_code, Form)
+
+                    #assert isinstance(param_code[0].code, Identifier) and
+                    if param_code[0].code.full_name == '=':
+                        # (= arg initializer)
+
+                        assert len(param_code) == 3
+
+                        with GC.let(domain=ExDom):
+                            initializer_code = GC.generate(param_code[2])
+
+                        assert isinstance(param_code[1].code, Identifier)
+                        arg_object = ast.arg(arg=param_code[1].full_name, annotation=annotation_code)
+
+                        if poststar:
+
+                            kwonlyargslist.append(arg_object)
+                            kw_defaults.append(initializer_code)
+
+                        else:
+
+                            argslist.append(arg_object)
+                            defaults.append(initializer_code)
+
+
+
+
+
+                    elif param_code[0].code.full_name == '*':
+                        # (* arg)
+
+                        #assert isinstance(param_code[1].code, Identifier)
+
+                        starg = ast.arg(arg=param_code[1].code.full_name, annotation=annotation_code)
+
+                        assert vararg is None
+
+                        vararg = starg
+
+                        poststar = True
+
+
+
+
+                    else:
+                        assert param_code[0].code.full_name == '**'
+                        # (** arg)
+
+                        #assert isinstance(param_code[1].code, Identifier)
+
+                        dblstarg = ast.arg(arg=param_code[1].code.full_name, annotation=annotation_code)
+
+                        assert kwarg is None
+
+                        kwarg = dblstarg
+
+                        poststar = True
 
 
 
