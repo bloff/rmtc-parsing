@@ -31,14 +31,13 @@ class DefaultGenerator(Generator):
 
         assert(isinstance(unit, Node))
 
-        from rmtc.Generation.SpecialForms.SpecialForms import Assign, \
-            Attribute
-        from rmtc.Generation.SpecialForms.AugAssign import AddAssign
-        from rmtc.Generation.SpecialForms.Operation import AddOp
-        #from DefaultSpecialFormsTable import ...
+        # from rmtc.Generation.SpecialForms.SpecialForms import Assign, \
+        #     Attribute
+        # from rmtc.Generation.SpecialForms.AugAssign import AddAssign
+        # from rmtc.Generation.SpecialForms.Operation import AddOp
+        from rmtc.Generation.DefaultSpecialFormsTable import default_special_forms_table
 
-        special_forms = {"=":Assign(), "+=":AddAssign(), ".":Attribute(),
-                         "+":AddOp()}
+        special_forms = default_special_forms_table
 
         context_root_bindings = Record(
             default_generator = self,
