@@ -72,112 +72,17 @@ class SpecialForm(Generator):
         return code
 
 
-
-
-
-
-
-
-class Assign(SpecialForm):
-
-# #(= target expr)
+##=================================
 #
-# #(= targets+ expr)
-# #(= (targets,+) expr)
-
-    HEADTEXT = "="
-    LENGTH = 3
-    DOMAIN = SDom
-
-    def generate(self, element:Element, GC:GenerationContext):
-
-        self.precheck(element, GC)
-
-        acode = element.code
-
-        targets_element = acode[1]
-        value_element = acode.last
-
-
-        # if not isinstance(targets, Seq):
-        #     # targets is only one target
-        #
-        #     with GC.let(domain=LVDom):
-        #         target_code = GC.generate(targets)
-
-        with GC.let(domain=LVDom):
-            targets_code = GC.generate(targets_element)
-
-        with GC.let(domain=ExDom):
-            value_code = GC.generate(value_element)
-
-
-        return ast.Assign(targets=[targets_code], value=value_code)
-
-
-
-
-
-
-
-
-
-
-class If(SpecialForm):
-
-# #(if condition body_element+ (elif condition body_element+)* (else body_element+)?)))
-
-    HEADTEXT = "if"
-    DOMAIN = SDom
-
-    def generate(self, element:Element, GC:GenerationContext):
-
-        acode = element.code
-
-        # "Check that form is as above"
-        #assert
-
-        with GC.let(domain=ExDom):
-            condition_code = GC.generate(acode[1])
-
-
-        # "make sure we have only 1 body_element in each of the bodies"
-        #if GC.domain == ExDom:
-
-
-        body_code = []
-        if GC.domain == ExDom:
-            body_code.append(GC.generate(acode[2]))
-        else:
-            #assert GC.domain == SDom
-            nxtelm = acode[3]
-            for nxtelm in acode.iterate_from(3):
-                #if nxtelm.code ...
-                    break
-
-
-            while (not isinstance(nxtelm.code, Form)) or nxtelm.code[0].code.full_name not in ['elif','else']:
-                # (nxtelm.code[0].code.full_name in ['elif', 'else'] if isinstance(nxtelm.code, Form) else True)
-                body_code.append(GC.generate(nxtelm.code))
-                nxtelm = nxtelm.next
-
-
-        #else_code =
-
-        if GC.domain == ExDom:
-
-            return #ast.IfExp(condition_code, body_code, else_code)
-
-        else:
-
-            #assert GC.domain == StatementDomain
-            #assert GC.domain == StatementDomain()
-            #assert isinstance(GC.domain, StatementDomain)
-            assert GC.domain == SDom
-
-            #return ast.If(condition_code, body_code, else_code)
-
-
+# import
+#
+# global
+# nonlocal
+#
+# class
+#
+# attribute
+#
 
 
 
@@ -212,43 +117,6 @@ class Attribute(SpecialForm):
 
 
 
-
-
-
-class Raise(SpecialForm):
-
-# #(raise exception?)
-#
-# not implemented yet:
-# "raise ex_obj from cause"?  ==>  ast.Raise(ex_obj, cause)
-
-    HEADTEXT = "raise"
-
-    def generate(self, element:Element, GC:GenerationContext):
-
-        acode = element.code
-        #assert isinstance(acode, Form)
-
-        if len(acode) > 1:
-            with GC.let(domain=ExDom):
-                exception_obj_code = GC.generate(acode[1])
-
-            return ast.Raise(exception_obj_code)
-
-        else:
-            assert len(acode) == 1
-            return ast.Raise(None)
-
-
-
-# class Pass(SpecialForm):
-#
-# # #(pass)
-#
-#     HEADTEXT = "pass"
-#
-#     def generate(self):
-#         return ast.Pass()
 
 
 

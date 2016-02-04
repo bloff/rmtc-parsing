@@ -10,6 +10,59 @@ from rmtc.Generation.Domain import StatementDomain as SDom,\
 
 
 
+
+
+
+class Assign(SpecialForm):
+
+# #(= target expr)
+#
+# #(= targets+ expr)
+# #(= (targets,+) expr)
+
+    HEADTEXT = "="
+    LENGTH = 3
+    DOMAIN = SDom
+
+    def generate(self, element:Element, GC:GenerationContext):
+
+        self.precheck(element, GC)
+
+        acode = element.code
+
+        targets_element = acode[1]
+        value_element = acode.last
+
+
+        # if not isinstance(targets, Seq):
+        #     # targets is only one target
+        #
+        #     with GC.let(domain=LVDom):
+        #         target_code = GC.generate(targets)
+
+        with GC.let(domain=LVDom):
+            targets_code = GC.generate(targets_element)
+
+        with GC.let(domain=ExDom):
+            value_code = GC.generate(value_element)
+
+
+        return ast.Assign(targets=[targets_code], value=value_code)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class AugAssign(SpecialForm):
 
 # #(OP target expression)

@@ -14,6 +14,8 @@ from rmtc.Generation.Domain import StatementDomain as SDom,\
 # lambda
 # call?
 # return
+#
+# yield
 
 
 
@@ -345,3 +347,21 @@ class Return(SpecialForm):
                 expression_code = GC.generate(acode[1])
 
             return ast.Return(expression_code)
+
+
+
+
+
+class Yield(SpecialForm):
+
+    HEADTEXT = "yield"
+    #DOMIN =
+
+
+    def generate(self, element:Element, GC:GenerationContext):
+
+        raise NotImplementedError()
+
+
+
+

@@ -14,9 +14,8 @@ from rmtc.Syntax.Node import Element
 # list, tuple?, dict
 # comprehensions
 # subscription
-
-
-
+#
+# del
 
 
 
@@ -55,3 +54,18 @@ class Subscript(SpecialForm):
 
         #else extslice
 
+
+
+
+
+
+class Delete(SpecialForm):
+
+    HEADTEXT = "del"
+    DOMAIN = SDom
+
+    # (del (seq, to, delete))
+
+    def generate(self, element:Element, GC:GenerationContext):
+
+        raise NotImplementedError()

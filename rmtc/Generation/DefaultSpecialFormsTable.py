@@ -1,15 +1,17 @@
 
 #import rmtc.Generation.SpecialForms.SpecialForms as SF
-from rmtc.Generation.SpecialForms.SpecialForms import Assign, Attribute
+from rmtc.Generation.SpecialForms.SpecialForms import Attribute
 import rmtc.Generation.SpecialForms.Operation as Op
-import rmtc.Generation.SpecialForms.AugAssign as Aug
-import rmtc.Generation.SpecialForms.Container as Ct
+#import rmtc.Generation.SpecialForms.Comparison as Cmp
+import rmtc.Generation.SpecialForms.Assign as As
+import rmtc.Generation.SpecialForms.Container as Cnt
 import rmtc.Generation.SpecialForms.Function as Fn
+import rmtc.Generation.SpecialForms.Control as Ctl
 
 
 
 default_special_forms_table = {
-    "=" : Assign(),
+    "=" : As.Assign(),
     "." : Attribute(),
 
     # "+" : Op.UnaryAddOp(),
@@ -34,22 +36,22 @@ default_special_forms_table = {
     "and" : Op.AndOp(),
     "or" : Op.OrOp(),
 
-    "+=" : Aug.AddAssign(),
-    "-=" : Aug.SubtractAssign(),
-    "*=" : Aug.MultiplyAssign(),
-    "/=" : Aug.DivideAssign(),
-    "//=" : Aug.IntDivideAssign(),
-    "%=" : Aug.ModuloAssign(),
-    "**=" : Aug.PowAssign(),
-    "<<=" : Aug.BitLShiftAssign(),
-    ">>=" : Aug.BitRShiftAssign(),
-    "|=" : Aug.BitOrAssign(),
-    "^=" : Aug.BitXorAssign(),
-    "&=" : Aug.BitAndAssign(),
-    "@=" : Aug.MatMultAssign(),
+    "+=" : As.AddAssign(),
+    "-=" : As.SubtractAssign(),
+    "*=" : As.MultiplyAssign(),
+    "/=" : As.DivideAssign(),
+    "//=" : As.IntDivideAssign(),
+    "%=" : As.ModuloAssign(),
+    "**=" : As.PowAssign(),
+    "<<=" : As.BitLShiftAssign(),
+    ">>=" : As.BitRShiftAssign(),
+    "|=" : As.BitOrAssign(),
+    "^=" : As.BitXorAssign(),
+    "&=" : As.BitAndAssign(),
+    "@=" : As.MatMultAssign(),
 
 
-    "@[]" : Ct.Subscript(),
+    "@[]" : Cnt.Subscript(),
     #"[]": Ct.List(),
     #"{}" : Ct.Dict(), #or set?
     #"if" : If(),
