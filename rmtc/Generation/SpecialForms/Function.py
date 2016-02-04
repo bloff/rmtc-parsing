@@ -48,6 +48,20 @@ class Def(SpecialForm):
 
         arguments = self.generate_arguments(*func_specs[1:], GC=GC)
 
+        body_elements = acode[2:]
+
+        body_code = []
+        with GC.let(domain=SDom):
+            for body_element in body_elements:
+                body_code.append(GC.generate(body_element))
+
+        decorators_code = []
+
+        returns_code = None
+
+        return ast.FunctionDef(function_name, arguments, body_code,
+                               decorators_code, returns_code)
+
 
 
     def generate_arguments(self, *params, GC:GenerationContext):
@@ -92,7 +106,7 @@ class Def(SpecialForm):
             elif isinstance(param_code, Form):
 
                 #assert isinstance(param_code[0].code, Identifier) and
-                if param_code[0].full_name == '=':
+                if param_code[0].code.full_name == '=':
                     # (= arg initializer)
 
                     assert len(param_code) == 3
@@ -100,7 +114,7 @@ class Def(SpecialForm):
                     with GC.let(domain=ExDom):
                         initializer_code = GC.generate(param_code[2])
 
-                    assert isinstance(param_code[1], Identifier)
+                    assert isinstance(param_code[1].code, Identifier)
                     arg_object = ast.arg(arg=param_code[1].full_name, annotation=None)
 
                     if poststar:
@@ -250,7 +264,8 @@ class Def(SpecialForm):
 
 
 
-        return ast.arguments(argslist, vararg, kwonlyargslist, kwarg, defaults, kw_defaults)
+        return ast.arguments(args=argslist, vararg=vararg, kwonlyargs=kwonlyargslist,
+                             kwarg=kwarg, defaults=defaults, kw_defaults=kw_defaults)
 
 
 

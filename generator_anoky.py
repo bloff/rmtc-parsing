@@ -1,5 +1,7 @@
 import sys
 
+import ast
+
 import msgpack
 from rmtc.Common.Errors import ErrorInPosition
 
@@ -19,7 +21,8 @@ def unicode_encoder(obj):
     return (str(obj)+"\n").encode()
 
 def parse_args(argv):
-    options = Record({'verbose': False})
+    options = Record({'verbose': False,
+                      'execute': False},)
     args = SysArgsParser(argv)
     while args.next() is not None:
         arg = args()
@@ -46,6 +49,10 @@ def parse_args(argv):
                 print("Multiple filenames found!")
                 exit(-1)
             options['filename'] = arg
+
+        elif arg == '--execute':
+            options.execute = True
+
         else:
             print("Unexpected option, '%s'" % arg)
             exit(-1)
@@ -77,8 +84,22 @@ def expand(options):
         print("\nGenerated Python code:\n")
         astpp.parseprint(py_module)
 
+        if options.execute:
+
+            ast.fix_missing_locations(py_module)
+
+            compiled_module = compile(py_module,
+                                      filename="<ast>",
+                                      mode="exec")
+
+            exec(compiled_module)
+
+
     except ErrorInPosition as e:
         print(e.trace)
+
+
+
 
 def main():
     options = parse_args(sys.argv)

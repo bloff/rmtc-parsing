@@ -2,7 +2,7 @@ import ast
 
 from rmtc.Common.Record import Record
 
-#from rmtc.Generation.SpecialForms.SpecialForms import *
+
 from rmtc.Generation.GenerationContext import GenerationContext
 from rmtc.Generation.Domain import StatementDomain as SDom,\
     ExpressionDomain as ExDom, LValueDomain as LVDom, DeletionDomain as DelDom
@@ -59,6 +59,8 @@ class DefaultGenerator(Generator):
 
 
     def generate(self, element, GC:GenerationContext):
+
+        from rmtc.Generation.SpecialForms.SpecialForms import expr_wrap
 
         acode = element.code
 
@@ -199,13 +201,13 @@ class DefaultGenerator(Generator):
         if isinstance(acode, Identifier):
 
             if acode.full_name == "True":
-                return ast.NameConstant(True)
+                return expr_wrap(ast.NameConstant(True), GC)
 
             elif acode.full_name == "False":
-                return ast.NameConstant(False)
+                return expr_wrap(ast.NameConstant(False), GC)
 
             elif acode.full_name == "None":
-                return ast.NameConstant(None)
+                return expr_wrap(ast.NameConstant(None), GC)
 
 
             elif GC.domain == LVDom:
@@ -215,7 +217,7 @@ class DefaultGenerator(Generator):
                 return ast.Name(acode.full_name, ast.Del())
 
             else:
-                return ast.Name(acode.full_name, ast.Load())
+                return expr_wrap(ast.Name(acode.full_name, ast.Load()), GC)
 
 
 

@@ -25,7 +25,14 @@ def ctx_from_domain(GC:GenerationContext):
         return ast.Del()
     else:
         return ast.Load()
+
+def expr_wrap(code, GC:GenerationContext):
+    if GC.domain == SDom:
+        return ast.Expr(code)
+    return code
+
 ##=====================
+
 
 
 
@@ -33,6 +40,7 @@ class SpecialForm(Generator):
 
     HEADTEXT = None
     LENGTH = None
+    DOMAIN = None
 
     def generate(self, element:Element, GC:GenerationContext):
         raise NotImplementedError()
