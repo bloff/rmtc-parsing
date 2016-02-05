@@ -14,7 +14,7 @@ class CommentTokenizer(Tokenizer):
     See `<https://bloff.github.io/lyc/2015/10/04/lexer-3.html>`_.
     """
 
-    OPENING_DELIMITER = '#'
+    OPENING_DELIMITER = '##'
     CLOSING_DELIMITER = '◁'
 
     def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):

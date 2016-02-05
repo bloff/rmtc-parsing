@@ -30,7 +30,7 @@ reply = unpack(socket.recv())
 print("Received reply %s" % repr(reply))
 
 
-filename = "_compile.ly"
+filename = "_compile.bf"
 file_contents = open('0.Input/'+filename).read()
 request = {'request':'tokenize', 'file_name':filename, 'file_contents':file_contents}
 print("Sending request %s.", repr(request))

@@ -8,7 +8,7 @@ class LeftRightUnaryPostfixNospaceOperator(ArrangementRule):
     """
     ::
 
-       a X ⋅  ⦅X a⦆ ⋅
+       a X ⋅  ⦅«⋅X» a⦆ ⋅
     """
 
     def __init__(self, sym_vals):

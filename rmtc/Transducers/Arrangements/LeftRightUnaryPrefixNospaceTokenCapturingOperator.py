@@ -12,7 +12,7 @@ class LeftRightUnaryPrefixNospaceTokenCapturingOperator(ArrangementRule):
     """
     ::
 
-       X ⋅ b  ⦅X b⦆ ⋅
+       X ⋅ b  #(«X⋅» b) ⋅
 
     ``b`` can be of the form ``BEGIN  END`` or ``BEGIN_MACRO  END_MACRO``, and it will be captured as a unit.
     """

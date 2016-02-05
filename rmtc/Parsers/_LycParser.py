@@ -61,12 +61,12 @@ default_lyc_readtable = make_readtable([
 
     # [RT.MACRO, 'literate▷\n', {'tokenizer': 'Literate'}],
 
-    [RT.ISOLATED_CONSTITUENT, ['', '', '', '', '',
-               '', '', '', '', '', '', ''],],
+    [RT.ISOLATED_CONSTITUENT, ['<-', '', '', '', '',
+               '->', '', '', '', '', '', ''],],
 
     [RT.PUNCTUATION, [':', ';', ',',]],
 
-    [RT.ISOLATED_CONSTITUENT, ["+o", ".", "", "" "", "", "~", "*", "", "", "", "&", '', "\\", "$", "/", "⫽", # 1st priority
+    [RT.ISOLATED_CONSTITUENT, ["+o", ".", "", "" "", "", "~", "*", "", "", "", "&", '', "\\", "$", "/", "//", # 1st priority
 
                "'", '', '!', '&', '\\@', '~@',
                '', '', '%',
@@ -157,7 +157,7 @@ def define_default_lyc_transducer_chain():
                              Arrangement([
                              #TRF_AssignmentStyleOperator(assignment_symbols),
     #                                            TFR_MarkSpecialOperator(':=', False),
-                                TransformationArrow({'', '', '', '', ''}),
+                                TransformationArrow({'<-', '', '', '', ''}),
                                 ApplyToRest({'return'}),]))
 
 
@@ -195,7 +195,7 @@ def define_default_lyc_transducer_chain():
 
     tt_arrow = TopDownTreeTransducer("Arrows",
                         Arrangement([
-                            RightLeftBinaryOperator({'', '', '', ''})
+                            RightLeftBinaryOperator({'->', '', '', ''})
                         ], ReadDirection.RIGHT_TO_LEFT))
 
     tt_comparison = TopDownTreeTransducer("Comparisons",
@@ -316,40 +316,40 @@ class LycParser(RMTCParser):
     
         readtable default-readtable:
             macro “(” “⦅” “[” “⟦” “{” “⦃” “‘” “⟨”:
-                tokenizer := tokenizers⫽delimiter
+                tokenizer := tokenizers//delimiter
 
             closing::
                 “\”” “)” “⦆” “]” “⟧”
                 “}” “⦄” “◁” “’” “⟩”
 
             macro ““”:
-                tokenizer := tokenizers⫽delimited-symbol
+                tokenizer := tokenizers//delimited-symbol
                 preserve-leading-whitespace
 
             macro “‘”:
-                tokenizer := tokenizers⫽quote
+                tokenizer := tokenizers//quote
 
             macro ““”:
-                tokenizer := tokenizers⫽string
+                tokenizer := tokenizers//string
                 preserve-leading-whitespace
 
             macro “#”:
-                tokenizer := tokenizers⫽comment
+                tokenizer := tokenizers//comment
                 preserve-leading-whitespace
 
             macro “##”:
-                tokenizer := tokenizers⫽raw-comment
+                tokenizer := tokenizers//raw-comment
                 preserve-leading-whitespace
 
             macro “literate▷\n”:
-                tokenizer := tokenizers⫽literate
+                tokenizer := tokenizers//literate
                 
             isolated-constituent::
-                “” “” “” “” “” “”
+                “<-” “” “” “” “” “->”
                 “” “” “” “” “” “”
                 “.” “” ““ “” “” “~”
                 “*” “” “” “” “&” ““, “\\”
-                “$” “/” “⫽”
+                “$” “/” “//”
                 ““” “” “!” “&” “\\@” “~@”
                 “” “” “%”
                 “” “”

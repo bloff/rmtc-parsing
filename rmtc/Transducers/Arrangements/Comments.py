@@ -18,7 +18,7 @@ class RawComment(ArrangementRule):
         ArrangementRule.__init__(self, "Raw Comment")
 
     def applies(self, element):
-        return is_token(element, Tokens.BEGIN_MACRO, token_text="##")
+        return is_token(element, Tokens.BEGIN_MACRO, token_text="#")
 
     def apply(self, element) -> Element:
         parent = element.parent
@@ -40,7 +40,7 @@ class Comment(ArrangementRule):
         ArrangementRule.__init__(self, "Comment")
 
     def applies(self, element):
-        return is_token(element, Tokens.BEGIN_MACRO, token_text="#")
+        return is_token(element, Tokens.BEGIN_MACRO, token_text="##")
 
     def apply(self, element) -> Element:
         assert is_token(element.next, Tokens.COMMENT)

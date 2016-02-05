@@ -10,7 +10,7 @@ class RawCommentTokenizer(Tokenizer):
     Reads comments without interpolated code.
     """
 
-    OPENING_DELIMITER = '##'
+    OPENING_DELIMITER = '#'
 
     def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
         Tokenizer.__init__(self, context)

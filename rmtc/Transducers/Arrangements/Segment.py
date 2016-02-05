@@ -105,9 +105,9 @@ class Segment(ArrangementRule):
         return new_form_element.parent.replace(new_form_element, punctuator).next
 
     # BEGIN h a INDENT $b INDENT c END  ₐ⟅h⟨a⟩ b c⟆ₐ
-    # b  BEGIN a  :  END  ⟅a⟨⟩⟆ₐ
-    # b  BEGIN  END  ⟨⟩
-    # b  BEGIN  INDENT  END  error
+    # b <- BEGIN a  :  END  ⟅a⟨⟩⟆ₐ
+    # b <- BEGIN  END  ⟨⟩
+    # b <- BEGIN  INDENT  END  error
     # out[2].punctuation := in[0].punctuation
 
     def _double_indented_segment_apply(self, begin_token) -> Element:

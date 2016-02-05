@@ -77,7 +77,7 @@ def is_form(
             return False
 
 
-def is_tuple(code_or_element: Union[Code, Element]) -> bool:
+def is_seq(code_or_element: Union[Code, Element]) -> bool:
     if code_or_element is None: return False
     code = get_code(code_or_element)
     return isinstance(code, Seq)

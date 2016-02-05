@@ -8,7 +8,7 @@ class RightLeftUnaryPrefixNospaceOperator(ArrangementRule):
     """
     ::
 
-       ⋅ ⦅X a⦆  ⋅ X a
+       ⋅ ⦅«⋅X» a⦆  ⋅ X a
 
     when there is no space between ``X`` and ``a``.
     """

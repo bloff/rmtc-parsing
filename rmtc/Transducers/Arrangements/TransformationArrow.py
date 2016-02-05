@@ -13,11 +13,11 @@ class TransformationArrow(ArrangementRule):
     """
     ::
 
-          ⋅  INDENT   ⦅ ⟅⟆ ⟅⟆ ⦆ ⋅
+         <- ⋅  INDENT   ⦅<- ⟅⟆ ⟅⟆ ⦆ ⋅
 
-          ⋅   ⦅ ⟅⟆ ⟅⟆⦆ ⋅
+         <- ⋅   ⦅<- ⟅⟆ ⟅⟆⦆ ⋅
 
-          ⋅     ⦅ ⟅⟆⦆ ⋅
+         <- ⋅     ⦅<- ⟅⟆⦆ ⋅
 
     ``⟅⟆`` denote PreTuples.
 

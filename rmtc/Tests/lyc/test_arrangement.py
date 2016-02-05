@@ -67,17 +67,17 @@ class TestArrangement(TestCase):
              d, e, f)
             """,
             r"""
-            (a b c
-             d e f)
+            (a, b, c
+             d, e, f)
             """)
 
 
     def test_arrangement_apply_parenthesis(self):
         self._test_arrangement_equals(
             r"""
-            a ⦅elif ⦆
+            a ^!⦅elif ⦆
             """,
             r"""
-            ⦅a ⦅ ⦅elif ⦆⦆⦆
+            ⦅a ⦅^! ⦅elif ⦆⦆⦆
             """)
 
