@@ -310,12 +310,14 @@ def define_default_anoky_transducer_chain():
                                         tt_punctuation,
                                         # tt_commaoperator,
 
-                                        tt_starguments,
+
                                         
                                         tt_exponentiation,
                                         tt_multiplication,
                                         tt_addition,
-                                        
+
+                                        tt_starguments,
+
                                         tt_bit_shift,
                                         tt_bit_and,
                                         tt_bit_xor,

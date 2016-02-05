@@ -17,6 +17,8 @@ import rmtc.Common.Options as Options
 
 import astpp
 
+from astformatter import ASTFormatter
+
 def unicode_encoder(obj):
     return (str(obj)+"\n").encode()
 
@@ -84,6 +86,9 @@ def expand(options):
         print("\nGenerated Python code:\n")
         astpp.parseprint(py_module)
 
+        print("\n")
+        print(ASTFormatter().format(py_module))
+
         if options.execute:
 
             ast.fix_missing_locations(py_module)
@@ -93,6 +98,8 @@ def expand(options):
                                       mode="exec")
 
             exec(compiled_module)
+
+
 
 
     except ErrorInPosition as e:
