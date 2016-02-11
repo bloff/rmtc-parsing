@@ -62,5 +62,8 @@ default_special_forms_table = {
     "def" : Fn.Def(),
 }
 
+container = Cnt.Container()
 
+default_special_forms_table["{}"] = container
+default_special_forms_table["[]"] = container
 
