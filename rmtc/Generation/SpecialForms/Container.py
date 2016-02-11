@@ -68,9 +68,46 @@ class Container(SpecialForm):
                 and isinstance(acode[1].code[0].code, Identifier) \
                 and acode[1].code[0].code.full_name == "for":
 
-                raise NotImplementedError()
+                for_form = acode[1].code
 
                 # list comprehension
+
+# («[]» (for (in i lst) (f i))) # list compr
+
+
+                in_el = for_form[1]
+                in_el_code = in_el.code
+
+                #with GC.let(domain=ExDom):
+
+                assert isinstance(in_el_code[0].code, Identifier) \
+                    and in_el_code[0].code.full_name == "in"
+
+                target_element = in_el_code[1]
+                iter_element = in_el_code[2]
+
+                with GC.let(domain=LVDom):
+                    target_code = GC.generate(target_element)
+
+                with GC.let(domain=ExDom):
+                    iter_code = GC.generate(iter_element)
+
+
+
+                generators = [ ast.comprehension(target=target_code,
+                                                 iter=iter_code,
+                                                 ifs=[]) ]
+
+
+                to_evaluate_element = for_form[2]
+
+                with GC.let(domain=ExDom):
+
+                    to_evaluate_code = GC.generate(to_evaluate_element)
+
+
+                return ast.ListComp(to_evaluate_code, generators)
+
 
             else:
 
