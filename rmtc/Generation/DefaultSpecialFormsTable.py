@@ -1,6 +1,6 @@
 
 #import rmtc.Generation.SpecialForms.SpecialForms as SF
-from rmtc.Generation.SpecialForms.SpecialForms import Attribute
+from rmtc.Generation.SpecialForms.SpecialForms import Attribute, Class, Global, Nonlocal
 import rmtc.Generation.SpecialForms.Operation as Op
 #import rmtc.Generation.SpecialForms.Comparison as Cmp
 import rmtc.Generation.SpecialForms.Assign as As
@@ -60,6 +60,11 @@ default_special_forms_table = {
     #"pass" : SF.Pass()
 
     "def" : Fn.Def(),
+
+    "global" : Global(),
+    "nonlocal" : Nonlocal(),
+
+    "class" : Class()
 }
 
 container = Cnt.Container()

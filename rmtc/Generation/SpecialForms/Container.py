@@ -111,19 +111,11 @@ class Container(SpecialForm):
 
             else:
 
-                els = []
-
-
-                for el in acode[1:]:
-
-
-                    el_code = GC.generate(el)
-
-                    els.append(el_code)
+                els = self.generate_as_expressions(GC, *acode[1:])
 
                 if GC.domain == LVDom:
                     return ast.List(els, ast.Store())
-                return ast.List(els, ast.Load())
+                return self.expr_wrap(ast.List(els, ast.Load()), GC)
 
 
 
@@ -192,13 +184,7 @@ class Container(SpecialForm):
 
                     #set
 
-                    el_codes = []
-
-                    for item in acode[1:]:
-
-                        item_code = GC.generate(item)
-
-                        el_codes.append(item_code)
+                    el_codes = self.generate_as_expressions(GC, *acode[1:])
 
                     return ast.Set(el_codes)
 
@@ -206,9 +192,27 @@ class Container(SpecialForm):
 
 
 
+    @staticmethod
+    def generate_as_expressions(GC:GenerationContext, *args:Element):
 
-# class List(SpecialForm):
-#
+        expr_codes = []
+
+        with GC.let(domain=ExDom):
+
+            for arg_element in args:
+                expr_codes.append(GC.generate(arg_element))
+
+        return expr_codes
+
+
+
+
+
+
+class List(Container):
+
+    HEADTEXT = "[]"
+
 #     # #([] ...)
 #     #
 #
@@ -218,14 +222,56 @@ class Container(SpecialForm):
 #
 #
 #
-# class Set(SpecialForm):
+
+class Set(Container):
+
+    HEADTEXT = "{}"
 #
 #     def generate(self, element:Element, GC:GenerationContext):
 #
 #         raise NotImplementedError()
 
 
-#class Dict
+class Dict(Container):
+
+    HEADTEXT = "{}"
+
+
+
+
+
+class Comprehension(Container):
+
+    LENGTH = 2
+
+
+
+
+class ListComp(Comprehension):
+
+    HEADTEXT = "[]"
+
+
+class SetComp(Comprehension):
+
+    HEADTEXT = "{}"
+
+
+class DictComp(Comprehension):
+
+    HEADTEXT = "{}"
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -263,12 +309,6 @@ class Subscript(SpecialForm):
         #else extslice
 
 
-
-
-
-def ListComp(SpecialForm):
-
-    raise NotImplementedError()
 
 
 
