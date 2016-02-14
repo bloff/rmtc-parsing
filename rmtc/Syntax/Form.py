@@ -26,3 +26,5 @@ class Form(Node):
         return LispPrinter.lisp_printer(self)
 
 
+    def copy(self):
+        return Form(*[i.code.copy() for i in self])

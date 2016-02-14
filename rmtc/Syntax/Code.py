@@ -26,3 +26,10 @@ class Code(object):
         # #        Lval macros
         # #        etc...
         # self.semi = Record()
+
+
+    def copy(self):
+
+
+
+        raise NotImplementedError()

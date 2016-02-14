@@ -18,12 +18,18 @@ from rmtc.Transducers.Arrangements.Delimiters import ParenthesisWithHead, Parent
 from rmtc.Transducers.Arrangements.IfElse import InfixIfElse, IfElifElse
 from rmtc.Transducers.Arrangements.LeftRightBinaryOperator import LeftRightBinaryOperator
 from rmtc.Transducers.Arrangements.LeftRightBinaryOperatorTwoSymbols import LeftRightBinaryOperatorTwoSymbols
+from rmtc.Transducers.Arrangements.LeftRightNaryOperator import LeftRightNaryOperator
+from rmtc.Transducers.Arrangements.LeftRightUnaryPrefixNospaceOperator import LeftRightUnaryPrefixNospaceOperator
+from rmtc.Transducers.Arrangements.LeftRightUnaryPrefixNospaceTokenCapturingOperator import LeftRightUnaryPrefixNospaceTokenCapturingOperator
 from rmtc.Transducers.Arrangements.RightLeftBinaryOperator import RightLeftBinaryOperator
 from rmtc.Transducers.Arrangements.RightLeftUnaryPrefixOperator import RightLeftUnaryPrefixOperator
 from rmtc.Transducers.Arrangements.Segment import Segment
 from rmtc.Transducers.Arrangements.Strings import Strings
 from rmtc.Transducers.ConvertPreForms import ConvertPreforms
 from rmtc.Transducers.TopDownTreeTransducer import TopDownTreeTransducer
+
+from rmtc.Expansion.ExpansionContext import ExpansionContext
+from rmtc.Expansion.Expander import DefaultExpander
 
 #from rmtc.Transducers.Arrangements.Delimiters import BracketsWithHead
 
@@ -80,7 +86,10 @@ default_readtable = make_readtable( [
      ['.',
       '+', '-', '*', '/', '//', '%', '**', '@',
       '&', '^', '<<', '>>', '~',
+      '=',
       '==', '!=', '<', '>', '<=', '>=',
+      '+=', '-=', '*=', '/=', '//=', '%=',
+      '**=', '@=', '|=', '^=', '&=', '<<=', '>>=',
       '->' ], ],
 
     
@@ -248,10 +257,10 @@ def define_default_anoky_transducer_chain():
     
 
     tt_and = TopDownTreeTransducer("And",
-                                   Arrangement([LeftRightBinaryOperator({'and'})]))
+                                   Arrangement([LeftRightNaryOperator({'and'})]))
 
     tt_or = TopDownTreeTransducer("Or",
-                                   Arrangement([LeftRightBinaryOperator({'or'})]))
+                                   Arrangement([LeftRightNaryOperator({'or'})]))
 
 
 
@@ -276,21 +285,39 @@ def define_default_anoky_transducer_chain():
                                                                        '<<=', '>>=',
                                                                        '&=', '^=', '|=' })]))
                                               
-    
+
+    # add to transducer chain
+    tt_starguments = TopDownTreeTransducer("Prefixed Stars/Doublestars",
+                                           Arrangement([
+                                               LeftRightUnaryPrefixNospaceOperator({'*', '**'})
+                                           ]))
+
+
+    # tt_unaryadd = TopDownTreeTransducer("Unary Plus/Minus",
+    #                                     Arrangement([LeftRightUnaryPrefixNospaceTokenCapturingOperator({'+', '-'})
+    #                                     ]))
+
+
 
 
     default_python_transducer_chain = [ tt_constituent,
                                         tt_primary,
                                         #tt_,
                                         #tt_tertiary,
+
+
                                         
                                         tt_punctuation,
                                         # tt_commaoperator,
+
+
                                         
                                         tt_exponentiation,
                                         tt_multiplication,
                                         tt_addition,
-                                        
+
+                                        tt_starguments,
+
                                         tt_bit_shift,
                                         tt_bit_and,
                                         tt_bit_xor,
