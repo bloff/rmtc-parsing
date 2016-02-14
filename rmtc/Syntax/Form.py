@@ -1,4 +1,4 @@
-from rmtc.Syntax.Node import Node
+from rmtc.Syntax.Node import Node, ElementOperation
 
 
 class Form(Node):
@@ -7,8 +7,8 @@ class Form(Node):
     represents the application of the first element (presumably a function, a
     macro, etc) to the remaining elements.
     """
-    def __init__(self, *children):
-        Node.__init__(self, *children)
+    def __init__(self, *children, new_element=ElementOperation.make_new):
+        Node.__init__(self, *children, new_element=new_element)
 
     @property
     def head(self):

@@ -35,19 +35,6 @@ class Element(object):
             assert isinstance(code_or_element, Element)
             self.code = code_or_element.code
 
-    @staticmethod
-    def _make_new_element(code_or_element, parent=None):
-        if isinstance(code_or_element, Code):
-            return Element(code_or_element, parent)
-        else:
-            assert isinstance(code_or_element, Element)
-            if code_or_element.parent is None:
-                code_or_element.parent = parent
-                return code_or_element
-            else:
-                return Element(code_or_element, parent)
-
-
     def __getattr__(self, item):
         return self.__dict__.get(item, None)
 
@@ -115,6 +102,35 @@ class Element(object):
             return "Element()"
 
 
+class ElementOperation(object):
+    @staticmethod
+    def make_new(code_or_element, parent=None):
+        if isinstance(code_or_element, Code):
+            return Element(code_or_element, parent)
+        else:
+            assert isinstance(code_or_element, Element)
+            if code_or_element.parent is None:
+                code_or_element.parent = parent
+                return code_or_element
+            else:
+                return Element(code_or_element, parent)
+
+    @staticmethod
+    def steal(code_or_element, parent=None):
+        if isinstance(code_or_element, Code):
+            return Element(code_or_element, parent)
+        else:
+            assert isinstance(code_or_element, Element)
+            if code_or_element.parent is not None:
+                code_or_element.parent.remove(code_or_element)
+            code_or_element.parent = parent
+            return code_or_element
+
+    @staticmethod
+    def copy(code_or_element, parent=None):
+        raise NotImplementedError()
+
+
 class NodeIterator(object):
     """
     An iterator over the elements of a node. After iterating over some element,
@@ -151,7 +167,7 @@ class Node (Code):
     # Given a list of elements and/or Code instances, or a sequence of elements and/or Code instances as arguments
     # creates a node whose elements have the given code instances, and the code instances of the given elements;
     # e.g., Node(1, 2, elm) has elements: Element.make(1), Element.make(2), Element.make(elm.value)
-    def __init__(self, *children):
+    def __init__(self, *children, new_element=ElementOperation.make_new):
         super(Node, self).__init__()
         if len(children) == 1 and isinstance(children[0], list):
             children = children[0]
@@ -165,11 +181,12 @@ class Node (Code):
 
         if len(children) > 0:
             assert isinstance(children[0], Code) or isinstance(children[0], Element)
-            current = self.first = Element._make_new_element(children[0], self)
+            current = self.first = new_element(children[0], self)
+
             self.range.update(current.code.range)
             for child in children[1:]:
                 assert isinstance(child, Code) or isinstance(child, Element)
-                current.next = Element._make_new_element(child, self)
+                current.next = new_element(child, self)
                 current.next.prev = current
                 current = current.next
                 self.range.update(current.code.range)
@@ -183,18 +200,22 @@ class Node (Code):
             node.parent = node.next = node.prev = None
         self.first = self.last = None
 
-    def prepend(self, child:Union[Code,Element]):
+    def prepend(self, child:Union[Code,Element], new_element=ElementOperation.make_new):
         """
         Adds an element to the beginning of this node.
 
+
         :param child: A Code or an Element to be inserted. If ``child`` is an Element whose ``parent`` field is ``None``,
           the element will be changed to have this node as its parent.
+
+        :param steal: Whether, if given an element that already has a parent, we remove the element from the current parent ("steal"), or create a new element.
 
         :type child: Code or Element
 
         """
         assert isinstance(child, Code) or isinstance(child, Element)
-        element = Element._make_new_element(child, self)
+
+        element = new_element(child, self)
         self.range.update(element.range)
         if self.first is None:
             self.first = self.last = element
@@ -203,7 +224,7 @@ class Node (Code):
             element.next = self.first
             self.first = element
 
-    def append(self, child):
+    def append(self, child, new_element=ElementOperation.make_new):
         """
         Adds an element to the end of this node.
 
@@ -214,7 +235,7 @@ class Node (Code):
 
         """
         assert isinstance(child, Code) or isinstance(child, Element)
-        element = Element._make_new_element(child, self)
+        element = new_element(child, self)
         self.range.update(element.range)
         if self.first is None:
             self.first = self.last = element
@@ -223,7 +244,7 @@ class Node (Code):
             element.prev = self.last
             self.last = element
 
-    def insert(self, after_this:Element, child):
+    def insert(self, after_this:Element, child, new_element=ElementOperation.make_new):
         """
         Inserts a new element after a given element of this node.
 
@@ -244,7 +265,7 @@ class Node (Code):
             self.append(child)
         else:
             assert after_this.parent is self
-            element = Element._make_new_element(child, self)
+            element = new_element(child, self)
             self.range.update(element.range)
             element.next = after_this.next
             element.prev = after_this
@@ -273,7 +294,7 @@ class Node (Code):
         else: element.next.prev = element.prev
         element.parent = element.next = element.prev = None
 
-    def replace(self, element, new_child):
+    def replace(self, element, new_child, new_element=ElementOperation.make_new):
         """
         Replacesa given element of this node with a new element.
 
@@ -291,7 +312,7 @@ class Node (Code):
         assert isinstance(element, Element)
         assert element.parent is self
         assert isinstance(new_child, Code) or isinstance(new_child, Element)
-        new_element = Element._make_new_element(new_child, self)
+        new_element = new_element(new_child, self)
         self.range.update(new_element.range)
         new_element.next = element.next
         new_element.prev = element.prev
