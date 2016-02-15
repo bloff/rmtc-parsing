@@ -59,6 +59,8 @@ default_special_forms_table = {
     #"raise" : SF.Raise(),
     #"pass" : SF.Pass()
 
+    "with" : Ctl.With(),
+
     "def" : Fn.Def(),
 
     "global" : Global(),

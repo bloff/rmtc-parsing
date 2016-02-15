@@ -7,6 +7,7 @@ from rmtc.Generation.Domain import StatementDomain as SDom,\
     ExpressionDomain as ExDom, LValueDomain as LVDom, DeletionDomain as DelDom
 
 from rmtc.Syntax.Form import Form
+from rmtc.Syntax.Identifier import Identifier
 from rmtc.Syntax.Node import Element
 
 
@@ -199,7 +200,69 @@ class With(SpecialForm):
     HEADTEXT = "with"
     DOMAIN = SDom
 
+    # (with ((f) (as x y)) body+
 
     def generate(self, element:Element, GC:GenerationContext):
 
-        raise NotImplementedError()
+        acode = element.code
+
+        context_element = acode[1]
+        context_element_code = context_element.code
+        assert len(context_element_code) > 0
+
+        with_items = []
+
+        with GC.let(domain=ExDom):
+
+            for ctxel in context_element_code:
+
+
+                if isinstance(ctxel.code, Form) \
+                    and isinstance(ctxel.code[0], Identifier) \
+                    and ctxel.code[0].full_name == "as":
+
+                    ctxelcode = ctxel.code
+
+                    assert len(ctxel) == 3
+                    ctx_expr = GC.generate(ctxelcode[1])
+
+                    opt_var = GC.generate(ctxelcode[2])
+
+                    with_items.append(ast.withitem(context_expr=ctx_expr,
+                                                   optional_vars=opt_var))
+
+                else:
+
+                    ctx_expr = GC.generate(ctxel)
+
+                    with_items.append(ast.withitem(context_expr=ctx_expr,
+                                                   optional_vars=None))
+
+            body_items = []
+
+            with GC.let(domain=SDom):
+
+                for bodyel in acode[2:]:
+
+                    body_items.append(GC.generate(bodyel))
+
+
+        return ast.With(items=with_items,
+                        body=body_items)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
