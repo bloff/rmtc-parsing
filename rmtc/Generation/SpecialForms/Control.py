@@ -98,10 +98,23 @@ class While(SpecialForm):
     HEADTEXT = "while"
     DOMAIN = SDom
 
+    # (while testexpr body_statement+ (else ...)?)
 
     def generate(self, element:Element, GC:GenerationContext):
 
         raise NotImplementedError()
+
+        # acode = element.code
+        #
+        # testexpr_element = acode[1]
+        #
+        # with GC.let(domain=ExDom):
+        #
+        #     testexpr_code = GC.generate(testexpr_element)
+        #
+        #
+        #
+        # body_items
 
 
 
@@ -111,11 +124,23 @@ class For(SpecialForm):
     HEADTEXT = "for"
     DOMAIN = SDom
 
-    # (for (ids, iterable) expr+ (else ...)? )
+    # (for (ids, iterable) statement+ (else ...)? )
 
     def generate(self, element:Element, GC:GenerationContext):
 
         raise NotImplementedError()
+
+        #acode = element.code
+
+
+
+
+
+        #return ast.For(target=
+        #               iter=
+        #               body=
+        #               orelse=
+        #               )
 
 
 
