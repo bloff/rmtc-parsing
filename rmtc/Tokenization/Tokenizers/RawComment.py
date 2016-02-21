@@ -25,6 +25,7 @@ class RawCommentTokenizer(Tokenizer):
     def run(self):
         stream = self.context.stream
 
+        stream.push()
         opening_comment_token = Tokens.BEGIN_MACRO(self.__class__.OPENING_DELIMITER, self.opening_delimiter_position, self.opening_delimiter_position_after)
         yield opening_comment_token
 
@@ -35,5 +36,6 @@ class RawCommentTokenizer(Tokenizer):
                 yield Tokens.COMMENT(value, value_first_position, stream.copy_absolute_position())
                 yield Tokens.END_MACRO(opening_comment_token, "", stream.copy_absolute_position(), stream.copy_absolute_position())
                 return
-            stream.read()
+            value += stream.read()
 
+        stream.pop()

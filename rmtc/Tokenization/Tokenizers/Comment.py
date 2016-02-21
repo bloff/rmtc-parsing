@@ -31,6 +31,9 @@ class CommentTokenizer(Tokenizer):
 
     def run(self):
         stream = self.context.stream
+
+        stream.push()
+
         seen_escape = False
 
         opening_comment_token = Tokens.BEGIN_MACRO(self.__class__.OPENING_DELIMITER, self.opening_delimiter_position, self.opening_delimiter_position_after)
@@ -66,6 +69,7 @@ class CommentTokenizer(Tokenizer):
                         value = ""
                         value_first_position = stream.copy_absolute_position()
                     else: value += char
+        stream.pop()
 
     def escape(self):
         stream = self.context.stream

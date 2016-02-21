@@ -4,6 +4,7 @@ from rmtc.Streams.StreamRange import StreamRange
 from rmtc.Tokenization import TokenizationContext
 from rmtc.Tokenization.Tokenizer import Tokenizer
 import rmtc.Syntax.Tokens as Tokens
+from rmtc.Tokenization.Tokenizers.Util import skip_white_lines
 
 
 class DelimiterTokenizer(Tokenizer):
@@ -31,8 +32,20 @@ class DelimiterTokenizer(Tokenizer):
 
     def run(self):
         stream = self.context.stream
+        readtable = self.context.readtable
+
         opening_delimiter_token = Tokens.BEGIN_MACRO(self.opening_delimiter, self.opening_delimiter_position, self.opening_delimiter_position_after)
         yield opening_delimiter_token
+
+        skip_white_lines(stream, readtable)
+        col_of_first_non_whitespace = stream.visual_column
+        if stream.next_is_EOF():
+            raise TokenizingError(stream.copy_absolute_position(), "No characters found after opening delimiter '%s'." % self.opening_delimiter)
+        if col_of_first_non_whitespace < 1:
+            raise TokenizingError(stream.copy_absolute_position(), "Indentation too small after opening delimiter '%s'." % self.opening_delimiter)
+
+        stream.push()
+
 
         tokenizer = self.context.DefaultTokenizer(self.context)
         for token in tokenizer.run():
@@ -52,3 +65,6 @@ class DelimiterTokenizer(Tokenizer):
 
         closing_delimiter_token = Tokens.END_MACRO(opening_delimiter_token, cdem, cdem_position, stream.copy_absolute_position())
         yield closing_delimiter_token
+
+
+        stream.pop()
