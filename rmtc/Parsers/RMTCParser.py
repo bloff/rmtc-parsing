@@ -6,8 +6,9 @@ from rmtc.Streams.StreamPosition import StreamPosition
 from rmtc.Streams.StringStream import StringStream
 from rmtc.Syntax.Node import Node
 from rmtc.Tokenization.Readtable import RT
+from rmtc.Tokenization.Tokenizers.Util import print_tokens
 from rmtc.Transducers.TreeTransducer import apply_transducer_chain
-
+from rmtc.Common.Globals import G
 
 class RMTCParser(object):
 
@@ -83,5 +84,6 @@ class RMTCParser(object):
 
     def parse(self, code_or_stream:Union[str, CharacterStream]) -> Node:
         code_node = self.tokenize_into_node(code_or_stream)
+        if G.Options.PRINT_TOKENS: print_tokens(code_node)
         apply_transducer_chain(self.transducer_chain, code_node)
         return code_node
