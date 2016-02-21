@@ -24,6 +24,20 @@ class CharacterStream(object):
         """
         raise NotImplementedError()
 
+    def readn(self, n:int=1) -> str:
+        """
+        Reads n characters from the stream.
+        :return: The character that was read.
+        """
+        ret = ""
+        while n > 0:
+            if self.next_is_EOF():
+                return None
+            ret += self.read()
+            n -= 1
+        return ret
+
+
     def unread(self, n:int = 1) -> str:
         """
         Unreads a character from a stream.
