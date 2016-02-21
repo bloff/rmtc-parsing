@@ -14,7 +14,7 @@ class Token(Element):
 
     def __str__(self):
         s = "Token: %s, range=(%s‥%s)" % (self.type, repr(self.range.first_position.values), repr(self.range.position_after.values))
-        if hasattr(self, 'value'):
+        if hasattr(self, 'value') and self.value is not None:
             if isinstance(self.value, str): r = repr(self.value)[1:-1]
             else: r = self.value
             s += ', value=“%s”' % r
