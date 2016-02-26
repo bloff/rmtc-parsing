@@ -67,13 +67,16 @@ class Segment(ArrangementRule):
         new_form = new_form_element.code
 
         indent  = begin_token.indents[0]
-        punctuation = begin_token.punctuation
+        # punctuation = begin_token.punctuation
+
+        has_colon = begin_token.find_punctuation(':', indent) is not None
 
         new_form.remove(new_form.first) # remove BEGIN
         new_form.remove(new_form.last)  # remove END
 
 
-        has_colon = any(is_token(p, Tokens.PUNCTUATION, ':') for p in punctuation)
+
+
 
         if not has_colon: # If the segment does not have a colon, then we are in list-of-args mode
             # In list-of-args mode, we replace every newline with a comma, and "open-up"
@@ -86,7 +89,6 @@ class Segment(ArrangementRule):
             if indent.prev is not new_form.first:
                 new_comma = Tokens.PUNCTUATION(None, ",", None, None)
                 new_form.insert(indent, new_comma)
-                punctuation.append(new_comma)
 
             new_form.remove(indent)
 
@@ -95,12 +97,11 @@ class Segment(ArrangementRule):
             # BEGIN head INDENT BEGIN ... END END => head BEGIN ... END
 
             # remove BEGIN/END pairs of non-indented, non-colon-having segments
-            extra_punctuation = Util.explode_list_of_args(first_begin_after_indentation)
-            punctuation.extend(extra_punctuation)
+            Util.explode_list_of_args(first_begin_after_indentation)
 
-            punctuator = Punctuator(new_form_element.code, punctuation, 1)
+            punctuator = Punctuator(new_form_element.code, None, 1)
         else: # otherwise, we are in list-of-forms mode
-            punctuator = Punctuator(new_form_element.code, punctuation, 1, indent)
+            punctuator = Punctuator(new_form_element.code, None, 1, indent)
 
         return new_form_element.parent.replace(new_form_element, punctuator).next
 
@@ -115,29 +116,29 @@ class Segment(ArrangementRule):
         new_form = new_form_element.code
 
         indent0, indent1 = begin_token.indents
-        punctuation = begin_token.punctuation
 
         first_args_begin = indent0.next
 
-        # replace first INDENT with comma if necessary
-        if indent0.prev is not new_form.first:
-            new_comma = Tokens.PUNCTUATION(None, ",", None, None)
-            new_form.insert(indent0, new_comma)
-            punctuation.append(new_comma)
+        colon = begin_token.find_punctuation(':', indent0)
+        if colon is not None:
+            raise ArrangementError(colon.range.first_position, "Dual indented segment cannot have ':' in its first line.")
 
+
+        # replace first INDENT with ARGBREAK
+        new_break = Tokens.ARGBREAK()
+        new_form.insert(indent0, new_break)
         new_form.remove(indent0)
 
 
         # explode the args
         # (the explode function stops when it hits the second INDENT)
-        args_punctuation = Util.explode_list_of_args(first_args_begin)
-        punctuation.extend(args_punctuation)
+        Util.explode_list_of_args(first_args_begin)
 
 
         # wrap everything after head and before second INDENT in preseq inside a punctuator
 
         args_block = begin_token.parent.wrap(begin_token.next.next, indent1.prev, PreSeq)
-        punctuator = Punctuator(args_block.code, punctuation, 0)
+        punctuator = Punctuator(args_block.code, None, 0)
         new_form.replace(args_block, punctuator)
 
         # remove second INDENT

@@ -2,7 +2,7 @@ from enum import Enum
 
 from rmtc.Streams.StreamPosition import StreamPosition
 from rmtc.Streams.StreamRange import StreamRange
-from rmtc.Syntax.Token import Token
+from rmtc.Syntax.Token import Token, is_token
 
 
 class _TokenTypes(Enum):
@@ -30,14 +30,23 @@ class BEGIN(Token):
         """The corresponding END token."""
         self.indents = []
         """A list of INDENT (indentation) tokens for this block of code."""
-        self.punctuation = []
-        """A list containing PUNCTUATION tokens appearing in the segment's first line."""
 
     def add_indent(self, indent):
         self.indents.append(indent)
 
-    def add_punctuation(self, punctuation_token):
-        self.punctuation.append(punctuation_token)
+    def find_punctuation(self, value, before=None):
+        if before is None: before = self.end
+        punct = None
+        elm = self.next
+        while elm is not None and elm is not before:
+            if is_token(elm, PUNCTUATION, ':'):
+                punct = elm
+                break
+            elm = elm.next
+        return punct
+
+    # def add_punctuation(self, punctuation_token):
+    #     self.punctuation.append(punctuation_token)
 
 
 class END(Token):
@@ -68,8 +77,21 @@ class PUNCTUATION(Token):
         Token.__init__(self, _TokenTypes.PUNCTUATION, StreamRange(first_position, position_after))
         self.begin = begin_token
         self.value = value
-        if isinstance(begin_token, BEGIN):
-            begin_token.add_punctuation(self)
+
+    def print(self):
+        return "'%s'" % self.value
+
+
+class ARGBREAK(PUNCTUATION):
+    """
+    A generated punctuation token meant to denote an argument break.
+    """
+    def __init__(self):
+        PUNCTUATION.__init__(self, None, None, None, None)
+
+    def print(self):
+        return "ARGBREAK"
+
 
 
 class CONSTITUENT(Token):

@@ -114,29 +114,23 @@ def explode_list_of_args(first_begin_token):
     node = first_begin_token.parent
     begin_token = first_begin_token
 
-    punctuation = []
     while is_token(begin_token, Tokens.BEGIN):
         assert begin_token.end is not None
         end_token = begin_token.end
         assert is_token(end_token, Tokens.END)
         after_end = end_token.next
-        has_colon = any(is_token(p, Tokens.PUNCTUATION, ':') for p in begin_token.punctuation)
+        make_preform = len(begin_token.indents) > 0 or begin_token.find_punctuation(':')
 
-        if len(begin_token.indents) == 0 and not has_colon: # if there is no INDENT token and no colons
-            punctuation.extend(begin_token.punctuation)
-            if not is_token(end_token.prev, Tokens.PUNCTUATION, ","):
-                new_comma = Tokens.PUNCTUATION(None, ",", None, None)
-                node.insert(end_token.prev, new_comma)
-                punctuation.append(new_comma)
+        if not make_preform: # if there is no INDENT token and no colons
+            arg_break = Tokens.ARGBREAK()
+            node.insert(end_token.prev, arg_break)
             node.remove(begin_token)
             node.remove(end_token)
         else:
-            new_comma = Tokens.PUNCTUATION(None, ",", None, None)
-            node.insert(end_token, new_comma)
-            punctuation.append(new_comma)
+            arg_break = Tokens.ARGBREAK()
+            node.insert(end_token, arg_break)
         begin_token = after_end
 
-    return punctuation
 
 
 def element_after(element) -> Element:

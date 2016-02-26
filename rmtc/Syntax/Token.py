@@ -37,6 +37,9 @@ class Token(Element):
     def range(self, value):
         self._range = value
 
+    def print(self):
+        return self.type.name
+
 
 def is_token(obj, token_type=None, token_value=None, token_text=None):
     """

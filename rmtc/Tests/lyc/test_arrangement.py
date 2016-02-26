@@ -4,6 +4,7 @@ from rmtc.Common.Errors import ArrangementError
 from rmtc.Parsers._LycParser import LycParser
 from rmtc.Syntax.Code import Code
 from rmtc.Syntax.Identifier import Identifier
+from rmtc.Syntax.LispPrinter import lisp_printer
 from rmtc.Syntax.Literal import Literal
 from rmtc.Syntax.Node import Node
 
@@ -39,7 +40,7 @@ class TestArrangement(TestCase):
     def _test_arrangement_equals(self, code:str, lisp_form:str):
         code1 = lyc_parser.parse(code)
         code2 = lyc_parser.parse(lisp_form)
-        self.assertTrue(self._code_equals(code1, code2))
+        self.assertTrue(self._code_equals(code1, code2), msg="Code '%s' != '%s'" %(lisp_printer(code1), lisp_printer(code2)))
 
     def test_bad_punct_1(self):
         self.assertRaises(ArrangementError, arrange, ", a")
@@ -58,7 +59,7 @@ class TestArrangement(TestCase):
 
 
     def test_arrangement_equals_1(self):
-        self._test_arrangement_equals("a b, c; d", "⦅a (b c) d⦆")
+        self._test_arrangement_equals("a b c, d", "⦅a (b c) d⦆")
 
     def test_arrangement_equals_2(self):
         self._test_arrangement_equals(
@@ -75,9 +76,9 @@ class TestArrangement(TestCase):
     def test_arrangement_apply_parenthesis(self):
         self._test_arrangement_equals(
             r"""
-            a ^!⦅elif ⦆
+            a !⦅elif ...⦆
             """,
             r"""
-            ⦅a ⦅^! ⦅elif ⦆⦆⦆
+            ⦅a ⦅! ⦅elif ...⦆⦆⦆
             """)
 

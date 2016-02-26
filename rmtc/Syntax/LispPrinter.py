@@ -26,13 +26,7 @@ def lisp_printer(code_or_element) -> str:
         if code_or_element.code is not None:
             return lisp_printer(code_or_element.code)
         else:
-            ret = code_or_element.type.name
-            if hasattr(code_or_element, 'text') and code_or_element.text is not None:
-                text = code_or_element.text
-                if len(text) < 32:
-                    ret += "('" + text + "')"
-                else:
-                    ret += "('" + text[:32] + "'...)"
+            ret = code_or_element.print()
         return ret
     elif isinstance(code_or_element, Element):
         return lisp_printer(code_or_element.code)
@@ -82,13 +76,7 @@ def indented_lisp_printer(code_or_element, current_line = None) -> str:
         if code_or_element.code is not None:
             return line_prefix + indented_lisp_printer(code_or_element.code, current_line)
         else:
-            ret = code_or_element.type.name
-            if hasattr(code_or_element, 'text') and code_or_element.text is not None:
-                text = code_or_element.text
-                if len(text) < 32:
-                    ret += "('" + text + "')"
-                else:
-                    ret += "('" + text[:32] + "'...)"
+            ret = code_or_element.print()
         return line_prefix + ret
     elif isinstance(code_or_element, Node):
         node_elms = [indented_lisp_printer(elm, current_line) for elm in code_or_element]
