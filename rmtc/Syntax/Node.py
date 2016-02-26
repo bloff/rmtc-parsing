@@ -478,11 +478,15 @@ class Node (Code):
     def __iter__(self):
         return NodeIterator(self.first)
 
-    def iterate_from(self, start:int):
+    def iterate_from(self, start:Union[int,Element]):
         """
-        Returns an iterator that goes through all elements from the ``start`` position to the end of the node.
+        Returns an iterator that goes through all elements from the ``start`` position/element to the end of the node.
         """
-        return NodeIterator(self[start] if len(self) > start else None)
+        if isinstance(start, int):
+            return NodeIterator(self[start] if len(self) > start else None)
+        else:
+            assert isinstance(start, Element)
+            return NodeIterator(start)
 
     def __str__(self):
         children = [str(element.code) if element.code is not None else str(element) for element in self]

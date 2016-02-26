@@ -1,9 +1,12 @@
+from jinja2.lexer import TOKEN_TILDE
+
 from rmtc.Common.Errors import ArrangementError
 from rmtc.Syntax.Node import Node, Element
 from rmtc.Syntax.Punctuator import Punctuator
 from rmtc.Syntax.PreSeq import PreSeq
 from rmtc.Syntax.Token import is_token
 import rmtc.Syntax.Tokens as Tokens
+from rmtc.Syntax.Tokens import PUNCTUATION
 from rmtc.Transducers.ArrangementRule import ArrangementRule
 
 
@@ -47,7 +50,7 @@ class DefaultPunctuation(ArrangementRule):
 
         punctuator = form_element.code
         """ :type : Punctuator """
-        punctuation = punctuator.punctuation
+        # punctuation = punctuator.punctuation
         pnode = punctuator.first.code
         assert isinstance(pnode, Node)
 
@@ -55,21 +58,18 @@ class DefaultPunctuation(ArrangementRule):
             parent = form_element.parent
             return parent.replace(form_element, pnode).next
 
-        if len(punctuation) == 0 or len(pnode) < 2:
+        if len(pnode) < 2:
             if punctuator.end_punctuation_marker is not None:
                 pnode.remove(punctuator.end_punctuation_marker)
             return _replace_punctuator_with_pform()
 
-        start_of_big_group = None
         first_small_group = None
-        first_big_group = None
 
         has_groups = False
-        has_big_groups = False
         seen_colon = False
 
-        if len(punctuation) > 0 and punctuation[0].number < punctuator.skip_count:
-            raise ArrangementError(punctuation[0].range.first_position, "Unexpected punctuation '%s' before start of argument sequence."  % punctuation[0].value)
+#        if len(punctuation) > 0 and punctuation[0].number < punctuator.skip_count:
+#            raise ArrangementError(punctuation[0].range.first_position, "Unexpected punctuation '%s' before start of argument sequence."  % punctuation[0].value)
 
         start_of_group = pnode[punctuator.skip_count]
         if is_token(start_of_group, Tokens.PUNCTUATION):
@@ -80,25 +80,22 @@ class DefaultPunctuation(ArrangementRule):
                 colon = start_of_group
                 start_of_group = colon.next
                 pnode.remove(colon)
-                assert punctuation[0] is colon
-                punctuation.pop(0)
+                if is_token(start_of_group, Tokens.PUNCTUATION):
+                    raise ArrangementError(start_of_group.range.first_position, "Unexpected punctuation '%s' after ':'."  % start_of_group.value)
 
 
         def finish_groups(last_element_in_group):
-            if has_groups:
-                if start_of_group:
-                    new = pnode.wrap(start_of_group, last_element_in_group, PreSeq)
-                else:
-                    new = start_of_group
-                if has_big_groups and start_of_big_group is not None:
-                    pnode.wrap(start_of_big_group, new, PreSeq)
+            if has_groups and start_of_group is not None:
+                pnode.wrap(start_of_group, last_element_in_group, PreSeq)
 
 
-        for punctuation_token in punctuation:
+        for punctuation_token in pnode.iterate_from(start_of_group):
+            if not is_token(punctuation_token, Tokens.PUNCTUATION):
+                continue
 
             value = punctuation_token.value
 
-            if value == "," or value == ";":
+            if value == ",":
                 has_groups = True
                 if start_of_group is punctuation_token:
                     raise ArrangementError(punctuation_token.range.first_position, "Unexpected punctuation '%s'."  % punctuation_token.value)
@@ -106,24 +103,9 @@ class DefaultPunctuation(ArrangementRule):
                 new_group = pnode.wrap(start_of_group, punctuation_token.prev, PreSeq)
                 if first_small_group is None:
                     first_small_group = new_group
-                if start_of_big_group is None:
-                    start_of_big_group = new_group
                 start_of_group = punctuation_token.next
-            elif punctuation_token.value != ':':
-                raise ArrangementError(punctuation_token.range.first_position, "Unknown punctuation '%s' in argument sequence."  % punctuation_token.value)
-
-
-            if value == ";":
-                has_big_groups = True
-                if start_of_big_group:
-                    if start_of_big_group is punctuation_token:
-                        raise ArrangementError(punctuation_token.range.first_position, "Unexpected punctuation '%s'."  % punctuation_token.value)
-                    new_big_group = pnode.wrap(start_of_big_group, punctuation_token.prev, PreSeq)
-                    if first_big_group is None:
-                        first_big_group = new_big_group
-                start_of_big_group = None
-
-            if value == ":":
+                pnode.remove(punctuation_token)
+            elif value == ":":
                 if seen_colon:
                     raise ArrangementError(punctuation_token.range.first_position, "Argument sequence should have a single colon ':'.")
                 if start_of_group is punctuation_token:
@@ -131,18 +113,17 @@ class DefaultPunctuation(ArrangementRule):
                 seen_colon = True
                 finish_groups(punctuation_token.prev)
                 has_groups = False
-                has_big_groups = False
                 if first_small_group is None:
                     first = pnode[1]
-                elif first_big_group is None:
-                    first = first_small_group
                 else:
-                    first = first_big_group
+                    first = first_small_group
                 pnode.wrap(first, punctuation_token.prev, PreSeq)
                 start_of_group = punctuation_token.next
-                start_of_big_group = None
+                pnode.remove(punctuation_token)
+            else:
+                raise ArrangementError(punctuation_token.range.first_position, "Default punctuator cannot parse unknown punctuation token '%s'."  % punctuation_token.value)
 
-            pnode.remove(punctuation_token)
+
 
 
 
