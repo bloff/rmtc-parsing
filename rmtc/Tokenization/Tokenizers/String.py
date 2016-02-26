@@ -80,8 +80,6 @@ class StringTokenizer(Tokenizer):
                             yield token
                         value = ""
                         value_first_position = stream.copy_absolute_position()
-                    elif char == '␤': value += '\n'
-                    elif char == '␉': value += '\t'
                     else:
                         value += char
                         last_k_chars = value[-self.__class__.MY_CLOSING_DELIMITER_LENGTH:]
