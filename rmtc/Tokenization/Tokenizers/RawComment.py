@@ -35,7 +35,6 @@ class RawCommentTokenizer(Tokenizer):
             if stream.next_is_EOF():
                 yield Tokens.COMMENT(value, value_first_position, stream.copy_absolute_position())
                 yield Tokens.END_MACRO(opening_comment_token, "", stream.copy_absolute_position(), stream.copy_absolute_position())
+                stream.pop()
                 return
             value += stream.read()
-
-        stream.pop()

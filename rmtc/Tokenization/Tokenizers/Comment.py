@@ -45,6 +45,7 @@ class CommentTokenizer(Tokenizer):
             if stream.next_is_EOF():
                 yield Tokens.COMMENT(value, value_first_position, stream.copy_absolute_position())
                 yield Tokens.END_MACRO(opening_comment_token, "", stream.copy_absolute_position(), stream.copy_absolute_position())
+                stream.pop()
                 return
             char = stream.read()
             if char == '\\':
@@ -61,6 +62,7 @@ class CommentTokenizer(Tokenizer):
                     if char == self.__class__.CLOSING_DELIMITER:
                         yield Tokens.COMMENT(value, value_first_position, stream.absolute_position_of_unread())
                         yield Tokens.END_MACRO(opening_comment_token, self.__class__.CLOSING_DELIMITER, stream.absolute_position_of_unread(), stream.copy_absolute_position())
+                        stream.pop()
                         return
                     elif char == '$':
                         yield Tokens.COMMENT(value, value_first_position, stream.absolute_position_of_unread())
@@ -69,7 +71,6 @@ class CommentTokenizer(Tokenizer):
                         value = ""
                         value_first_position = stream.copy_absolute_position()
                     else: value += char
-        stream.pop()
 
     def escape(self):
         stream = self.context.stream
