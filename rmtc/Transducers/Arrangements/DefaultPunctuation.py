@@ -69,7 +69,12 @@ class DefaultPunctuation(ArrangementRule):
         seen_colon = False
 
 
-        start_of_group = pnode[punctuator.skip_count]
+        start_of_group = pnode[0]
+        for i in range(punctuator.skip_count):
+            if is_token(start_of_group, Tokens.PUNCTUATION):
+                raise ArrangementError(start_of_group.range, "Unexpected punctuation '%s' before start of argument sequence." % start_of_group.value)
+            start_of_group = start_of_group.next
+
         while is_token(start_of_group, Tokens.ARGBREAK):
             nxt = start_of_group.next
             pnode.remove(start_of_group)
