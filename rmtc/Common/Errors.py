@@ -1,6 +1,6 @@
 from rmtc.Common.Globals import G
 
-class ErrorInPosition(Exception):
+class CompilerError(Exception):
     name = "Generic Error"
     def __init__(self, range_or_pos, message:str):
         self.message = message
@@ -14,37 +14,37 @@ class ErrorInPosition(Exception):
         trace += "    %s: %s" %(str(self.range_or_pos), self.message)
         return trace
 
-class TokenizingError(ErrorInPosition):
+class TokenizingError(CompilerError):
     name = "Tokenization Error"
     def __init__(self, range_or_pos, message:str):
-        ErrorInPosition.__init__(self, range_or_pos, message)
+        CompilerError.__init__(self, range_or_pos, message)
 
-class SyntaxError(ErrorInPosition):
+class SyntaxError(CompilerError):
     name = "Syntax Error"
     def __init__(self, range_or_pos, message:str):
-        ErrorInPosition.__init__(self, range_or_pos, message)
+        CompilerError.__init__(self, range_or_pos, message)
 
-class ArrangementError(ErrorInPosition):
+class ArrangementError(CompilerError):
     name = "Arrangement Error"
     def __init__(self, range_or_pos, message:str):
-        ErrorInPosition.__init__(self, range_or_pos, message)
+        CompilerError.__init__(self, range_or_pos, message)
 
-class SemanticAnalysisError(ErrorInPosition):
+class SemanticAnalysisError(CompilerError):
     name = "Semantic Analysis Error"
     def __init__(self, range_or_pos, message:str):
-        ErrorInPosition.__init__(self, range_or_pos, message)
+        CompilerError.__init__(self, range_or_pos, message)
 
-class DispatchError(ErrorInPosition):
+class DispatchError(CompilerError):
     name = "Dispatch Error"
     def __init__(self, range_or_pos, message:str):
-        ErrorInPosition.__init__(self, range_or_pos, message)
+        CompilerError.__init__(self, range_or_pos, message)
 
-class CodeGenerationError(ErrorInPosition):
+class CodeGenerationError(CompilerError):
     name = "Code Generation Error"
     def __init__(self, range_or_pos, message:str):
-        ErrorInPosition.__init__(self, range_or_pos, message)
+        CompilerError.__init__(self, range_or_pos, message)
 
-class MetaError(ErrorInPosition):
+class MetaError(CompilerError):
     name = "Meta Error"
     def __init__(self, range_or_pos, message:str):
-        ErrorInPosition.__init__(self, range_or_pos, message)
+        CompilerError.__init__(self, range_or_pos, message)

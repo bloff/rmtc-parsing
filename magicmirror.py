@@ -2,7 +2,7 @@ from typing import Union
 import zmq
 import msgpack
 
-from rmtc.Common.Errors import TokenizingError, ErrorInPosition
+from rmtc.Common.Errors import TokenizingError, CompilerError
 from rmtc.Streams.StreamPosition import StreamPosition
 from rmtc.Streams.StreamRange import StreamRange
 from rmtc.Streams.StringStream import StringStream
@@ -28,7 +28,7 @@ def error(arg0:Union[str, StreamPosition]) -> bytes:
     if isinstance(arg0, str):
         return pack(['ERROR', arg0])
     else:
-        assert isinstance(arg0, ErrorInPosition)
+        assert isinstance(arg0, CompilerError)
         range_or_pos = arg0.range_or_pos
         if isinstance(range_or_pos, StreamRange):
             return pack(['ERROR', arg0.trace, range_or_pos.first_position.index, range_or_pos.position_after.index])

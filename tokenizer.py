@@ -4,7 +4,7 @@ import sys
 
 
 from rmtc.Common.SysArgsParser import SysArgsParser
-from rmtc.Common.Errors import ErrorInPosition
+from rmtc.Common.Errors import CompilerError
 from rmtc.Parsers._LycParser import LycParser
 from rmtc.Streams.StringStream import StringStream
 from rmtc.Common.Record import Record
@@ -73,7 +73,7 @@ def tokenize(options):
             for token in parser.tokenize(stream):
                 print(str(token))
 
-    except ErrorInPosition as e:
+    except CompilerError as e:
         print(e.trace)
 
 def main():
