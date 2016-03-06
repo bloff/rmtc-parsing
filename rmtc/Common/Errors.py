@@ -43,3 +43,8 @@ class CodeGenerationError(ErrorInPosition):
     name = "Code Generation Error"
     def __init__(self, range_or_pos, message:str):
         ErrorInPosition.__init__(self, range_or_pos, message)
+
+class MetaError(ErrorInPosition):
+    name = "Meta Error"
+    def __init__(self, range_or_pos, message:str):
+        ErrorInPosition.__init__(self, range_or_pos, message)
