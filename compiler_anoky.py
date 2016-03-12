@@ -80,7 +80,6 @@ def generate(options):
             print("No filename specified.")
             return
         filename = options.filename
-
         stream = FileStream(filename)
 
         file_node = parser.parse(stream)
@@ -88,7 +87,6 @@ def generate(options):
 
         expander = DefaultExpander()
         ec = expander.expand_unit(file_node)
-
         expanded = indented_lisp_printer(file_node)
 
         generator = DefaultGenerator()
@@ -105,9 +103,7 @@ def generate(options):
             print("\n〰〰〰〰〰〰 Python retrosource 〰〰〰〰〰〰\n")
             print(ASTFormatter().format(py_module))
 
-
         return py_module
-
 
 
     except ErrorInPosition as e:
@@ -120,22 +116,16 @@ def check_for_apyc(filename):
     apyc_filename = cache_from_source(filename)
 
     if isfile(apyc_filename):
-
         with open(apyc_filename, "rb") as pyc:
             pycmagic = pyc.read(4)
             pycmodtime = unpack('=L', pyc.read(4))[0]
             pycsrcsize = unpack('=L', pyc.read(4))[0]
 
         srcstats = stat(filename)
-
         # check magic number?
-
-        print(int(srcstats.st_mtime), pycmodtime, srcstats.st_size, pycsrcsize, sep="\n")
-
-
+        #print(int(srcstats.st_mtime), pycmodtime, srcstats.st_size, pycsrcsize, sep="\n")
         return int(srcstats.st_mtime) == pycmodtime \
             and srcstats.st_size == pycsrcsize
-
 
     return False
 
@@ -157,11 +147,9 @@ def load_from_apyc(filename):
 def write_apyc(filename, codeobj):
 
     apyc_filename = cache_from_source(filename)
-
     srcstats = stat(filename)
 
     with open(apyc_filename, "wb") as pyc:
-
         pyc.write(MAGIC_NUMBER)
 
         # write last mod time
@@ -176,6 +164,14 @@ def write_apyc(filename, codeobj):
 
         # write bytecode
         marshal.dump(codeobj, pyc)
+
+
+
+
+
+
+
+##====================================
 
 
 

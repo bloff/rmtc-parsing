@@ -58,6 +58,7 @@ default_special_forms_table = {
     #"if" : If(),
 
     "raise" : Ctl.Raise(),
+    "assert" : Ctl.Assert(),
     "pass" : Ctl.Pass(),
 
     "with" : Ctl.With(),

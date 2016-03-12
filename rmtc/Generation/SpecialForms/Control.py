@@ -24,15 +24,7 @@ from rmtc.Syntax.Node import Element
 # raise
 # assert
 # pass
-
-
-
-
-
-
-
-
-
+from rmtc.Syntax.Util import is_form
 
 
 class If(SpecialForm):
@@ -203,6 +195,34 @@ class Raise(SpecialForm):
             return ast.Raise(None)
 
 
+class Assert(SpecialForm):
+
+    HEADTEXT = "assert"
+
+    # (assert test)
+    # (assert test msg)
+
+    def generate(self, element:Element, GC:GenerationContext):
+
+        self.precheck(element, GC)
+
+        acode = element.code
+
+        test_element = acode[1]
+
+        with GC.let(domain=ExDom):
+
+            test_code = GC.generate(test_element)
+
+            msg_code = None
+            if len(acode) > 2:
+                msg_element = acode[2]
+                msg_code = GC.generate(msg_element)
+
+
+        return ast.Assert(test=test_code, msg=msg_code)
+
+
 
 class Pass(SpecialForm):
 
@@ -242,9 +262,7 @@ class With(SpecialForm):
             for ctxel in context_element_code:
 
 
-                if isinstance(ctxel.code, Form) \
-                    and isinstance(ctxel.code[0], Identifier) \
-                    and ctxel.code[0].full_name == "as":
+                if is_form(ctxel.code, "as"):
 
                     ctxelcode = ctxel.code
 
