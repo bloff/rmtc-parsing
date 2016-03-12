@@ -1,5 +1,6 @@
 
 #import rmtc.Generation.SpecialForms.SpecialForms as SF
+from rmtc.Generation.SpecialForms.Control import If
 from rmtc.Generation.SpecialForms.SpecialForms import Attribute, Class, Global, Nonlocal
 import rmtc.Generation.SpecialForms.Operation as Op
 #import rmtc.Generation.SpecialForms.Comparison as Cmp
@@ -55,7 +56,7 @@ default_special_forms_table = {
     "@[]" : Cnt.Subscript(),
     #"[]": Ct.List(),
     #"{}" : Ct.Dict(), #or set?
-    #"if" : If(),
+    "if" : If(),
 
     "raise" : Ctl.Raise(),
     "pass" : Ctl.Pass(),

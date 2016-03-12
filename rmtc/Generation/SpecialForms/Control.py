@@ -1,6 +1,7 @@
 
 import ast
 
+from rmtc.Common.Errors import CodeGenerationError
 from rmtc.Generation.GenerationContext import GenerationContext
 from rmtc.Generation.SpecialForms.SpecialForms import SpecialForm
 from rmtc.Generation.Domain import StatementDomain as SDom,\
@@ -8,6 +9,7 @@ from rmtc.Generation.Domain import StatementDomain as SDom,\
 
 from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Identifier import Identifier
+from rmtc.Syntax.LispPrinter import succinct_lisp_printer
 from rmtc.Syntax.Node import Element
 
 
@@ -24,71 +26,69 @@ from rmtc.Syntax.Node import Element
 # raise
 # assert
 # pass
-
-
-
-
-
-
-
-
-
+from rmtc.Syntax.Util import is_form
 
 
 class If(SpecialForm):
 
-# #(if condition body_element+ (elif condition body_element+)* (else body_element+)?)))
-
     HEADTEXT = "if"
-    DOMAIN = SDom
+    DOMAIN = [SDom, ExDom]
 
     def generate(self, element:Element, GC:GenerationContext):
+
+        self.precheck(element, GC)
 
         acode = element.code
 
         # "Check that form is as above"
         #assert
 
+
+        if GC.domain == ExDom:
+            astIf = ast.IfExp
+            if len(acode) > 3 and not (is_form(acode[3], 'elif') or is_form(acode[3], 'else')):
+                raise CodeGenerationError(acode.range, "If expression must only have a single sub-expression (for now).")
+        else:
+            astIf = ast.If
+
+
+
+        def gen_elif_elses(elif_else_elm):
+            my_code = elif_else_elm.code
+            if is_form(elif_else_elm, 'elif'):
+                with GC.let(domain=ExDom):
+                    my_condition_gen = GC.generate(my_code[1])
+
+                my_body_gens = [GC.generate(body_elm) for body_elm in my_code.iterate_from(2)]
+
+                if elif_else_elm.next is None:
+                    return [astIf(my_condition_gen, my_body_gens, [])]
+                else:
+                    else_code = gen_elif_elses(elif_else_elm.next)
+                    return [astIf(my_condition_gen, my_body_gens, else_code)]
+            elif is_form(elif_else_elm, 'else'):
+                return [GC.generate(body_elm) for body_elm in my_code.iterate_from(1)]
+            else:
+                raise CodeGenerationError(elif_else_elm.range, "Unexpected element `%s` after first `elif` or `else` form within `if` form." % (succinct_lisp_printer(elif_else_elm)))
+
+
+
+
         with GC.let(domain=ExDom):
-            condition_code = GC.generate(acode[1])
+            condition_gen = GC.generate(acode[1])
+        body_gens = []
+        else_code = []
+        for body_elm in acode.iterate_from(2):
+            if is_form(body_elm, 'elif') or is_form(body_elm, 'else'):
+                else_code = gen_elif_elses(body_elm)
+                break
+            else:
+                body_gen = GC.generate(body_elm)
+                body_gens.append(body_gen)
 
+        if len(body_gens) == 0: body_gens.append(ast.Pass())
 
-        # "make sure we have only 1 body_element in each of the bodies"
-        #if GC.domain == ExDom:
-
-
-        body_code = []
-        if GC.domain == ExDom:
-            body_code.append(GC.generate(acode[2]))
-        else:
-            #assert GC.domain == SDom
-            nxtelm = acode[3]
-            for nxtelm in acode.iterate_from(3):
-                #if nxtelm.code ...
-                    break
-
-
-            while (not isinstance(nxtelm.code, Form)) \
-                            or nxtelm.code[0].code.full_name not in ['elif','else']:
-                # (nxtelm.code[0].code.full_name in ['elif', 'else'] if isinstance(nxtelm.code, Form) else True)
-                body_code.append(GC.generate(nxtelm.code))
-                nxtelm = nxtelm.next
-
-
-        #else_code =
-
-        if GC.domain == ExDom:
-
-            return #ast.IfExp(condition_code, body_code, else_code)
-
-        else:
-
-            #assert GC.domain == StatementDomain
-            #assert GC.domain == StatementDomain()
-            #assert isinstance(GC.domain, StatementDomain)
-            assert GC.domain == SDom
-
-            #return ast.If(condition_code, body_code, else_code)
+        return astIf(condition_gen, body_gens, else_code)
 
 
 
