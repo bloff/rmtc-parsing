@@ -17,8 +17,6 @@ import compiler_anoky as akycomp
 
 
 
-
-
 class AnokyLoader(iabc.SourceLoader):
 
 
@@ -30,6 +28,9 @@ class AnokyLoader(iabc.SourceLoader):
         #raise NotImplementedError()
         with open(path, "rb") as f:
             bdata = f.read()
+
+        print("read binary data at",path)
+
 
         return bdata
 
@@ -47,6 +48,8 @@ class AnokyLoader(iabc.SourceLoader):
         The 'data' argument can be any object type that compile() supports.
         """
 
+        print("compiling module at",path,"from source")
+
         options = Record({'filename': path,
                           'verbose': False,
                           'execute': False},)
@@ -62,6 +65,61 @@ class AnokyLoader(iabc.SourceLoader):
 
 
 
+    def set_data(self, path, data):
+        # data is a bytearray ready to be written to pyc
+        #   i.e. it already has a magic/mtime/size header
+        #   followed by marshalled code object
+        # path is the full path of the pyc file to write
+
+        # The following is taken directly from the set_data
+        #   implementation in importlib.abc.SourceFileLoader,
+        #   replacing internal functions with their
+        #   os or os.path versions
+
+        parent, filename = os.path.split(path)
+        path_parts = []
+        # Figure out what directories are missing.
+        while parent and not os.path.isdir(parent):
+            parent, part = os.path.split(parent)
+            path_parts.append(part)
+        # Create needed directories.
+        for part in reversed(path_parts):
+            parent = os.path.join(parent, part)
+            try:
+                os.mkdir(parent)
+            except FileExistsError:
+                # Probably another Python process already created the dir.
+                continue
+            except OSError as exc:
+                # Could be a permission error, read-only filesystem: just forget
+                # about writing the data.
+                #_verbose_message('could not create {!r}: {!r}', parent, exc)
+                return
+        try:
+            #_write_atomic(path, data, _mode)
+            with open(path, "wb") as pycfile:
+                pycfile.write(data)
+
+            #_verbose_message('created {!r}', path)
+        except OSError as exc:
+            # Same as above: just don't write the bytecode.
+            #_verbose_message('could not create {!r}: {!r}', path, exc)
+            pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -70,14 +128,24 @@ class AnokyFinder(iabc.MetaPathFinder):
 
     def find_spec(self, fullname, path, target=None):
 
+        #print("finding spec for ",fullname)
+
         if path is not None:
-            raise NotImplementedError()
+
+            #print("path is ",path)
+
+            if isinstance(path, list):
+                os.chdir(path[0])
+            else:
+                # "namespace path" ??
+                return None
 
         cwd = os.getcwd()
         filename = fullname + ".aky"
         fullpath = cwd + os.sep + filename
 
         if os.path.isfile(filename):
+            print(filename," found")
 
             #pycpath = cache_from_source(fullpath)
 
@@ -91,17 +159,20 @@ class AnokyFinder(iabc.MetaPathFinder):
                 # etc.
             )
 
+            print("found aky module",filename)
+
             return spec
 
         return None
 
 
-sys.meta_path.append(AnokyFinder())
+#sys.meta_path.append(AnokyFinder())
+sys.meta_path = [AnokyFinder()] + sys.meta_path
 
-print(sys.meta_path)
+#print(sys.meta_path)
 
 
-import pyctest
+#import pyctest
 
 
 

@@ -22,6 +22,8 @@ class Import(Macro, SpecialForm):
     HEADTEXT = "import"
     DOMAIN = SDom
 
+    # (import (module_names+))
+
     def expand(self, element:Element, EC:ExpansionContext):
 
         #raise NotImplementedError()
@@ -376,6 +378,14 @@ def generate_macro_store_codes_from_EC(EC:ExpansionContext):
 
     return macro_store_codes
 
+
+
+
+akyimport_init_code = [
+    #import rmtc.AnokyImporter as __akyimp__
+    ast.Import([ast.alias(name="rmtc.AnokyImporter", asname="__akyimp__")])
+
+]
 
 
 
