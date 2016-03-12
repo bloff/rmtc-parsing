@@ -1,5 +1,6 @@
 
 #import rmtc.Generation.SpecialForms.SpecialForms as SF
+from rmtc.Generation.SpecialForms.Comparison import Compare
 from rmtc.Generation.SpecialForms.Control import If
 from rmtc.Generation.SpecialForms.SpecialForms import Attribute, Class, Global, Nonlocal
 import rmtc.Generation.SpecialForms.Operation as Op
@@ -51,6 +52,8 @@ default_special_forms_table = {
     "^=" : As.BitXorAssign(),
     "&=" : As.BitAndAssign(),
     "@=" : As.MatMultAssign(),
+
+    "compare": Compare(),
 
 
     "@[]" : Cnt.Subscript(),

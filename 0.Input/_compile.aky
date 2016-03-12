@@ -6,3 +6,6 @@ def function(test, a, b):
     else:
         return a * b
 
+
+
+a <= b > c == d

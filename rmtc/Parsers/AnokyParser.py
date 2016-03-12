@@ -10,6 +10,7 @@ from rmtc.Tokenization.Tokenizers.IndentationReadtable import IndentationReadtab
 from rmtc.Tokenization.Tokenizers.RawComment import RawCommentTokenizer
 from rmtc.Tokenization.Tokenizers.String import StringTokenizer
 from rmtc.Transducers.Arrangement import Arrangement
+from rmtc.Transducers.Arrangements.LeftRightNaryOperatorMultipleHeads import LeftRightNaryOperatorMultipleHeads
 from rmtc.Transducers.Arrangements.Comments import RawComment
 from rmtc.Transducers.Arrangements.Constituents import Constituent
 from rmtc.Transducers.Arrangements.DefaultPunctuation import DefaultPunctuation
@@ -247,8 +248,9 @@ def define_default_anoky_transducer_chain():
     tt_comparisons = TopDownTreeTransducer("Comparisons, Membership/Identity Tests",
                                            Arrangement([
                                                LeftRightBinaryOperator({
-                                                   'in', 'is', '==', '!=',
-                                                   '<', '>', '<=', '>='}),
+                                                   'in', 'is',}),
+                                               LeftRightNaryOperatorMultipleHeads('compare',
+                                                   {'==', '!=', '<', '>', '<=', '>='}),
                                                LeftRightBinaryOperatorTwoSymbols({
                                                    ('not', 'in'), ('is', 'not')})]))
 

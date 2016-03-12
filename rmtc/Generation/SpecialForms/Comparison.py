@@ -1,25 +1,50 @@
 import ast
 
+from rmtc.Generation.Domain import ExpressionDomain, StatementDomain
 from rmtc.Generation.GenerationContext import GenerationContext
 from rmtc.Generation.SpecialForms.SpecialForms import SpecialForm
 from rmtc.Syntax.Node import Element
 
 
-class Comparison(SpecialForm):
+class Compare(SpecialForm):
 
-#
-# class Compare(left, ops, comparators)
-# "left is the first value in the comparison,
-#  ops the list of operators, and comparators
-#  the list of values after the first."
+
+    HEADTEXT = "compare"
+    DOMAIN = [StatementDomain, ExpressionDomain]
+    OPERAND_DICT = {"==": ast.Eq,
+                    "!=": ast.NotEq,
+                    "<=": ast.LtE,
+                    ">=": ast.GtE,
+                    "<": ast.Lt,
+                    ">": ast.Gt}
 
     def generate(self, element:Element, GC:GenerationContext):
 
+        self.precheck(element, GC)
+
         acode = element.code
 
-        left_element = acode[1]
+        operands_seq = acode.last.code
 
-        #with
+        first_operand = operands_seq[0]
+
+        with GC.let(domain = ExpressionDomain):
+            first_operand_gen = GC.generate(first_operand)
+
+            ops = [self.OPERAND_DICT[e.code.name]() for e in acode[1:-1]]
+            comparators = [GC.generate(operand) for operand in operands_seq.iterate_from(1)]
+
+        return self.expr_wrap(
+            ast.Compare(
+                left = first_operand_gen,
+                ops = ops,
+                comparators = comparators
+            ), GC)
+
+
+
+
+
 
 
 
