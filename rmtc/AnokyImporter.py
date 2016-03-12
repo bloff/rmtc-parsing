@@ -37,6 +37,8 @@ class AnokyLoader(iabc.SourceLoader):
 
     def get_filename(self, fullname):
 
+        #print("sys.meta_path length is",len(sys.meta_path))
+
         fullpath = os.getcwd() + os.sep + fullname + ".aky"
         return fullpath
 
@@ -51,7 +53,7 @@ class AnokyLoader(iabc.SourceLoader):
         print("compiling module at",path,"from source")
 
         options = Record({'filename': path,
-                          'verbose': False,
+                          'verbose': True,
                           'execute': False},)
 
         aky_ast = akycomp.generate(options)
@@ -112,17 +114,6 @@ class AnokyLoader(iabc.SourceLoader):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 class AnokyFinder(iabc.MetaPathFinder):
 
 
@@ -167,7 +158,16 @@ class AnokyFinder(iabc.MetaPathFinder):
 
 
 #sys.meta_path.append(AnokyFinder())
+
 sys.meta_path = [AnokyFinder()] + sys.meta_path
+
+#print(len(sys.meta_path))
+
+# if all([not isinstance(f, AnokyFinder) for f in sys.meta_path]):
+#     sys.meta_path = [AnokyFinder()] + sys.meta_path
+
+
+
 
 #print(sys.meta_path)
 
@@ -177,28 +177,3 @@ sys.meta_path = [AnokyFinder()] + sys.meta_path
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-##=================================================
-
-# def decode_source(source_bytes):
-#     """Decode bytes representing source code and return the string.
-#
-#     Universal newline support is used in the decoding.
-#     """
-#     import tokenize  # To avoid bootstrap issues.
-#     source_bytes_readline = _io.BytesIO(source_bytes).readline
-#     encoding = tokenize.detect_encoding(source_bytes_readline)
-#     newline_decoder = _io.IncrementalNewlineDecoder(None, True)
-#     return newline_decoder.decode(source_bytes.decode(encoding[0]))

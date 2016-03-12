@@ -13,8 +13,7 @@ from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Identifier import Identifier
 
 from rmtc.Syntax.Node import Element
-
-
+from rmtc.Syntax.Util import is_form
 
 
 class Import(Macro, SpecialForm):
@@ -22,48 +21,49 @@ class Import(Macro, SpecialForm):
     HEADTEXT = "import"
     DOMAIN = SDom
 
-    # (import (module_names+))
+    # (import module_names+)
 
     def expand(self, element:Element, EC:ExpansionContext):
 
-        #raise NotImplementedError()
+        return
 
-        acode = element.code
-
-        imports_list = []
-
-        for to_import_element in acode[1:]:
-
-            if isinstance(to_import_element.code, Identifier):
-
-                to_import_name = to_import_element.code.full_name
-
-                imports_list.append(to_import_name)
-
-            else:
-
-                assert isinstance(to_import_element.code, Form) \
-                    and isinstance(to_import_element.code[0].code, Identifier) \
-                    and to_import_element.code[0].code.full_name == "as"
-
-                # assert 1 and 2 are also code
-
-                to_import_name = to_import_element.code[1].code.full_name
-                to_import_asname = to_import_element.code[2].code.full_name
-
-                imports_list.append((to_import_name, to_import_asname))
-
-        for to_import_name in imports_list:
-
-            if isinstance(to_import_name, str):
-
-                raise NotImplementedError()
-
-            else:
-
-                # assert isinstance(to_import_name, tuple)
-
-                raise NotImplementedError()
+        # acode = element.code
+        #
+        #
+        # imports_list = []
+        #
+        # for to_import_element in acode[1:]:
+        #
+        #     if isinstance(to_import_element.code, Identifier):
+        #
+        #         to_import_name = to_import_element.code.full_name
+        #
+        #         imports_list.append(to_import_name)
+        #
+        #     else:
+        #
+        #         assert isinstance(to_import_element.code, Form) \
+        #             and isinstance(to_import_element.code[0].code, Identifier) \
+        #             and to_import_element.code[0].code.full_name == "as"
+        #
+        #         # assert 1 and 2 are also code
+        #
+        #         to_import_name = to_import_element.code[1].code.full_name
+        #         to_import_asname = to_import_element.code[2].code.full_name
+        #
+        #         imports_list.append((to_import_name, to_import_asname))
+        #
+        # for to_import_name in imports_list:
+        #
+        #     if isinstance(to_import_name, str):
+        #
+        #         raise NotImplementedError()
+        #
+        #     else:
+        #
+        #         # assert isinstance(to_import_name, tuple)
+        #
+        #         raise NotImplementedError()
 
 
 # (import module_names+)
@@ -88,12 +88,12 @@ class Import(Macro, SpecialForm):
                                                   asname=None))
 
                 else:
+                    # (as module_name as_name)
 
-                    assert isinstance(to_import_element.code, Form) \
-                        and isinstance(to_import_element.code[0].code, Identifier) \
-                        and to_import_element.code[0].code.full_name == "as"
-
-                    # assert 1 and 2 are also code
+                    # assert isinstance(to_import_element.code, Form) \
+                    #     and isinstance(to_import_element.code[0].code, Identifier) \
+                    #     and to_import_element.code[0].code.full_name == "as"
+                    assert is_form(to_import_element.code, "as")
 
                     to_import_name = to_import_element.code[1].code.full_name
                     to_import_asname = to_import_element.code[2].code.full_name
@@ -101,9 +101,7 @@ class Import(Macro, SpecialForm):
                     imports_list.append(ast.alias(name=to_import_name,
                                                   asname=to_import_asname))
 
-
-
-        return
+        return ast.Import(imports_list)
 
 
 

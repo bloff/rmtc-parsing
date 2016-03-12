@@ -62,7 +62,9 @@ class DefaultGenerator(Generator):
         body_nodes = []
 
 
-        from rmtc.Generation.SpecialForms.Import import macrostore_init_code as mic
+        from rmtc.Generation.SpecialForms.Import \
+            import macrostore_init_code as mic, akyimport_init_code as aic
+        body_nodes.extend(aic)
         body_nodes.extend(mic)
 
 

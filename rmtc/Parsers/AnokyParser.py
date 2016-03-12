@@ -300,6 +300,11 @@ def define_default_anoky_transducer_chain():
     #                                     ]))
 
 
+    tt_as = TopDownTreeTransducer("infix as",
+                                  Arrangement([
+                                      LeftRightBinaryOperator({'as'})]))
+
+
 
 
     default_python_transducer_chain = [ tt_constituent,
@@ -327,6 +332,8 @@ def define_default_anoky_transducer_chain():
                                         tt_bit_and,
                                         tt_bit_xor,
                                         tt_bit_or,
+
+                                        tt_as,
                                         
                                         tt_comparisons,
                                         tt_not,

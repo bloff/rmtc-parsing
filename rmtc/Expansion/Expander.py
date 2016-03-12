@@ -44,6 +44,7 @@ class DefaultExpander(Expander):
             macro_table = {"quote":Quote(),
                            "rawmacro":RawMacro(),
                            "rawspecial":RawSpecialForm()},
+                          #"import" etc.
                           #"defalias":DefAlias()},
             id_macro_table = {}
         )
