@@ -17,6 +17,17 @@ import rmtc.Common.Options as Options
 
 import astpp
 
+from importlib.util import MAGIC_NUMBER
+import marshal
+from os import listdir, stat
+from os.path import isfile
+#from time import gmtime
+#from calendar import timegm
+from struct import pack, unpack
+#from sys import getsizeof
+
+from importlib.util import cache_from_source, source_from_cache
+
 from astformatter import ASTFormatter
 
 def unicode_encoder(obj):
@@ -62,7 +73,7 @@ def parse_args(argv):
 
 
 
-def expand(options):
+def generate(options):
     parser = AnokyParser()
     try:
         if "filename" not in options:
@@ -91,16 +102,8 @@ def expand(options):
         print("\n〰〰〰〰〰〰 Python retrosource 〰〰〰〰〰〰\n")
         print(ASTFormatter().format(py_module))
 
-        if options.execute:
 
-            ast.fix_missing_locations(py_module)
-
-            compiled_module = compile(py_module,
-                                      filename="<ast>",
-                                      mode="exec")
-
-            exec(compiled_module)
-
+        return py_module
 
 
 
@@ -109,15 +112,99 @@ def expand(options):
 
 
 
+def check_for_apyc(filename):
+
+    apyc_filename = cache_from_source(filename)
+
+    if isfile(apyc_filename):
+
+        with open(apyc_filename, "rb") as pyc:
+            pycmagic = pyc.read(4)
+            pycmodtime = unpack('=L', pyc.read(4))[0]
+            pycsrcsize = unpack('=L', pyc.read(4))[0]
+
+        srcstats = stat(filename)
+
+        # check magic number?
+
+        print(int(srcstats.st_mtime), pycmodtime, srcstats.st_size, pycsrcsize, sep="\n")
+
+
+        return int(srcstats.st_mtime) == pycmodtime \
+            and srcstats.st_size == pycsrcsize
+
+
+    return False
+
+
+def load_from_apyc(filename):
+
+    apyc_filename = cache_from_source(filename)
+
+    with open(apyc_filename, "rb") as pyc:
+        pycmagic = pyc.read(4)
+        pycmodtime = unpack('=L', pyc.read(4))[0]
+        pycsrcsize = unpack('=L', pyc.read(4))[0]
+
+        codeobj = marshal.load(pyc)
+
+    return codeobj
+
+
+def write_apyc(filename, codeobj):
+
+    apyc_filename = cache_from_source(filename)
+
+    srcstats = stat(filename)
+
+    with open(apyc_filename, "wb") as pyc:
+
+        pyc.write(MAGIC_NUMBER)
+
+        # write last mod time
+        srcmtime = int(srcstats.st_mtime)
+        bsrcmtime = pack('=L', srcmtime)
+        pyc.write(bsrcmtime)
+
+        # write size
+        srcsize = srcstats.st_size
+        bsrcsize = pack('=L', srcsize)
+        pyc.write(bsrcsize)
+
+        # write bytecode
+        marshal.dump(codeobj, pyc)
+
+
+
 
 def main():
     options = parse_args(sys.argv)
 
+    filename = options.filename
+    apyc_exists = check_for_apyc(filename)
 
-    expand(options)
+    if apyc_exists:
 
-#    node = Form(Identifier("bla bla"), Identifier("arg"))
-#    print(lisp_printer(node))
+        codeobj = load_from_apyc(filename)
+        print("loaded code object from pyc")
+
+    else:
+
+        py_module = generate(options)
+
+        ast.fix_missing_locations(py_module)
+
+        codeobj = compile(py_module,
+                          filename=filename,
+                          mode="exec")
+
+        print("compiled code object from source")
+
+    if options.execute:
+        exec(codeobj)
+
+    if not apyc_exists:
+        write_apyc(filename, codeobj)
 
 
 

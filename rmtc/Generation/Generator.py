@@ -1,7 +1,7 @@
 import ast
 
 from rmtc.Common.Record import Record
-
+from rmtc.Expansion.ExpansionContext import ExpansionContext
 
 from rmtc.Generation.GenerationContext import GenerationContext
 from rmtc.Generation.Domain import StatementDomain as SDom,\
@@ -35,9 +35,19 @@ class DefaultGenerator(Generator):
         #     Attribute
         # from rmtc.Generation.SpecialForms.AugAssign import AddAssign
         # from rmtc.Generation.SpecialForms.Operation import AddOp
-        from rmtc.Generation.DefaultSpecialFormsTable import default_special_forms_table
 
+        from rmtc.Generation.DefaultSpecialFormsTable import default_special_forms_table
         special_forms = default_special_forms_table
+
+
+        # from rmtc.Expansion.Macros.Quote import Quote
+        special_forms["quote"] = kwargs["EC"].macro_table["quote"]
+        #
+        # from rmtc.Expansion.Macros.Rawmacro import RawMacro
+        # special_forms["rawmacro"] = RawMacro()
+        special_forms["rawmacro"] = kwargs["EC"].macro_table["rawmacro"]
+        special_forms["rawspecial"] = kwargs["EC"].macro_table["rawspecial"]
+
 
         context_root_bindings = Record(
             default_generator = self,
@@ -50,8 +60,28 @@ class DefaultGenerator(Generator):
         GC = GenerationContext(**context_root_bindings.__dict__)
 
         body_nodes = []
+
+
+        from rmtc.Generation.SpecialForms.Import import macrostore_init_code as mic
+        body_nodes.extend(mic)
+
+
         for element in unit:
-            body_nodes.append(GC.generate(element))
+
+            element_code = GC.generate(element)
+
+            if isinstance(element_code, list) or isinstance(element_code, tuple):
+                body_nodes.extend(element_code)
+
+            else:
+
+                assert isinstance(element_code, ast.AST)
+
+                body_nodes.append(element_code)
+
+
+
+
 
         return ast.Module(body=body_nodes)
 

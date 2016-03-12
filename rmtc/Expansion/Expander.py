@@ -34,12 +34,17 @@ class DefaultExpander(Expander):
     def expand_unit(self, unit:Node, **kwargs):
 
         from rmtc.Expansion.Macros.Alias import DefAlias
+        from rmtc.Expansion.Macros.Quote import Quote
+        from rmtc.Expansion.Macros.Rawmacro import RawMacro, RawSpecialForm
 
         assert(isinstance(unit, Node))
         context_root_bindings = Record(
             default_expander = self,
             expander = self,
-            macro_table = {"defalias":DefAlias()},
+            macro_table = {"quote":Quote(),
+                           "rawmacro":RawMacro(),
+                           "rawspecial":RawSpecialForm()},
+                          #"defalias":DefAlias()},
             id_macro_table = {}
         )
         context_root_bindings.update(kwargs)
@@ -64,7 +69,7 @@ class DefaultExpander(Expander):
     #   into two functions?
 
 
-    def expand(self, element:Element, context:ExpansionContext):
+    def expand(self, element:Element, EC:ExpansionContext):
 
         code = element.code
 
@@ -78,15 +83,16 @@ class DefaultExpander(Expander):
 
             # check if any macros apply
 
-            if isinstance(headcode, Identifier) and headcode.full_name in context.macro_table:
+            if isinstance(headcode, Identifier) \
+                    and headcode.full_name in EC.macro_table:
 
-                context.macro_table[headcode.full_name].expand(element, context)
+                EC.macro_table[headcode.full_name].expand(element, EC)
 
             # otherwise expand recursively
             else:
 
                 for item in code:
-                    context.expand(item)
+                    EC.expand(item)
 
 
         elif isinstance(code, Seq):
@@ -94,7 +100,7 @@ class DefaultExpander(Expander):
 
             for item in code:
 
-                context.expand(item)
+                EC.expand(item)
 
 
         elif isinstance(code, Literal):
@@ -105,11 +111,11 @@ class DefaultExpander(Expander):
         elif isinstance(code, Identifier):
 
             # IDENTIFIER MACROS
-            if code.full_name in context.id_macro_table:
+            if code.full_name in EC.id_macro_table:
 
-                idmac = context.id_macro_table[code.full_name]
+                idmac = EC.id_macro_table[code.full_name]
 
-                idmac.expand(element, context)
+                idmac.expand(element, EC)
 
 #                element.parent.replace(element, idmac.expand(element, context))
 

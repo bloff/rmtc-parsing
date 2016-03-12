@@ -35,10 +35,7 @@ from rmtc.Syntax.Node import Element
 #
 # («{}» (for (in i lst) (= expr expr))) # dict compr
 # («{}» (= something else)) # dict
-
-
-
-
+from rmtc.Syntax.Util import is_form
 
 
 class Container(SpecialForm):
@@ -296,10 +293,28 @@ class Subscript(SpecialForm):
         with GC.let(domain=ExDom):
             base_object_code = GC.generate(acode[1])
 
-        if isinstance(acode[2].code, Literal):
 
-            if GC.domain == LVDom:
-                return ast.Subscript(base_object_code, ast.Index(GC.generate(acode[2])), ast.Store())
+        # (.. )
+        if is_form(acode[2], ".."):
+
+            #slice
+
+            raise NotImplementedError()
+
+
+
+
+
+        #if isinstance(acode[2].code, Literal):
+        else:
+
+            with GC.let(domain=ExDom):
+                index_code = GC.generate(acode[2])
+
+
+            return ast.Subscript(base_object_code,
+                                 ast.Index(index_code),
+                                 ast.Store() if GC.domain == LVDom else ast.Load())
 
             # if GC.domain == DelDom
             # else
