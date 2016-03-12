@@ -14,6 +14,7 @@ from rmtc.Syntax.Identifier import Identifier
 from rmtc.Syntax.Literal import Literal
 from rmtc.Syntax.Node import Element, Node
 from rmtc.Syntax.Seq import Seq
+from rmtc.Syntax.Util import is_form
 
 
 class Generator(object):
@@ -134,8 +135,7 @@ class DefaultGenerator(Generator):
                     arg_element_code = arg_element.code
 
                     if isinstance(arg_element_code, Form):
-                        if isinstance(arg_element_code[0].code, Identifier) \
-                            and arg_element_code[0].code.full_name == '=':
+                        if is_form(arg_element_code, '='):
                             # keyword argument
 
                             kw_name = arg_element_code[1].code.full_name
@@ -146,23 +146,14 @@ class DefaultGenerator(Generator):
                             keywords.append(ast.keyword(kw_name, value_code))
 
 
-                        elif isinstance(arg_element_code[0].code, Identifier) \
-                            and arg_element_code[0].code.full_name == '*':
-                            # starred argument
-
-                            assert len(arg_element_code) == 2
-                            # verify no other stars already?
-
+                        elif is_form(arg_element_code, '*') and len(arg_element_code) == 2:
+                            # stared argument - expand as list
                             with GC.let(domain=ExDom):
                                 arg_code = GC.generate(arg_element_code[1])
-
                             args.append(ast.Starred(arg_code, ast.Load()))
 
-
-
-                        elif isinstance(arg_element_code[0].code, Identifier) \
-                            and arg_element_code[0].code.full_name == '**':
-                            # double starred argument
+                        elif is_form(arg_element_code, '**') and len(arg_element_code) == 2:
+                            # double starred argument - expand as kwlist
 
                             assert len(arg_element_code) == 2
                             # verify no other dblstars already?
@@ -183,6 +174,7 @@ class DefaultGenerator(Generator):
 
                     else:
                         # arg_element_code not a Form
+                        # then generate as expression
 
                         with GC.let(domain=ExDom):
                                 arg_code = GC.generate(arg_element)

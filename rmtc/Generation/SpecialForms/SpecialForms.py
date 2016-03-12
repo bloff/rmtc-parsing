@@ -1,5 +1,6 @@
 import ast
 
+from rmtc.Common.Errors import CodeGenerationError
 from rmtc.Generation.GenerationContext import GenerationContext
 from rmtc.Generation.Generator import Generator
 from rmtc.Generation.Domain import StatementDomain as SDom,\
@@ -49,23 +50,25 @@ class SpecialForm(Generator):
     def precheck(self, element:Element, GC:GenerationContext):
         acode = element.code
         # assert isinstance(acode[0], Identifier) ?
-        if self.HEADTEXT:
-            #assert self.HEADTEXT == acode[0].code.full_name
-            assert is_identifier(acode[0], self.HEADTEXT)
-            # assert is_form(acode, self.HEADTEXT)
         if self.LENGTH:
             if isinstance(self.LENGTH, int):
                 # if a number
-                assert self.LENGTH == len(acode)
+                if self.LENGTH != len(acode):
+                    raise CodeGenerationError(element.range, "Special form `%s` expected %d arguments, got %d."%(self.HEADTEXT, self.LENGTH, len(acode)))
             else:
                 # if range or list
-                assert len(acode) in self.LENGTH
+                if len(acode) not in self.LENGTH:
+                    valid_numbers = ", ".join(self.LENGTH[:-1]) + " or " + self.LENGTH[-1]
+                    raise CodeGenerationError(element.range, "Special form `%s` expected %d arguments, got %d."%(self.HEADTEXT, valid_numbers, len(acode)))
         if self.DOMAIN:
-            if isinstance(self.DOMAIN, int):
-                assert self.DOMAIN == GC.domain
+            if isinstance(self.DOMAIN, str):
+                if self.DOMAIN != GC.domain:
+                    raise CodeGenerationError(element.range, "Special form `%s` appeared in domain '%s', but can only appear in domain '%s'."%(self.HEADTEXT, GC.domain, self.DOMAIN))
             else:
                 # if list or set
-                assert GC.domain in self.DOMAIN
+                if GC.domain not in self.DOMAIN:
+                    valid_domains = "'"+ "', '".join(self.LENGTH[:-1]) + " or '" + self.LENGTH[-1] + "'"
+                    raise CodeGenerationError(element.range, "Special form `%s` appeared in domain '%s', but can only appear in domains ."%(self.HEADTEXT, GC.domain, valid_domains))
 
 
     @staticmethod

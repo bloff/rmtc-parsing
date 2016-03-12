@@ -189,7 +189,8 @@ class Node (Code):
                 current.next = new_element(child, self)
                 current.next.prev = current
                 current = current.next
-                self.range.update(current.code.range)
+                self.range.update(current.range)
+
             self.last = current
 
     def erase(self):

@@ -1,5 +1,5 @@
 from rmtc.Common.Errors import ArrangementError
-from rmtc.Syntax.Util import is_identifier, identifier_in, is_literal
+from rmtc.Syntax.Util import is_identifier, identifier_in, is_literal, is_form
 from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Node import Element
 from rmtc.Syntax.Token import is_token
@@ -32,17 +32,15 @@ class LeftRightBinaryTokenCapturingOperator(ArrangementRule):
         form = element.parent
         next = element.next # this is 'b'
         prev = element.prev # this is 'a'
-        if is_identifier(next) or is_literal(next):
+        if is_identifier(next) or is_literal(next) or is_form(next):
             new_form_element = form.wrap(prev, next, Form)
         elif is_token(next, Tokens.BEGIN_MACRO):
             # a . BEGIN_MACRO something END_MACRO dont want => (. a BEGIN_MACRO) something END_MACRO
             # actually want
             # a . BEGIN_MACRO something END_MACRO => (. a BEGIN_MACRO something END_MACRO)
             new_form_element = form.wrap(prev, next.end, Form)
-        elif is_token(next, Tokens.PUNCTUATION):
-            raise ArrangementError(next.range.first_position, "Unexpected punctuation after '%s' in position %s." %(element.code.name, element.range.first_position.nameless_str))
         else:
-            raise ArrangementError(next.range.first_position, "Expected identifier, literal or begin-macro-token after '%s' in position %s." %(element.code.name, element.range.first_position.nameless_str))
+            raise ArrangementError(element.range.position_after, "Expected identifier, literal, form or begin-macro-token after '%s' in position %s." %(element.code.name, element.range.first_position.nameless_str))
         new_form = new_form_element.code
         # at this point new_form = ⦅a X b⦆
         new_form.remove(element)
