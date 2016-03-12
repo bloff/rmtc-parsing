@@ -16,6 +16,7 @@ from rmtc.Syntax.Node import Element
 
 ##=====================
 from rmtc.Syntax.Seq import Seq
+from rmtc.Syntax.Util import is_identifier
 
 
 def ctx_from_domain(GC:GenerationContext):
@@ -49,7 +50,9 @@ class SpecialForm(Generator):
         acode = element.code
         # assert isinstance(acode[0], Identifier) ?
         if self.HEADTEXT:
-            assert self.HEADTEXT == acode[0].code.full_name
+            #assert self.HEADTEXT == acode[0].code.full_name
+            assert is_identifier(acode[0], self.HEADTEXT)
+            # assert is_form(acode, self.HEADTEXT)
         if self.LENGTH:
             if isinstance(self.LENGTH, int):
                 # if a number

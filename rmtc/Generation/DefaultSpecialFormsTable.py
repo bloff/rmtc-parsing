@@ -7,6 +7,7 @@ import rmtc.Generation.SpecialForms.Assign as As
 import rmtc.Generation.SpecialForms.Container as Cnt
 import rmtc.Generation.SpecialForms.Function as Fn
 import rmtc.Generation.SpecialForms.Control as Ctl
+import rmtc.Generation.SpecialForms.Import as Imp
 
 
 
@@ -56,15 +57,20 @@ default_special_forms_table = {
     #"{}" : Ct.Dict(), #or set?
     #"if" : If(),
 
-    #"raise" : SF.Raise(),
-    #"pass" : SF.Pass()
+    "raise" : Ctl.Raise(),
+    "pass" : Ctl.Pass(),
+
+    "with" : Ctl.With(),
 
     "def" : Fn.Def(),
 
     "global" : Global(),
     "nonlocal" : Nonlocal(),
 
-    "class" : Class()
+    "class" : Class(),
+
+    "import" : Imp.Import(),
+    #"macroimport" : Imp.MacroImport()
 }
 
 container = Cnt.Container()

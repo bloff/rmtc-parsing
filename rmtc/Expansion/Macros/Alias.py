@@ -1,5 +1,6 @@
 from rmtc.Expansion.ExpansionContext import ExpansionContext
-from rmtc.Expansion.Macro import Macro
+from rmtc.Expansion.Macro import Macro, IdentifierMacro
+from rmtc.Generation.GenerationContext import GenerationContext
 
 from rmtc.Syntax.Code import Code
 from rmtc.Syntax.Node import Element, Node
@@ -10,9 +11,12 @@ from rmtc.Syntax.Identifier import Identifier
 
 
 
-class Alias(Macro):
+class Alias(IdentifierMacro):
 
     def __init__(self, id_alias:Identifier=None, substitution:Code=None):
+                 #parent_expander=None):
+
+        #Macro.__init__(self, parent_expander=parent_expander)
 
         # can a code instance evaluate to False?
         #   we want to be able to alias empty-like code to identifiers
@@ -25,11 +29,11 @@ class Alias(Macro):
 
 
 
-    def expand(self, element, context):
+    def expand(self, id_element, EC:ExpansionContext):
 
-        element.expand(self.substitution.copy())
+        id_element.expand(self.substitution.copy())
 
-        context.expand(element)
+        EC.expand(id_element)
 
 
     # def configure_expand(self, id_alias:Identifier, substitution:Code):
@@ -57,7 +61,7 @@ class DefAlias(Macro):
 
     # (defalias name form)
 
-    def expand(self, element:Element, context:ExpansionContext):
+    def expand(self, element:Element, EC:ExpansionContext):
 
         form = element.code
 
@@ -72,8 +76,14 @@ class DefAlias(Macro):
         alias_macro = Alias(id_alias, substitution)
 
         # add the new macro to the macro table
-        context.id_macro_table[id_alias.name] = alias_macro
+        EC.id_macro_table[id_alias.name] = alias_macro
 
+
+
+
+    def generate(self, element:Element, context:GenerationContext):
+
+        raise NotImplementedError()
 
 
 
