@@ -94,19 +94,24 @@ class While(SpecialForm):
 
     def generate(self, element:Element, GC:GenerationContext):
 
-        raise NotImplementedError()
+        self.precheck(element, GC)
 
-        # acode = element.code
-        #
-        # testexpr_element = acode[1]
-        #
-        # with GC.let(domain=ExDom):
-        #
-        #     testexpr_code = GC.generate(testexpr_element)
-        #
-        #
-        #
-        # body_items
+        acode = element.code
+
+        testexpr_element = acode[1]
+
+        with GC.let(domain=ExDom):
+
+            testexpr_code = GC.generate(testexpr_element)
+
+        if is_form(acode.last, "else"):
+            raise NotImplementedError()
+
+        body_codes = [GC.generate(e) for e in acode[2:]]
+
+        return ast.While(test=testexpr_code,
+                         body=body_codes,
+                         orelse=[])
 
 
 
@@ -120,19 +125,30 @@ class For(SpecialForm):
 
     def generate(self, element:Element, GC:GenerationContext):
 
-        raise NotImplementedError()
+        self.precheck(element, GC)
 
-        #acode = element.code
+        acode = element.code
+
+        target_iter_element = acode[1]
+        target_element = target_iter_element.code[0]
+        iter_element = target_iter_element.code[1]
+
+        with GC.let(domain=ExDom):
+
+            target_code = GC.generate(target_element)
+            iter_code = GC.generate(iter_element)
+
+        if is_form(acode.last, "else"):
+            raise NotImplementedError()
+
+        body_codes = [GC.generate(e) for e in acode[2:]]
 
 
-
-
-
-        #return ast.For(target=
-        #               iter=
-        #               body=
-        #               orelse=
-        #               )
+        return ast.For(target=target_code,
+                      iter=iter_code,
+                      body=body_codes,
+                      orelse=[],
+                      )
 
 
 

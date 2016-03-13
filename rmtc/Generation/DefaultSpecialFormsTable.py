@@ -57,6 +57,9 @@ default_special_forms_table = {
     #"{}" : Ct.Dict(), #or set?
     #"if" : If(),
 
+    "while" : Ctl.While(),
+    "for" : Ctl.For(),
+
     "raise" : Ctl.Raise(),
     "assert" : Ctl.Assert(),
     "pass" : Ctl.Pass(),
