@@ -83,7 +83,9 @@ class Segment(ArrangementRule):
 
             # replace indent with comma when there are some elements
             # between the head and the indent token
-            if indent.prev is not new_form.first:
+            # BUT not when there is already a comma immediately before the indent
+            if indent.prev is not new_form.first \
+                    and not is_token(indent.prev, Tokens.PUNCTUATION, ","):
                 new_comma = Tokens.PUNCTUATION(None, ",", None, None)
                 new_form.insert(indent, new_comma)
                 punctuation.append(new_comma)
@@ -120,7 +122,8 @@ class Segment(ArrangementRule):
         first_args_begin = indent0.next
 
         # replace first INDENT with comma if necessary
-        if indent0.prev is not new_form.first:
+        if indent0.prev is not new_form.first \
+                and not is_token(indent0.prev, Tokens.PUNCTUATION, ","):
             new_comma = Tokens.PUNCTUATION(None, ",", None, None)
             new_form.insert(indent0, new_comma)
             punctuation.append(new_comma)
