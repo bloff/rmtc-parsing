@@ -53,7 +53,7 @@ default_special_forms_table = {
 
 
     "@[]" : Cnt.Subscript(),
-    #"[]": Ct.List(),
+    "[]" : Cnt.List(),
     #"{}" : Ct.Dict(), #or set?
     #"if" : If(),
 
@@ -80,5 +80,5 @@ default_special_forms_table = {
 container = Cnt.Container()
 
 default_special_forms_table["{}"] = container
-default_special_forms_table["[]"] = container
+#default_special_forms_table["[]"] = container
 
