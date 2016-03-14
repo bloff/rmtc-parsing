@@ -35,7 +35,7 @@ from rmtc.Syntax.Node import Element
 #
 # («{}» (for (in i lst) (= expr expr))) # dict compr
 # («{}» (= something else)) # dict
-from rmtc.Syntax.Util import is_form
+from rmtc.Syntax.Util import is_form, is_identifier
 
 
 class Container(SpecialForm):
@@ -50,88 +50,13 @@ class Container(SpecialForm):
         assert isinstance(head, Identifier)
         headtext = head.full_name
 
-        if headtext == "[]":
-
-
-            #raise NotImplementedError()
-
-            # "ast.List(elts, ctx)
-            #  A list or tuple. elts holds a list of nodes representing the elements.
-            #  ctx is Store if the container is an assignment target (i.e. (x,y)=pt),
-            #  and Load otherwise."
-
-
-            if len(acode) is 2 and isinstance(acode[1].code, Form) \
-                and isinstance(acode[1].code[0].code, Identifier) \
-                and acode[1].code[0].code.full_name == "for":
-
-                for_form = acode[1].code
-
-                # list comprehension
-
-# («[]» (for (in i lst) (f i))) # list compr
-
-
-                in_el = for_form[1]
-                in_el_code = in_el.code
-
-                #with GC.let(domain=ExDom):
-
-                assert isinstance(in_el_code[0].code, Identifier) \
-                    and in_el_code[0].code.full_name == "in"
-
-                target_element = in_el_code[1]
-                iter_element = in_el_code[2]
-
-                with GC.let(domain=LVDom):
-                    target_code = GC.generate(target_element)
-
-                with GC.let(domain=ExDom):
-                    iter_code = GC.generate(iter_element)
 
 
 
-                generators = [ ast.comprehension(target=target_code,
-                                                 iter=iter_code,
-                                                 ifs=[]) ]
+##==================MOVE TO SUBCLASSES==========
 
+        assert headtext == "{}"
 
-                to_evaluate_element = for_form[2]
-
-                with GC.let(domain=ExDom):
-
-                    to_evaluate_code = GC.generate(to_evaluate_element)
-
-
-                return ast.ListComp(to_evaluate_code, generators)
-
-
-            else:
-
-                els = self.generate_as_expressions(GC, *acode[1:])
-
-                if GC.domain == LVDom:
-                    return ast.List(els, ast.Store())
-                return self.expr_wrap(ast.List(els, ast.Load()), GC)
-
-
-
-
-        else:
-            assert headtext == "{}"
-
-            #
-            # "class Set(elts)
-            #  A set. elts holds a list of nodes representing the elements."
-            #
-            # "class Dict(keys, values)
-            #  A dictionary. keys and values hold lists of nodes with
-            #  matching order (i.e. they could be paired with zip()).
-            #
-            #  Changed in version 3.5: It is now possible to expand one
-            #  dictionary into another, as in {'a': 1, **d}. In the AST, the
-            #  expression to be expanded (a Name node in this example) goes in
-            #  the values list, with a None at the corresponding position in keys."
 
 # («{}» (for (in i lst) expr)) # set compr
 # («{}» something else) # set
@@ -140,50 +65,50 @@ class Container(SpecialForm):
 # («{}» (= something else)) # dict
 
 
-            if len(acode) is 2 and isinstance(acode[1].code, Form) \
+        if len(acode) is 2 and isinstance(acode[1].code, Form) \
+            and isinstance(acode[1].code[0].code, Identifier) \
+            and acode[1].code[0].code.full_name == "for":
+
+            raise NotImplementedError()
+
+
+        else:
+
+            if len(acode) is 1:
+
+                return ast.Dict([], [])
+
+
+            if isinstance(acode[1].code, Form) \
                 and isinstance(acode[1].code[0].code, Identifier) \
-                and acode[1].code[0].code.full_name == "for":
+                and acode[1].code[0].code.full_name == "=":
 
-                raise NotImplementedError()
+                #dict
 
+                keys = []
+                values = []
+
+                #with GC.let(domain=ExDom):
+
+                for kvpair_el in acode[1:]:
+
+                    kvpair = kvpair_el.code
+
+                    key_code = GC.generate(kvpair[1])
+                    value_code = GC.generate(kvpair[2])
+
+                    keys.append(key_code)
+                    values.append(value_code)
+
+                return ast.Dict(keys, values)
 
             else:
 
-                if len(acode) is 1:
+                #set
 
-                    return ast.Dict([], [])
+                el_codes = self.generate_as_expressions(GC, *acode[1:])
 
-
-                if isinstance(acode[1].code, Form) \
-                    and isinstance(acode[1].code[0].code, Identifier) \
-                    and acode[1].code[0].code.full_name == "=":
-
-                    #dict
-
-                    keys = []
-                    values = []
-
-                    #with GC.let(domain=ExDom):
-
-                    for kvpair_el in acode[1:]:
-
-                        kvpair = kvpair_el.code
-
-                        key_code = GC.generate(kvpair[1])
-                        value_code = GC.generate(kvpair[2])
-
-                        keys.append(key_code)
-                        values.append(value_code)
-
-                    return ast.Dict(keys, values)
-
-                else:
-
-                    #set
-
-                    el_codes = self.generate_as_expressions(GC, *acode[1:])
-
-                    return ast.Set(el_codes)
+                return ast.Set(el_codes)
 
 
 
@@ -210,15 +135,62 @@ class List(Container):
 
     HEADTEXT = "[]"
 
-#     # #([] ...)
-#     #
-#
-#     def generate(self, element:Element, GC:GenerationContext):
-#
-#         raise NotImplementedError()
-#
-#
-#
+    def generate(self, element:Element, GC:GenerationContext):
+
+
+        acode = element.code
+
+        if len(acode) is 2 and is_form(acode[1], "for"):
+
+            for_form = acode[1].code
+
+            # list comprehension
+
+            # («[]» (for (in i lst) (f i))) # list compr
+
+            in_el = for_form[1]
+            in_el_code = in_el.code
+
+            #with GC.let(domain=ExDom):
+
+            assert is_identifier(in_el, "in")
+
+            target_element = in_el_code[1]
+            iter_element = in_el_code[2]
+
+            with GC.let(domain=LVDom):
+                target_code = GC.generate(target_element)
+
+            with GC.let(domain=ExDom):
+                iter_code = GC.generate(iter_element)
+
+
+
+            generators = [ ast.comprehension(target=target_code,
+                                             iter=iter_code,
+                                             ifs=[]) ]
+
+
+            to_evaluate_element = for_form[2]
+
+            with GC.let(domain=ExDom):
+
+                to_evaluate_code = GC.generate(to_evaluate_element)
+
+
+            return ast.ListComp(to_evaluate_code, generators)
+
+
+        else:
+
+            els = self.generate_as_expressions(GC, *acode[1:])
+
+            if GC.domain == LVDom:
+                return ast.List(els, ast.Store())
+            return self.expr_wrap(ast.List(els, ast.Load()), GC)
+
+
+
 
 class Set(Container):
 

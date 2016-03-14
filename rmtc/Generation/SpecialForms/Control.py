@@ -102,19 +102,24 @@ class While(SpecialForm):
 
     def generate(self, element:Element, GC:GenerationContext):
 
-        raise NotImplementedError()
+        self.precheck(element, GC)
 
-        # acode = element.code
-        #
-        # testexpr_element = acode[1]
-        #
-        # with GC.let(domain=ExDom):
-        #
-        #     testexpr_code = GC.generate(testexpr_element)
-        #
-        #
-        #
-        # body_items
+        acode = element.code
+
+        testexpr_element = acode[1]
+
+        with GC.let(domain=ExDom):
+
+            testexpr_code = GC.generate(testexpr_element)
+
+        if is_form(acode.last, "else"):
+            raise NotImplementedError()
+
+        body_codes = [GC.generate(e) for e in acode[2:]]
+
+        return ast.While(test=testexpr_code,
+                         body=body_codes,
+                         orelse=[])
 
 
 
@@ -128,19 +133,30 @@ class For(SpecialForm):
 
     def generate(self, element:Element, GC:GenerationContext):
 
-        raise NotImplementedError()
+        self.precheck(element, GC)
 
-        #acode = element.code
+        acode = element.code
+
+        target_iter_element = acode[1]
+        target_element = target_iter_element.code[0]
+        iter_element = target_iter_element.code[1]
+
+        with GC.let(domain=ExDom):
+
+            target_code = GC.generate(target_element)
+            iter_code = GC.generate(iter_element)
+
+        if is_form(acode.last, "else"):
+            raise NotImplementedError()
+
+        body_codes = [GC.generate(e) for e in acode[2:]]
 
 
-
-
-
-        #return ast.For(target=
-        #               iter=
-        #               body=
-        #               orelse=
-        #               )
+        return ast.For(target=target_code,
+                      iter=iter_code,
+                      body=body_codes,
+                      orelse=[],
+                      )
 
 
 
@@ -203,6 +219,34 @@ class Raise(SpecialForm):
             return ast.Raise(None)
 
 
+class Assert(SpecialForm):
+
+    HEADTEXT = "assert"
+
+    # (assert test)
+    # (assert test msg)
+
+    def generate(self, element:Element, GC:GenerationContext):
+
+        self.precheck(element, GC)
+
+        acode = element.code
+
+        test_element = acode[1]
+
+        with GC.let(domain=ExDom):
+
+            test_code = GC.generate(test_element)
+
+            msg_code = None
+            if len(acode) > 2:
+                msg_element = acode[2]
+                msg_code = GC.generate(msg_element)
+
+
+        return ast.Assert(test=test_code, msg=msg_code)
+
+
 
 class Pass(SpecialForm):
 
@@ -242,9 +286,7 @@ class With(SpecialForm):
             for ctxel in context_element_code:
 
 
-                if isinstance(ctxel.code, Form) \
-                    and isinstance(ctxel.code[0], Identifier) \
-                    and ctxel.code[0].full_name == "as":
+                if is_form(ctxel.code, "as"):
 
                     ctxelcode = ctxel.code
 

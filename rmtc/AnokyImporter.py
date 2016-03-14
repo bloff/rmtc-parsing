@@ -16,7 +16,6 @@ import compiler_anoky as akycomp
 
 
 
-
 class AnokyLoader(iabc.SourceLoader):
 
 
@@ -63,7 +62,9 @@ class AnokyLoader(iabc.SourceLoader):
 
         # return _bootstrap._call_with_frames_removed(compile, data, path, 'exec',
         #                                 dont_inherit=True, optimize=_optimize)
-        return super().source_to_code(aky_ast, path)
+        aky_codeobj = super().source_to_code(aky_ast, path)
+
+        return aky_codeobj
 
 
 
