@@ -55,10 +55,11 @@ default_special_forms_table = {
 
     "compare": Compare(),
 
-
-    "@[]" : Cnt.Subscript(),
     "[]" : Cnt.List(),
+    "{}" : Cnt.BraceContainer(),
     #"{}" : Ct.Dict(), #or set?
+    "@[]" : Cnt.Subscript(),
+
     "if" : If(),
 
     "while" : Ctl.While(),
@@ -81,8 +82,8 @@ default_special_forms_table = {
     #"macroimport" : Imp.MacroImport()
 }
 
-container = Cnt.Container()
+#container = Cnt.Container()
 
-default_special_forms_table["{}"] = container
+#default_special_forms_table["{}"] = container
 #default_special_forms_table["[]"] = container
 

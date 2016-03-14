@@ -195,19 +195,28 @@ class DefaultGenerator(Generator):
             # are seqs ever not tuples
 
             seq_codes = []
+
+            # NEED TO FIX THIS
+
+            # there's a better way to do this probably
+            if GC.domain == LVDom:
+                with GC.let(domain=LVDom):
+                    for e in seq_codes:
+                        seq_codes.append(GC.generate(e))
+                return ast.Tuple(seq_codes, ast.Store())
+
             with GC.let(domain=ExDom):
                 # does var scope extend outside with block?
                 #seq_codes = [GC.generate(e) for e in acode]
                 for e in acode:
                     seq_codes.append(GC.generate(e))
 
-            if GC.domain == LVDom:
-                return ast.Tuple(seq_codes, ast.Store())
+
 
             # elif GC.domain == SDom:
 
-            else:
-                return ast.Tuple(seq_codes, ast.Load())
+
+            return ast.Tuple(seq_codes, ast.Load())
 
 
 
