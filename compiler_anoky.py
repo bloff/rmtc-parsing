@@ -3,7 +3,7 @@ import sys
 import ast
 
 import msgpack
-from rmtc.Common.Errors import ErrorInPosition
+from rmtc.Common.Errors import CompilerError
 
 from rmtc.Common.Record import Record
 from rmtc.Common.SysArgsParser import SysArgsParser
@@ -106,7 +106,7 @@ def generate(options):
         return py_module
 
 
-    except ErrorInPosition as e:
+    except CompilerError as e:
         print(e.trace)
 
 
