@@ -85,7 +85,7 @@ default_readtable = make_readtable( [
     
     
     [RT.ISOLATED_CONSTITUENT,
-     ['.',
+     ['.', '..', '...',
       '+', '-', '*', '/', '//', '%', '**', '@',
       '&', '^', '<<', '>>', '~',
       '=',
@@ -222,7 +222,7 @@ def define_default_anoky_transducer_chain():
     tt_multiplication = TopDownTreeTransducer("Multiplication, Division, etc.",
                                               Arrangement([
                                                   LeftRightBinaryOperator({
-                                                      '*', '@', '/', '//', '%'})]))
+                                                      '*', '@', '/', '%'})]))
 
     tt_addition = TopDownTreeTransducer("Addition, Subtraction",
                                         Arrangement([

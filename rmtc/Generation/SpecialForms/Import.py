@@ -85,6 +85,7 @@ class Import(Macro, SpecialForm):
         acode = element.code
 
         imports_list = []
+        import_statements = []
 
         with GC.let(domain=ExDom):
 
@@ -108,10 +109,25 @@ class Import(Macro, SpecialForm):
 
                     imports_list.append(ast.alias(name=to_import_name,
                                                   asname=to_import_asname))
+                elif is_form(to_import_element.code, "from"):
+                    to_import_module_name = get_import_name(to_import_element.code[1])
+                    imported_names_from_module = []
+                    for to_import_item_element in to_import_element.code[2:]:
+                        if isinstance(to_import_item_element.code, Identifier) or is_form(to_import_item_element.code, "."):
+                            to_import_name = get_import_name(to_import_item_element)
+                            imported_names_from_module.append(ast.alias(name=to_import_name, asname=None))
+
+                        elif is_form(to_import_item_element.code, "as"):
+                            to_import_name = get_import_name(to_import_item_element.code[1])
+                            to_import_asname = to_import_item_element.code[2].code.full_name
+                            imported_names_from_module.append(ast.alias(name=to_import_name,
+                                                          asname=to_import_asname))
+                    import_statements.append(ast.ImportFrom(to_import_module_name, imported_names_from_module, 0))
                 else:
                     raise CodeGenerationError(to_import_element.range, "Special form `import` expected a module path (`a.b.c`) or an import alias `(as a.b.c name)`, but found `%s`." % succinct_lisp_printer(to_import_element))
 
-        return ast.Import(imports_list)
+        import_statements.append(ast.Import(imports_list))
+        return import_statements
 
 
 

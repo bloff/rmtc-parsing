@@ -88,7 +88,10 @@ class If(SpecialForm):
 
         if len(body_gens) == 0: body_gens.append(ast.Pass())
 
-        return astIf(condition_gen, body_gens, else_code)
+        if GC.domain == ExDom:
+            return ast.IfExp(condition_gen, body_gens[0], else_code[0])
+        else:
+            return ast.If(condition_gen, body_gens, else_code)
 
 
 
