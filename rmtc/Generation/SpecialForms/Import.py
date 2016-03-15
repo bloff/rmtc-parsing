@@ -18,6 +18,14 @@ from rmtc.Syntax.Node import Element
 from rmtc.Syntax.Util import is_form, is_identifier
 
 
+def get_import_name(element:Element) -> str:
+    if is_identifier(element):
+        return element.code.full_name # TODO: name mangling?
+    elif is_form(element, '.'):
+        return ".".join(get_import_name(e) for e in element.code.iterate_from(1))
+    else:
+        raise CodeGenerationError(element.range, "Expected a module path (`a.b.c`) , but found `%s`." % succinct_lisp_printer(element))
+
 class Import(Macro, SpecialForm):
 
     HEADTEXT = "import"
@@ -73,13 +81,6 @@ class Import(Macro, SpecialForm):
 #    (as name newname)
 
     def generate(self, element:Element, GC:GenerationContext):
-        def get_import_name(element:Element) -> str:
-            if is_identifier(element):
-                return element.code.full_name # TODO: name mangling?
-            elif is_form(element, '.'):
-                return ".".join(get_import_name(e) for e in element.code.iterate_from(1))
-            else:
-                raise CodeGenerationError(to_import_element.range, "Special form `import` expected a module path (`a.b.c`) , but found `%s`." % succinct_lisp_printer(to_import_element))
 
         acode = element.code
 
@@ -198,7 +199,7 @@ class MacroImport(Macro, SpecialForm):
 
         acode1 = acode[1].code
 
-        module_name = acode1[1].code.full_name
+        module_name = get_import_name(acode1[1])
 
         macro_name = acode1[2].code.full_name
 
