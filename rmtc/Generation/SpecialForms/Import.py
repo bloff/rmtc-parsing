@@ -2,6 +2,7 @@ import ast
 
 from importlib import import_module
 
+from rmtc.Common.Errors import CodeGenerationError
 from rmtc.Expansion.ExpansionContext import ExpansionContext
 from rmtc.Expansion.Macro import Macro, IdentifierMacro
 from rmtc.Generation.GenerationContext import GenerationContext
@@ -11,9 +12,10 @@ from rmtc.Generation.Domain import StatementDomain as SDom,\
     ExpressionDomain as ExDom, LValueDomain as LVDom, DeletionDomain as DelDom
 from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Identifier import Identifier
+from rmtc.Syntax.LispPrinter import succinct_lisp_printer
 
 from rmtc.Syntax.Node import Element
-from rmtc.Syntax.Util import is_form
+from rmtc.Syntax.Util import is_form, is_identifier
 
 
 class Import(Macro, SpecialForm):
@@ -71,6 +73,13 @@ class Import(Macro, SpecialForm):
 #    (as name newname)
 
     def generate(self, element:Element, GC:GenerationContext):
+        def get_import_name(element:Element) -> str:
+            if is_identifier(element):
+                return element.code.full_name # TODO: name mangling?
+            elif is_form(element, '.'):
+                return ".".join(get_import_name(e) for e in element.code.iterate_from(1))
+            else:
+                raise CodeGenerationError(to_import_element.range, "Special form `import` expected a module path (`a.b.c`) , but found `%s`." % succinct_lisp_printer(to_import_element))
 
         acode = element.code
 
@@ -80,26 +89,26 @@ class Import(Macro, SpecialForm):
 
             for to_import_element in acode[1:]:
 
-                if isinstance(to_import_element.code, Identifier):
+                if isinstance(to_import_element.code, Identifier) or is_form(to_import_element.code, "."):
 
-                    to_import_name = to_import_element.code.full_name
+                    to_import_name = get_import_name(to_import_element)
 
                     imports_list.append(ast.alias(name=to_import_name,
                                                   asname=None))
-
-                else:
+                elif is_form(to_import_element.code, "as"):
                     # (as module_name as_name)
 
                     # assert isinstance(to_import_element.code, Form) \
                     #     and isinstance(to_import_element.code[0].code, Identifier) \
                     #     and to_import_element.code[0].code.full_name == "as"
-                    assert is_form(to_import_element.code, "as")
 
-                    to_import_name = to_import_element.code[1].code.full_name
+                    to_import_name = get_import_name(to_import_element.code[1])
                     to_import_asname = to_import_element.code[2].code.full_name
 
                     imports_list.append(ast.alias(name=to_import_name,
                                                   asname=to_import_asname))
+                else:
+                    raise CodeGenerationError(to_import_element.range, "Special form `import` expected a module path (`a.b.c`) or an import alias `(as a.b.c name)`, but found `%s`." % succinct_lisp_printer(to_import_element))
 
         return ast.Import(imports_list)
 
