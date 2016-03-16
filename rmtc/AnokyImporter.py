@@ -127,7 +127,8 @@ class AnokyFinder(iabc.MetaPathFinder):
             #print("path is ",path)
 
             if isinstance(path, list):
-                os.chdir(path[0])
+                #os.chdir(path[0])
+                pass
             else:
                 # "namespace path" ??
                 return None
