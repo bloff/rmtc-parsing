@@ -23,7 +23,7 @@ from rmtc.Transducers.Arrangements.Constituents import Constituent
 from rmtc.Transducers.Arrangements.DefaultPunctuation import DefaultPunctuation
 from rmtc.Transducers.Arrangements.Delimiters import ParenthesisWithHead, ParenthesisNoHead, \
     ApplyParenthesis, Delimiters
-from rmtc.Transducers.Arrangements.IfElse import InfixIfElse, IfElifElse
+from rmtc.Transducers.Arrangements.IfElse import InfixIfElse, FormWithDirectives
 from rmtc.Transducers.Arrangements.LeftRightBinaryOperatorReversedArgs import LeftRightBinaryOperatorReversedArgs
 from rmtc.Transducers.Arrangements.LeftRightBinaryOperatorTwoSymbols import LeftRightBinaryOperatorTwoSymbols
 from rmtc.Transducers.Arrangements.LeftRightBinaryTokenCapturingOperator import LeftRightBinaryTokenCapturingOperator
@@ -247,7 +247,7 @@ def define_default_lyc_transducer_chain():
     tt_if_else = TopDownTreeTransducer("If-Elif-Else and Infix If-Else",
                         Arrangement([
                             InfixIfElse({('if', 'else')}),
-                            IfElifElse()
+                            FormWithDirectives()
                         ]))
 
     tt_infix_for = TopDownTreeTransducer("Infix For",

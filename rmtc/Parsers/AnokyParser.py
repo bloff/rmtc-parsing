@@ -16,7 +16,7 @@ from rmtc.Transducers.Arrangements.Constituents import Constituent
 from rmtc.Transducers.Arrangements.DefaultPunctuation import DefaultPunctuation
 from rmtc.Transducers.Arrangements.Delimiters import ParenthesisWithHead, ParenthesisNoHead, \
     Delimiters
-from rmtc.Transducers.Arrangements.IfElse import InfixIfElse, IfElifElse
+from rmtc.Transducers.Arrangements.IfElse import InfixIfElse, FormWithDirectives
 from rmtc.Transducers.Arrangements.LeftRightBinaryOperator import LeftRightBinaryOperator
 from rmtc.Transducers.Arrangements.LeftRightBinaryOperatorTwoSymbols import LeftRightBinaryOperatorTwoSymbols
 from rmtc.Transducers.Arrangements.LeftRightBinaryTokenCapturingOperator import LeftRightBinaryTokenCapturingOperator
@@ -276,7 +276,8 @@ def define_default_anoky_transducer_chain():
     tt_conditional = TopDownTreeTransducer("Conditionals",
                                            Arrangement([
                                                InfixIfElse({('if', 'else')}),
-                                               IfElifElse()]))
+                                               FormWithDirectives('if', {'elif', 'else'}),
+                                               FormWithDirectives('try', {'except', 'else', 'finally'})]))
     
 
     #tt_lambda = TopDownTreeTransducer("Lambdas", Arrangement([ ]))

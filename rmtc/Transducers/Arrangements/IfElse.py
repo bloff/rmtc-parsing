@@ -1,6 +1,6 @@
 from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Node import Element
-from rmtc.Syntax.Util import is_identifier
+from rmtc.Syntax.Util import is_identifier, is_form
 from rmtc.Transducers.ArrangementRule import ArrangementRule
 
 
@@ -50,33 +50,35 @@ class InfixIfElse(ArrangementRule):
         return form.replace(x, new_form).next
 
 
-class IfElifElse(ArrangementRule):
+class FormWithDirectives(ArrangementRule):
     # (if a b) . [(elif a b)]* [(else b)]? => (if a b (elif a b)* (else b)?)
     """
     Applies the transformation::
 
-      ⦅if ⦆ ⋅ ⦅elif ⦆* ⦅else ⦆?  ⦅if  ⦅elif ⦆* ⦅else ⦆?⦆⋅
+      ⦅head ⦆ ⋅ ⦅valid_continuation ⦆*  ⦅head  ⦅valid_continuation ⦆*⦆⋅
 
-    (i.e. places the elifs and else forms inside the preceeding if form)
+    (e.g. with head = `if` and valid_continuation one of `elif` or `else`, then it
+        places the elifs and else forms inside the preceeding if form)
     """
 
-    def __init__(self):
-        ArrangementRule.__init__(self, "If-Elif-Else")
+    def __init__(self, head_name:str, following_names:set):
+        ArrangementRule.__init__(self, head_name + '-'.join(following_names))
+        self.head_name = head_name
+        self.following_names = following_names
 
     def applies(self, element:Element):
-        return isinstance(element.code, Form) and is_identifier(element.code.head, 'if')
+        return isinstance(element.code, Form) and is_identifier(element.code.head, self.head_name)
 
     def apply(self, element:Element):
         form = element.parent
         next_form_element = element.next
-        while next_form_element is not None and isinstance(next_form_element.code, Form) and is_identifier(next_form_element.code.head, 'elif'):
+        while next_form_element is not None:
+            interesting_form = any( is_form(next_form_element, form_head) for form_head in self.following_names)
+            if not interesting_form: break
             form.remove(next_form_element)
             element.code.append(next_form_element)
             next_form_element = element.next
 
-        if next_form_element is not None and isinstance(next_form_element.code, Form) and is_identifier(next_form_element.code.head, 'else'):
-            form.remove(next_form_element)
-            element.code.append(next_form_element)
 
         return element.next
 

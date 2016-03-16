@@ -66,6 +66,7 @@ default_special_forms_table = {
     "for" : Ctl.For(),
 
     "raise" : Ctl.Raise(),
+    "try" : Ctl.Try(),
     "assert" : Ctl.Assert(),
     "pass" : Ctl.Pass(),
 
