@@ -84,6 +84,8 @@ class RMTCParser(object):
 
     def parse(self, code_or_stream:Union[str, CharacterStream]) -> Node:
         code_node = self.tokenize_into_node(code_or_stream)
-        if G.Options.PRINT_TOKENS: print_tokens(code_node)
+        return self.transduce(code_node)
+
+    def transduce(self, code_node:Node):
         apply_transducer_chain(self.transducer_chain, code_node)
         return code_node

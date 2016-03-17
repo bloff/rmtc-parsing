@@ -73,22 +73,22 @@ def expand(options):
         stream = FileStream(filename)
 
         file_node = parser.parse(stream)
-        print(indented_lisp_printer(file_node))
+        # print(indented_lisp_printer(file_node))
 
         expander = DefaultExpander()
         ec = expander.expand_unit(file_node)
-        print("\n〰〰〰〰〰〰 After macro expansion 〰〰〰〰〰〰")
-        print(indented_lisp_printer(file_node))
+        # print("\n〰〰〰〰〰〰 After macro expansion 〰〰〰〰〰〰")
+        # print(indented_lisp_printer(file_node))
 
         generator = DefaultGenerator()
         py_module = generator.generate_unit(file_node,
         # provide expansion context to generation context
                                             EC=ec)
 
-        print("\n〰〰〰〰〰〰 Generated Python code 〰〰〰〰〰〰\n")
-        astpp.parseprint(py_module)
+        # print("\n〰〰〰〰〰〰 Generated Python code 〰〰〰〰〰〰\n")
+        #astpp.parseprint(py_module)
 
-        print("\n〰〰〰〰〰〰 Python retrosource 〰〰〰〰〰〰\n")
+        # print("\n〰〰〰〰〰〰 Python retrosource 〰〰〰〰〰〰\n")
         print(ASTFormatter().format(py_module))
 
         if options.execute:
