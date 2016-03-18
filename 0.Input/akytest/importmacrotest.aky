@@ -1,0 +1,3 @@
+importmacro macrotest.testmac
+
+testmac()

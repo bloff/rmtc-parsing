@@ -245,6 +245,8 @@ class MacroImport(Macro, SpecialForm):
 
         EC.macro_table[macro_name] = modmacros[macro_name]
 
+        print(EC.macro_table)
+
         return
 
 
@@ -266,7 +268,8 @@ class MacroImport(Macro, SpecialForm):
         #   modulename = import_module("modulename")
 
         import_import_code = ast.ImportFrom(module="importlib",
-                                            names=[ast.alias("import_module")])
+                                            names=[ast.alias("import_module", None)],
+                                            level=0)
 
         module_import_code = ast.Call(func=ast.Name(id="import_module",
                                                     ctx=ast.Load()),
@@ -295,7 +298,8 @@ class MacroImport(Macro, SpecialForm):
                                     slice=ast.Index(ast.Str(macro_name)),
                                     ctx=ast.Store())
 
-        value_code = ast.Subscript(value=ast.Attribute(value=ast.Name(id=module_name),
+        value_code = ast.Subscript(value=ast.Attribute(value=ast.Name(id=module_name,
+                                                                      ctx=ast.Load()),
                                                        attr="__macros__",
                                                        ctx=ast.Load()),
                                    slice=ast.Index(ast.Str(macro_name)),
@@ -312,7 +316,7 @@ class MacroImport(Macro, SpecialForm):
 
         # return as tuple?
 
-        return
+        return [import_import_code, assign_imported_module_code, assign_macro_code]
 
 
 

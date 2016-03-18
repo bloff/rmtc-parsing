@@ -80,7 +80,7 @@ default_special_forms_table = {
     "class" : Class(),
 
     "import" : Imp.Import(),
-    #"macroimport" : Imp.MacroImport()
+    "importmacro" : Imp.MacroImport()
 }
 
 #container = Cnt.Container()

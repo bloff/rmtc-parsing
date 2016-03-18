@@ -1,0 +1,4 @@
+
+rawmacro:
+  (testmac, element, ec)
+  print "imported test macro"

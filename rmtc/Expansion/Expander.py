@@ -36,6 +36,7 @@ class DefaultExpander(Expander):
         from rmtc.Expansion.Macros.Alias import DefAlias
         from rmtc.Expansion.Macros.Quote import Quote
         from rmtc.Expansion.Macros.Rawmacro import RawMacro, RawSpecialForm
+        from rmtc.Generation.SpecialForms.Import import MacroImport
 
         assert(isinstance(unit, Node))
         context_root_bindings = Record(
@@ -43,7 +44,8 @@ class DefaultExpander(Expander):
             expander = self,
             macro_table = {"quote":Quote(),
                            "rawmacro":RawMacro(),
-                           "rawspecial":RawSpecialForm()},
+                           "rawspecial":RawSpecialForm(),
+                           "importmacro":MacroImport()},
                           #"import" etc.
                           #"defalias":DefAlias()},
             id_macro_table = {}
