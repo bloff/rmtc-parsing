@@ -22,17 +22,19 @@ def compile_anoky(options):
         stream = FileStream(filename)
         node_with_tokens = parser.tokenize_into_node(stream)
         if options.print_tokens:
+            print('\n——›–  Tokenized source  –‹——\n')
             for token in node_with_tokens:
                 print(str(token))
         if not options.arrange:
-            return
+            return()
         file_node = parser.transduce(node_with_tokens)
         if options.print_parse:
+            print('\n——›–  Parsed source before macro expansion  –‹——\n')
             print(indented_lisp_printer(file_node))
         expander = DefaultExpander()
         ec = expander.expand_unit(file_node)
         if options.print_macro_expanded_code:
-            print('\n——›–  After macro expansion  –‹——\n')
+            print('\n——›–  Parsed source macro expansion  –‹——\n')
             print(indented_lisp_printer(file_node))
         generator = DefaultGenerator()
         py_module = generator.generate_unit(file_node, EC=ec)

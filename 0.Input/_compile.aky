@@ -39,7 +39,10 @@ def compile_anoky(options):
         node_with_tokens = parser.tokenize_into_node(stream)
 
         if options.print_tokens:
-            for token node_with_tokens:
+            print  "
+                    ——›–  Tokenized source  –‹——
+                   "
+            for token in node_with_tokens:
                 print str(token)
 
         if not options.arrange:
@@ -48,6 +51,9 @@ def compile_anoky(options):
         file_node = parser.transduce(node_with_tokens)
 
         if options.print_parse:
+            print  "
+                    ——›–  Parsed source before macro expansion  –‹——
+                   "
             print indented_lisp_printer(file_node)
 
         expander = DefaultExpander()
@@ -55,7 +61,7 @@ def compile_anoky(options):
 
         if options.print_macro_expanded_code:
             print  "
-                    ——›–  After macro expansion  –‹——
+                    ——›–  Parsed source macro expansion  –‹——
                    "
             print indented_lisp_printer(file_node)
 
