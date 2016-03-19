@@ -157,14 +157,3 @@ class DefaultPunctuation(ArrangementRule):
 
         return _replace_punctuator_with_pform()
 
-
-g = 1
-def f():
-    g = 10
-    def ff():
-        global g
-        g = 20
-    ff()
-    print(g)
-
-f()
