@@ -65,21 +65,23 @@ class DefaultPunctuation(ArrangementRule):
 
         first_small_group = None
 
-        has_groups = False
         seen_colon = False
 
 
+        # 1. Check to make sure there are no punctuation tokens before the skip_count
         start_of_group = pnode[0]
         for i in range(punctuator.skip_count):
             if is_token(start_of_group, Tokens.PUNCTUATION):
                 raise ArrangementError(start_of_group.range, "Unexpected punctuation '%s' before start of argument sequence." % start_of_group.value)
             start_of_group = start_of_group.next
 
+        # 2. Remove leading break, if any
         while is_token(start_of_group, Tokens.ARGBREAK):
             nxt = start_of_group.next
             pnode.remove(start_of_group)
             start_of_group = nxt
 
+        # 2. The first token after skip_count cannot be punctuation, unless it's a colon ':'
         if is_token(start_of_group, Tokens.PUNCTUATION):
             if start_of_group.value != ':':
                 raise ArrangementError(start_of_group.range.first_position, "Unexpected punctuation '%s' at start of argument sequence."  % start_of_group.value)
@@ -88,34 +90,40 @@ class DefaultPunctuation(ArrangementRule):
                 colon = start_of_group
                 start_of_group = colon.next
                 pnode.remove(colon)
+                # and after this colon there should not be any punctuation
                 if is_token(start_of_group, Tokens.PUNCTUATION) and not is_token(start_of_group, Tokens.ARGBREAK):
                     raise ArrangementError(start_of_group.range.first_position, "Unexpected punctuation '%s' after ':'."  % start_of_group.value)
 
 
+        # This function will wrap the last group of tokens in a PreSeq
         def finish_groups(last_element_in_group):
-            if has_groups and start_of_group is not None:
-                pnode.wrap(start_of_group, last_element_in_group, PreSeq)
+            nonlocal first_small_group
+            if start_of_group is not None and start_of_group is not last_element_in_group:
+                new_seq = pnode.wrap(start_of_group, last_element_in_group, PreSeq)
+                if first_small_group is None:
+                    first_small_group = new_seq
 
 
-        # Iterate through all elements of the node, in search of ',' or ':' punctuation tokens
+        # Iterate through all elements of the node, in search of ',' or ':' punctuation tokens, or ARGBREAK tokens
         for punctuation_token in pnode.iterate_from(start_of_group):
 
+            # an ARGBREAK token will wrap the previous tokens (from start_of_group to this point)
             if is_token(punctuation_token, Tokens.ARGBREAK):
                 if start_of_group is punctuation_token:
+                    # ARGBREAKS after punctuation tokens are ignored
                     start_of_group = punctuation_token.next
                     pnode.remove(punctuation_token)
                 else:
-                    has_groups = True
+                    # wrap-previous-tokens(start_of_group, punctuation_token, PreSeq)
                     new_group = pnode.wrap(start_of_group, punctuation_token.prev, PreSeq)
                     if first_small_group is None:
                         first_small_group = new_group
                     start_of_group = punctuation_token.next
                     pnode.remove(punctuation_token)
-
             elif is_token(punctuation_token, Tokens.PUNCTUATION, ','):
                 if start_of_group is punctuation_token:
                     raise ArrangementError(punctuation_token.range.first_position, "Unexpected punctuation '%s'."  % punctuation_token.value)
-                has_groups = True
+                # wrap-previous-tokens(start_of_group, punctuation_token, PreSeq)
                 new_group = pnode.wrap(start_of_group, punctuation_token.prev, PreSeq)
                 if first_small_group is None:
                     first_small_group = new_group
@@ -129,9 +137,8 @@ class DefaultPunctuation(ArrangementRule):
                     raise ArrangementError(punctuation_token.range.first_position, "Unexpected punctuation '%s'."  % punctuation_token.value)
                 seen_colon = True
                 finish_groups(punctuation_token.prev)
-                has_groups = False
                 if first_small_group is None:
-                    first = pnode[1]
+                    first = start_of_group
                 else:
                     first = first_small_group
                 pnode.wrap(first, punctuation_token.prev, PreSeq)
@@ -151,3 +158,13 @@ class DefaultPunctuation(ArrangementRule):
         return _replace_punctuator_with_pform()
 
 
+g = 1
+def f():
+    g = 10
+    def ff():
+        global g
+        g = 20
+    ff()
+    print(g)
+
+f()

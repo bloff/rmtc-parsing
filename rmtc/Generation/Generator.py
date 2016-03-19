@@ -182,7 +182,7 @@ class DefaultGenerator(Generator):
                         args.append(arg_code)
 
 
-                return expr_wrap(ast.Call(func_code, args, keywords))
+                return expr_wrap(ast.Call(func_code, args, keywords), GC)
 
 
 
