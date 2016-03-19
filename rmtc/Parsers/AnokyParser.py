@@ -10,6 +10,7 @@ from rmtc.Tokenization.Tokenizers.IndentationReadtable import IndentationReadtab
 from rmtc.Tokenization.Tokenizers.RawComment import RawCommentTokenizer
 from rmtc.Tokenization.Tokenizers.String import StringTokenizer
 from rmtc.Transducers.Arrangement import Arrangement
+from rmtc.Transducers.Arrangements.ApplyInIsolation import ApplyInIsolation
 from rmtc.Transducers.Arrangements.ApplyToRest import ApplyToRest
 from rmtc.Transducers.Arrangements.LeftRightNaryOperatorMultipleHeads import LeftRightNaryOperatorMultipleHeads
 from rmtc.Transducers.Arrangements.Comments import RawComment
@@ -195,7 +196,8 @@ def define_default_anoky_transducer_chain():
     tt_infix_special_ops = TopDownTreeTransducer("Infix Gather-Alls",
                              Arrangement([
                                 TransformationArrow({'<-'}),
-                                ApplyToRest({'return', 'raise', 'pass'}),]))
+                                ApplyInIsolation({'del', 'pass', 'break', 'continue', 'import', 'global', 'nonlocal', 'assert'}),
+                                ApplyToRest({ 'return', 'raise', 'yield',}),]))
 
     tt_punctuation = TopDownTreeTransducer("Punctuation",
                                            Arrangement([DefaultPunctuation()]))
