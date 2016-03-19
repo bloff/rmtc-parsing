@@ -16,7 +16,7 @@ from rmtc.Transducers.Arrangements.LeftRightNaryOperatorMultipleHeads import Lef
 from rmtc.Transducers.Arrangements.Comments import RawComment
 from rmtc.Transducers.Arrangements.Constituents import Constituent
 from rmtc.Transducers.Arrangements.DefaultPunctuation import DefaultPunctuation, DefaultFormPunctuation, \
-    DefaultSeqPunctuation
+    DefaultSeqPunctuation, ForPunctuation, Skip2Punctuation
 from rmtc.Transducers.Arrangements.Delimiters import ParenthesisWithHead, ParenthesisNoHead, \
     Delimiters
 from rmtc.Transducers.Arrangements.IfElse import InfixIfElse, FormWithDirectives
@@ -201,7 +201,7 @@ def define_default_anoky_transducer_chain():
                                 ApplyToRest({ 'return', 'raise', 'yield',}),]))
 
     tt_punctuation = TopDownTreeTransducer("Punctuation",
-                                           Arrangement([DefaultSeqPunctuation(), DefaultFormPunctuation()]))
+                                           Arrangement([Skip2Punctuation({'@[]', '@{}'}), ForPunctuation(), DefaultSeqPunctuation(), DefaultFormPunctuation()]))
 
     # tt_commaoperator = TopDownTreeTransducer("Comma as binary operator",
     #                                          Arrangement([RightLeftBinaryOperator({','})]))
