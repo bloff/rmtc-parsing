@@ -52,13 +52,10 @@ class Segment(ArrangementRule):
         new_form_element = begin_token.parent.wrap(begin_token, begin_token.end, self.wrap_class)
         new_form = new_form_element.code
 
-        punctuation = begin_token.punctuation
         new_form.remove(new_form.first) # remove BEGIN
         new_form.remove(new_form.last)  # remove END
 
-        punctuator = Punctuator(new_form_element.code, punctuation, 1)
-
-        return new_form_element.parent.replace(new_form_element, punctuator).next
+        return new_form_element.next
 
 
     def _single_indented_segment_apply(self, begin_token) -> Element:
@@ -99,11 +96,8 @@ class Segment(ArrangementRule):
             # remove BEGIN/END pairs of non-indented, non-colon-having segments
             Util.explode_list_of_args(first_begin_after_indentation)
 
-            punctuator = Punctuator(new_form_element.code, None, 1)
-        else: # otherwise, we are in list-of-forms mode
-            punctuator = Punctuator(new_form_element.code, None, 1, indent)
 
-        return new_form_element.parent.replace(new_form_element, punctuator).next
+        return new_form_element.next
 
     # BEGIN h a INDENT $b INDENT c END  ₐ⟅h⟨a⟩ b c⟆ₐ
     # b <- BEGIN a  :  END  ⟅a⟨⟩⟆ₐ
@@ -137,12 +131,8 @@ class Segment(ArrangementRule):
 
         # wrap everything after head and before second INDENT in preseq inside a punctuator
 
-        args_block = begin_token.parent.wrap(begin_token.next.next, indent1.prev, PreSeq)
-        punctuator = Punctuator(args_block.code, None, 0)
-        new_form.replace(args_block, punctuator)
+        begin_token.parent.wrap(begin_token.next.next, indent1.prev, PreSeq)
 
-        # remove second INDENT
-        new_form.remove(indent1)
 
         # remove BEGIN and END
         new_form.remove(new_form.first)

@@ -59,38 +59,38 @@ def _element_after(element) -> Element:
 
 
 
-def join_all_args(element_containing_node, begin_element, block_name, punctuator_skip_count):
-    """
-    Applies the transformation::
-
-       ⟅(BEGIN  END)*⟆   ⟨⟅*⟆⟩
-
-    where the left-hand ``⟅⟆`` denotes some :ref:`Node`. This removes BEGIN and END tokens, and the list of punctuation
-    tokens given to the punctuator is the appending of all lists of punctuation tokens in each ``BEGIN  END`` pair.
-
-    E.g. ``⟅BEGIN ab, c, END BEGIN d, e END⟆`` becomes ``⟨ab, c, d, e⟩``
-    """
-
-    node = element_containing_node.code
-
-    punctuation = []
-    while begin_element is not None:
-        assert is_token(begin_element, Tokens.BEGIN)
-        assert begin_element.end is not None
-        end_element = begin_element.end
-        assert is_token(end_element, Tokens.END)
-        if len(begin_element.indents) > 0:
-            raise ArrangementError(begin_element.indents[0].range.first_position, "Unexpected indentation inside %s." % block_name)
-        punctuation.extend(begin_element.punctuation)
-        node.remove(begin_element)
-        begin_element = end_element.next
-        node.remove(end_element)
-
-    if len(punctuation) > 0:
-        punctuator = Punctuator(node, punctuation, punctuator_skip_count)
-        return element_containing_node.parent.replace(element_containing_node, punctuator).next
-    else:
-        return element_containing_node.next
+# def join_all_args(element_containing_node, begin_element, block_name, punctuator_skip_count):
+#     """
+#     Applies the transformation::
+#
+#        ⟅(BEGIN  END)*⟆   ⟨⟅*⟆⟩
+#
+#     where the left-hand ``⟅⟆`` denotes some :ref:`Node`. This removes BEGIN and END tokens, and the list of punctuation
+#     tokens given to the punctuator is the appending of all lists of punctuation tokens in each ``BEGIN  END`` pair.
+#
+#     E.g. ``⟅BEGIN ab, c, END BEGIN d, e END⟆`` becomes ``⟨ab, c, d, e⟩``
+#     """
+#
+#     node = element_containing_node.code
+#
+#     punctuation = []
+#     while begin_element is not None:
+#         assert is_token(begin_element, Tokens.BEGIN)
+#         assert begin_element.end is not None
+#         end_element = begin_element.end
+#         assert is_token(end_element, Tokens.END)
+#         if len(begin_element.indents) > 0:
+#             raise ArrangementError(begin_element.indents[0].range.first_position, "Unexpected indentation inside %s." % block_name)
+#         punctuation.extend(begin_element.punctuation)
+#         node.remove(begin_element)
+#         begin_element = end_element.next
+#         node.remove(end_element)
+#
+#     if len(punctuation) > 0:
+#         punctuator = Punctuator(node, punctuation, punctuator_skip_count)
+#         return element_containing_node.parent.replace(element_containing_node, punctuator).next
+#     else:
+#         return element_containing_node.next
 
 
 def explode_list_of_args(first_begin_token):

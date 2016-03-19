@@ -77,9 +77,8 @@ class ParenthesisWithHead(ArrangementRule):
             return new_form_element.next
         else:
             # return Util.join_all_args(new_form_element, begin_element, "head-prefixed parenthesized form", 1)
-            punctuation = Util.explode_list_of_args(begin_element)
-            punctuator = Punctuator(new_form_element.code, punctuation, 1)
-            return new_form_element.parent.replace(new_form_element, punctuator).next
+            Util.explode_list_of_args(begin_element)
+            return new_form_element.next
 
 
 class ParenthesisNoHead(ArrangementRule):
@@ -113,9 +112,8 @@ class ParenthesisNoHead(ArrangementRule):
         #    return new_tuple_element.next
         #else:
         #    return \
-        punctuation = Util.explode_list_of_args(begin_element)
-        punctuator = Punctuator(new_seq_element.code, punctuation, 0)
-        return new_seq_element.parent.replace(new_seq_element, punctuator).next
+        Util.explode_list_of_args(begin_element)
+        return new_seq_element.next
 
 
 class Delimiters(ArrangementRule):
@@ -157,9 +155,8 @@ class Delimiters(ArrangementRule):
             return new_form_element.next
         else:
             # return Util.join_all_args(new_form_element, begin_element, "head-prefixed parenthesized form", 2 if has_head else 1)
-            punctuation = Util.explode_list_of_args(begin_element)
-            punctuator = Punctuator(new_form_element.code, punctuation, 2 if has_head else 1)
-            return new_form_element.parent.replace(new_form_element, punctuator).next
+            Util.explode_list_of_args(begin_element)
+            return new_form_element.next
 
 
 
