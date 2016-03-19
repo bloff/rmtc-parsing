@@ -4,6 +4,7 @@ from rmtc.Generation.GenerationContext import GenerationContext
 from rmtc.Generation.SpecialForms.SpecialForms import SpecialForm
 from rmtc.Generation.Domain import StatementDomain as SDom,\
     ExpressionDomain as ExDom, LValueDomain as LVDom, DeletionDomain as DelDom
+from rmtc.Generation.Util import expr_wrap
 from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Identifier import Identifier
 
@@ -127,7 +128,7 @@ class List(Container):
 
             if GC.domain == LVDom:
                 return ast.List(els, ast.Store())
-            return self.expr_wrap(ast.List(els, ast.Load()), GC)
+            return expr_wrap(ast.List(els, ast.Load()), GC)
 
 
 
@@ -213,7 +214,7 @@ class BraceContainer(Container):
                         keys.append(key_code)
                         values.append(value_code)
 
-                return self.expr_wrap(ast.Dict(keys, values), GC)
+                return expr_wrap(ast.Dict(keys, values), GC)
 
             else:
 
@@ -221,7 +222,7 @@ class BraceContainer(Container):
 
                 el_codes = self.generate_as_expressions(GC, *acode[1:])
 
-                return self.expr_wrap(ast.Set(el_codes), GC)
+                return expr_wrap(ast.Set(el_codes), GC)
 
 
 

@@ -4,6 +4,7 @@ from rmtc.Expansion.ExpansionContext import ExpansionContext
 from rmtc.Expansion.Macro import Macro
 from rmtc.Generation.GenerationContext import GenerationContext
 from rmtc.Generation.SpecialForms.SpecialForms import SpecialForm
+from rmtc.Generation.Util import expr_wrap
 from rmtc.Syntax.Code import Code
 from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Identifier import Identifier
@@ -41,7 +42,7 @@ class Quote(Macro, SpecialForm):
         aquote = element.code[1].code
 
         quote_ast = Quote.generate_quote_ast(acode[1], GC)
-        return self.expr_wrap(quote_ast, GC)
+        return expr_wrap(quote_ast, GC)
 
 
     @staticmethod

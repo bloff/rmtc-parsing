@@ -3,6 +3,7 @@ import ast
 from rmtc.Generation.Domain import ExpressionDomain, StatementDomain
 from rmtc.Generation.GenerationContext import GenerationContext
 from rmtc.Generation.SpecialForms.SpecialForms import SpecialForm
+from rmtc.Generation.Util import expr_wrap
 from rmtc.Syntax.Node import Element
 
 
@@ -34,7 +35,7 @@ class Compare(SpecialForm):
             ops = [self.OPERAND_DICT[e.code.name]() for e in acode[1:-1]]
             comparators = [GC.generate(operand) for operand in operands_seq.iterate_from(1)]
 
-        return self.expr_wrap(
+        return expr_wrap(
             ast.Compare(
                 left = first_operand_gen,
                 ops = ops,

@@ -93,7 +93,7 @@ class DefaultGenerator(Generator):
 
     def generate(self, element, GC:GenerationContext):
 
-        from rmtc.Generation.SpecialForms.SpecialForms import expr_wrap
+        from rmtc.Generation.Util import expr_wrap
 
         acode = element.code
 
@@ -182,11 +182,7 @@ class DefaultGenerator(Generator):
                         args.append(arg_code)
 
 
-
-                if GC.domain == SDom:
-                    return ast.Expr(ast.Call(func_code, args, keywords))
-
-                return ast.Call(func_code, args, keywords)
+                return expr_wrap(ast.Call(func_code, args, keywords))
 
 
 
@@ -216,18 +212,18 @@ class DefaultGenerator(Generator):
             # elif GC.domain == SDom:
 
 
-            return ast.Tuple(seq_codes, ast.Load())
+            return expr_wrap(ast.Tuple(seq_codes, ast.Load()), GC)
 
 
 
         if isinstance(acode, Literal):
 
             if acode.type == "STRING(PLACEHOLDER)":
-                return ast.Str(acode.value)
+                return expr_wrap(ast.Str(acode.value), GC)
 
             elif acode.type in ["INT(PLACEHOLDER)", ]:
             # .. acode.type is numeric
-                return ast.Num(acode.value)
+                return expr_wrap(ast.Num(acode.value), GC)
 
 
 
@@ -251,8 +247,6 @@ class DefaultGenerator(Generator):
 
             else:
                 return expr_wrap(ast.Name(acode.full_name, ast.Load()), GC)
-
-
 
 
 

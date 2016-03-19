@@ -1,37 +1,21 @@
 import ast
 
 from rmtc.Common.Errors import CodeGenerationError
-from rmtc.Generation.GenerationContext import GenerationContext
-from rmtc.Generation.Generator import Generator
 from rmtc.Generation.Domain import StatementDomain as SDom,\
     ExpressionDomain as ExDom, LValueDomain as LVDom, DeletionDomain as DelDom
+from rmtc.Generation.GenerationContext import GenerationContext
+from rmtc.Generation.Generator import Generator
 
 #from rmtc.Generation.SpecialForms.AugAssign import *
 
 
-from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Identifier import Identifier
-from rmtc.Syntax.Literal import Literal
 from rmtc.Syntax.Node import Element
 
 
 ##=====================
 from rmtc.Syntax.Seq import Seq
-from rmtc.Syntax.Util import is_identifier
 
-
-def ctx_from_domain(GC:GenerationContext):
-    if GC.domain == LVDom:
-        return ast.Store()
-    elif GC.domain == DelDom:
-        return ast.Del()
-    else:
-        return ast.Load()
-
-def expr_wrap(code, GC:GenerationContext):
-    if GC.domain == SDom:
-        return ast.Expr(code)
-    return code
 
 ##=====================
 
@@ -70,12 +54,6 @@ class SpecialForm(Generator):
                     valid_domains = "'"+ "', '".join(self.LENGTH[:-1]) + " or '" + self.LENGTH[-1] + "'"
                     raise CodeGenerationError(element.range, "Special form `%s` appeared in domain '%s', but can only appear in domains ."%(self.HEADTEXT, GC.domain, valid_domains))
 
-
-    @staticmethod
-    def expr_wrap(code, GC:GenerationContext):
-        if GC.domain == SDom:
-            return ast.Expr(code)
-        return code
 
 
 ##=================================

@@ -4,6 +4,7 @@ from rmtc.Generation.GenerationContext import GenerationContext
 from rmtc.Generation.SpecialForms.SpecialForms import SpecialForm
 from rmtc.Generation.Domain import StatementDomain as SDom,\
     ExpressionDomain as ExDom, LValueDomain as LVDom, DeletionDomain as DelDom
+from rmtc.Generation.Util import expr_wrap
 
 from rmtc.Syntax.Node import Element
 
@@ -27,7 +28,7 @@ class UnaryOp(SpecialForm):
         with GC.let(domain=ExDom):
             operand_code = GC.generate(operand_element)
 
-        return self.expr_wrap(ast.UnaryOp(self.OP(), operand_code), GC)
+        return expr_wrap(ast.UnaryOp(self.OP(), operand_code), GC)
 
 
 class UnaryAddOp(UnaryOp):
@@ -72,7 +73,7 @@ class BinaryOp(SpecialForm):
             left_code = GC.generate(left_element)
             right_code = GC.generate(right_element)
 
-        return self.expr_wrap(ast.BinOp(left_code, self.OP(), right_code), GC)
+        return expr_wrap(ast.BinOp(left_code, self.OP(), right_code), GC)
 
 
 class AddOp(BinaryOp):
@@ -181,7 +182,7 @@ class BooleanBinaryOp(SpecialForm):
             for e in acode[1:]:
                 juncts_code.append(GC.generate(e))
 
-        return self.expr_wrap(ast.BoolOp(self.OP(), juncts_code), GC)
+        return expr_wrap(ast.BoolOp(self.OP(), juncts_code), GC)
 
         # code = ast.BoolOp(self.OP(), juncts_code)
 
