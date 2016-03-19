@@ -10,6 +10,7 @@ from rmtc.Tokenization.Tokenizers.IndentationReadtable import IndentationReadtab
 from rmtc.Tokenization.Tokenizers.RawComment import RawCommentTokenizer
 from rmtc.Tokenization.Tokenizers.String import StringTokenizer
 from rmtc.Transducers.Arrangement import Arrangement
+from rmtc.Transducers.Arrangements.ApplyToRest import ApplyToRest
 from rmtc.Transducers.Arrangements.LeftRightNaryOperatorMultipleHeads import LeftRightNaryOperatorMultipleHeads
 from rmtc.Transducers.Arrangements.Comments import RawComment
 from rmtc.Transducers.Arrangements.Constituents import Constituent
@@ -27,6 +28,7 @@ from rmtc.Transducers.Arrangements.RightLeftBinaryOperator import RightLeftBinar
 from rmtc.Transducers.Arrangements.RightLeftUnaryPrefixOperator import RightLeftUnaryPrefixOperator
 from rmtc.Transducers.Arrangements.Segment import Segment
 from rmtc.Transducers.Arrangements.Strings import Strings
+from rmtc.Transducers.Arrangements.TransformationArrow import TransformationArrow
 from rmtc.Transducers.ConvertPreForms import ConvertPreforms
 from rmtc.Transducers.TopDownTreeTransducer import TopDownTreeTransducer
 
@@ -190,25 +192,17 @@ def define_default_anoky_transducer_chain():
     
     
     
-    # "binding or tuple display, list display, dictionary display, set display"
-    #tt_secondary
-
-
-    # "subscription, slicing, call, attribute reference"
-    # tt_tertiary = TopDownTreeTransducer("Tertiary",
-    #                                     Arrangement([
-    #                                         )
-                                            # BracketsWithHead({'['}),
-                                            # Delimiters({'[','{'})]))
-
-
-    #tt_await??
+    tt_infix_special_ops = TopDownTreeTransducer("Infix Gather-Alls",
+                             Arrangement([
+                                TransformationArrow({'<-'}),
+                                ApplyToRest({'return', 'raise', 'pass'}),]))
 
     tt_punctuation = TopDownTreeTransducer("Punctuation",
                                            Arrangement([DefaultPunctuation()]))
 
     # tt_commaoperator = TopDownTreeTransducer("Comma as binary operator",
     #                                          Arrangement([RightLeftBinaryOperator({','})]))
+
     
 
     tt_exponentiation = TopDownTreeTransducer("Exponentiation",
@@ -313,16 +307,9 @@ def define_default_anoky_transducer_chain():
 
     default_python_transducer_chain = [ tt_constituent,
                                         tt_primary,
-                                        #tt_,
-                                        #tt_tertiary,
-
-
-                                        
+                                        tt_infix_special_ops,
                                         tt_punctuation,
-                                        # tt_commaoperator,
 
-
-                                        
                                         tt_exponentiation,
 
                                         tt_tilde,

@@ -1,5 +1,6 @@
 from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Node import Element
+from rmtc.Syntax.PreForm import PreForm
 from rmtc.Syntax.Util import is_identifier
 from rmtc.Transducers.ArrangementRule import ArrangementRule
 
@@ -21,7 +22,7 @@ class ApplyToRest(ArrangementRule):
     def applies(self, element:Element):
         return (is_identifier(element.code) and
                 element.code.name in self.names and
-                (not isinstance(element.parent, Form) or not element.is_first()))
+                (element.parent.__class__ is not Form or not element.is_first()))
 
     def apply(self, element):
         form = element.parent
