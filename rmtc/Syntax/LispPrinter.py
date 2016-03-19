@@ -80,7 +80,7 @@ def indented_lisp_printer(code_or_element, current_line = None) -> str:
         return line_prefix + ret
     elif isinstance(code_or_element, Node):
         node_elms = [indented_lisp_printer(elm, current_line) for elm in code_or_element]
-        return line_prefix + "NODE:\n" + u"\n".join(node_elms) + u"\n"
+        return line_prefix + "\n".join(node_elms) + "\n"
     elif isinstance(code_or_element, Element):
         return line_prefix +indented_lisp_printer(code_or_element.code, current_line)
     else:

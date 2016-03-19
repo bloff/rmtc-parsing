@@ -23,7 +23,7 @@ class Literal(Code):
         if isinstance(self.value, int):
             return str(self.value)
         elif isinstance(self.value, str):
-            return "“%s”" % repr(self.value)[1:-1]
+            return '"%s"' % repr(self.value)[1:-1]
         else:
             # FIXME?
             return str(self.value)
