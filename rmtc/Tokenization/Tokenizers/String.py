@@ -109,7 +109,14 @@ class StringTokenizer(Tokenizer):
                 yield Tokens.CONSTITUENT(seq, stream.absolute_position_of_unread_seq(seq), stream.copy_absolute_position())
             elif seq_type == RT.MACRO:
                 assert 'tokenizer' in properties
-                for token in Util.tokenize_macro(self.context, seq, properties):
+
+                abs_macro_seq_position = stream.absolute_position_of_unread_seq(seq)
+                abs_macro_seq_position_after = stream.copy_absolute_position()
+
+                TokenizerClass = self.context[properties.tokenizer]
+                assert issubclass(TokenizerClass, Tokenizer)
+                tokenizer = TokenizerClass(self.context, seq, abs_macro_seq_position, abs_macro_seq_position_after)
+                for token in tokenizer.run():
                     yield token
             elif seq_type == RT.CONSTITUENT:
                 first_position = stream.absolute_position_of_unread_seq(seq)

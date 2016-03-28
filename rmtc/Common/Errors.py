@@ -1,4 +1,5 @@
 from rmtc.Common.Globals import G
+import rmtc.Common.Options
 
 class CompilerError(Exception):
     name = "Generic Error"
