@@ -41,15 +41,6 @@ class DefaultGenerator(Generator):
         special_forms = default_special_forms_table
 
 
-        # from rmtc.Expansion.Macros.Quote import Quote
-        special_forms["quote"] = kwargs["EC"].macro_table["quote"]
-        #
-        # from rmtc.Expansion.Macros.Rawmacro import RawMacro
-        # special_forms["rawmacro"] = RawMacro()
-        special_forms["rawmacro"] = kwargs["EC"].macro_table["rawmacro"]
-        special_forms["rawspecial"] = kwargs["EC"].macro_table["rawspecial"]
-
-
         context_root_bindings = Record(
             default_generator = self,
             generator = self,
