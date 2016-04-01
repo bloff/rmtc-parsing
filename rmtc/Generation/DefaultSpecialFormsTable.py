@@ -1,90 +1,101 @@
-
-#import rmtc.Generation.SpecialForms.SpecialForms as SF
+# import rmtc.Generation.SpecialForms.SpecialForms as SF
+from rmtc.Expansion.Macros.Quote import Quote
+from rmtc.Expansion.Macros.Rawmacro import RawMacro, RawSpecialForm
 from rmtc.Generation.SpecialForms.Comparison import Compare
 from rmtc.Generation.SpecialForms.Control import If
+from rmtc.Generation.SpecialForms.Import import MacroImport
 from rmtc.Generation.SpecialForms.SpecialForms import Attribute, Class, Global, Nonlocal
 import rmtc.Generation.SpecialForms.Operation as Op
-#import rmtc.Generation.SpecialForms.Comparison as Cmp
+# import rmtc.Generation.SpecialForms.Comparison as Cmp
 import rmtc.Generation.SpecialForms.Assign as As
 import rmtc.Generation.SpecialForms.Container as Cnt
 import rmtc.Generation.SpecialForms.Function as Fn
 import rmtc.Generation.SpecialForms.Control as Ctl
 import rmtc.Generation.SpecialForms.Import as Imp
 
-
-
 default_special_forms_table = {
-    "=" : As.Assign(),
-    "." : Attribute(),
+    "=": As.Assign(),
+    ".": Attribute(),
 
     # "+" : Op.UnaryAddOp(),
     # "-" : Op.UnarySubOp(),
-    "not" : Op.NotOp(),
-    "~" : Op.InvertOp(),
+    "not": Op.NotOp(),
+    "~": Op.InvertOp(),
 
-    "+" : Op.AddOp(),
-    "-" : Op.SubOp(),
-    "*" : Op.MultOp(),
-    "/" : Op.DivOp(),
-    "//" : Op.FloorDivOp(),
-    "%" : Op.ModOp(),
-    "**" : Op.PowOp(),
-    "<<" : Op.LShiftOp(),
-    ">>" : Op.RShiftOp(),
-    "|" : Op.BitOrOp(),
-    "^" : Op.BitXorOp(),
-    "&" : Op.BitAndOp(),
-    "@" : Op.MatMultOp(),
+    "+": Op.AddOp(),
+    "-": Op.SubOp(),
+    "*": Op.MultOp(),
+    "/": Op.DivOp(),
+    "//": Op.FloorDivOp(),
+    "%": Op.ModOp(),
+    "**": Op.PowOp(),
+    "<<": Op.LShiftOp(),
+    ">>": Op.RShiftOp(),
+    "|": Op.BitOrOp(),
+    "^": Op.BitXorOp(),
+    "&": Op.BitAndOp(),
+    "@": Op.MatMultOp(),
 
-    "and" : Op.AndOp(),
-    "or" : Op.OrOp(),
+    "and": Op.AndOp(),
+    "or": Op.OrOp(),
 
-    "+=" : As.AddAssign(),
-    "-=" : As.SubtractAssign(),
-    "*=" : As.MultiplyAssign(),
-    "/=" : As.DivideAssign(),
-    "//=" : As.IntDivideAssign(),
-    "%=" : As.ModuloAssign(),
-    "**=" : As.PowAssign(),
-    "<<=" : As.BitLShiftAssign(),
-    ">>=" : As.BitRShiftAssign(),
-    "|=" : As.BitOrAssign(),
-    "^=" : As.BitXorAssign(),
-    "&=" : As.BitAndAssign(),
-    "@=" : As.MatMultAssign(),
+    "+=": As.AddAssign(),
+    "-=": As.SubtractAssign(),
+    "*=": As.MultiplyAssign(),
+    "/=": As.DivideAssign(),
+    "//=": As.IntDivideAssign(),
+    "%=": As.ModuloAssign(),
+    "**=": As.PowAssign(),
+    "<<=": As.BitLShiftAssign(),
+    ">>=": As.BitRShiftAssign(),
+    "|=": As.BitOrAssign(),
+    "^=": As.BitXorAssign(),
+    "&=": As.BitAndAssign(),
+    "@=": As.MatMultAssign(),
 
     "compare": Compare(),
 
-    "[]" : Cnt.List(),
-    "{}" : Cnt.BraceContainer(),
-    #"{}" : Ct.Dict(), #or set?
-    "@[]" : Cnt.Subscript(),
+    "[]": Cnt.List(),
+    "{}": Cnt.BraceContainer(),
+    # "{}" : Ct.Dict(), #or set?
+    "@[]": Cnt.Subscript(),
 
-    "if" : If(),
+    "if": If(),
 
-    "while" : Ctl.While(),
-    "for" : Ctl.For(),
+    "while": Ctl.While(),
+    "for": Ctl.For(),
 
-    "raise" : Ctl.Raise(),
-    "try" : Ctl.Try(),
-    "assert" : Ctl.Assert(),
-    "pass" : Ctl.Pass(),
+    "raise": Ctl.Raise(),
+    "try": Ctl.Try(),
+    "assert": Ctl.Assert(),
+    "pass": Ctl.Pass(),
 
-    "with" : Ctl.With(),
+    "with": Ctl.With(),
 
-    "def" : Fn.Def(),
+    "def": Fn.Def(),
 
-    "global" : Global(),
-    "nonlocal" : Nonlocal(),
+    "global": Global(),
+    "nonlocal": Nonlocal(),
 
-    "class" : Class(),
+    "class": Class(),
 
-    "import" : Imp.Import(),
-    "importmacro" : Imp.MacroImport()
+    "import": Imp.Import(),
+    "importmacro": Imp.MacroImport(),
+    "quote": Quote(),
+    "rawmacro": RawMacro(),
+    "rawspecial": RawSpecialForm()
+    # "quote" :
+    # # from rmtc.Expansion.Macros.Quote import Quote
+    # special_forms["quote"] = kwargs["EC"].macro_table["quote"]
+    # #
+    # # from rmtc.Expansion.Macros.Rawmacro import RawMacro
+    # # special_forms["rawmacro"] = RawMacro()
+    # special_forms["rawmacro"] = kwargs["EC"].macro_table["rawmacro"]
+    # special_forms["rawspecial"] = kwargs["EC"].macro_table["rawspecial"]
+
 }
 
-#container = Cnt.Container()
+# container = Cnt.Container()
 
-#default_special_forms_table["{}"] = container
-#default_special_forms_table["[]"] = container
-
+# default_special_forms_table["{}"] = container
+# default_special_forms_table["[]"] = container
