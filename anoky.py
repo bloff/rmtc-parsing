@@ -12,6 +12,9 @@ from rmtc.Parsers.AnokyParser import AnokyParser
 from rmtc.Streams.FileStream import FileStream
 from rmtc.Syntax.LispPrinter import indented_lisp_printer
 from rmtc.Common.Errors import CompilerError
+from rmtc.Streams.StringStream import StringStream
+from prompt_toolkit.history import InMemoryHistory
+from prompt_toolkit import prompt
 import argparse
 import ast
 import astpp
@@ -20,13 +23,18 @@ def compile_anoky(options):
     parser = AnokyParser()
     try:
         if options.interactive:
-            stream = FileStream(sys.stdin)
-            raise NotImplementedError()
+            interactive_history = InMemoryHistory()
+            def interactive_prompt():
+                while True:
+                    written_code = prompt('>>> ', history=interactive_history, multiline=True)
+                    stream = StringStream(written_code, '<interactive>')
+                    input_node = parser.parse(stream)
+                    yield(input_node)
+            segment_generator = interactive_prompt()
         else:
             filename = options.filename
             stream = FileStream(filename)
             segment_generator = parser.each_segment(stream)
-
         code_generator = DefaultGenerator()
         code_expander = DefaultExpander()
         (CG, init_code) = code_generator.begin()
@@ -131,3 +139,4 @@ def main():
     compile_anoky(options)
 if __name__ == '__main__':
     main()
+

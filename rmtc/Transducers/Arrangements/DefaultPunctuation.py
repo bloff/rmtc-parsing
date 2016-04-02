@@ -81,12 +81,18 @@ class DefaultPunctuation(ArrangementRule):
                 if is_token(start_of_group, Tokens.PUNCTUATION) and not is_token(start_of_group, Tokens.ARGBREAK):
                     raise ArrangementError(start_of_group.range.first_position,
                                            "Unexpected punctuation '%s' after ':'." % start_of_group.value)
+                # but there should be *something*
+                elif start_of_group is None:
+                    raise ArrangementError(colon.range, "Nothing after `:`!")
 
         # This function will wrap the last group of tokens in a PreSeq
         def finish_groups(last_element_in_group):
             nonlocal first_small_group
             if start_of_group not in [None, node[0], last_element_in_group, start_of_group]:
                 node.wrap(start_of_group, last_element_in_group, PreSeq)
+
+        if start_of_group is None:
+            return element.next
 
         # Iterate through all elements of the node, in search of ',' or ':' punctuation tokens, or ARGBREAK tokens
         # If there are two or more elements between such tokens, wrap them in a PreSeq

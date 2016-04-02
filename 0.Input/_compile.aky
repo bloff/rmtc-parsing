@@ -1,8 +1,5 @@
-(a, b) = (1, 2)
-
-a, b := 1, 2
-
-a, b :=
-   1, 1
-   2
-   3
+written_code =
+        prompt:
+            ">>> "
+            history=interactive_history
+            multiline=True

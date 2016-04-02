@@ -89,7 +89,7 @@ class Segment(ArrangementRule):
             new_form.remove(indent)
 
             # at this point, new_form was transformed like this:
-            # BEGIN head xxx INDENT BEGIN ... END END => head xxx, BEGIN ... END
+            # BEGIN head xxx INDENT BEGIN ... END END => head xxx ARGBREAK BEGIN ... END
             # BEGIN head INDENT BEGIN ... END END => head BEGIN ... END
 
             # remove BEGIN/END pairs of non-indented, non-colon-having segments

@@ -12,6 +12,7 @@ from rmtc.Tokenization.Tokenizers.String import StringTokenizer
 from rmtc.Transducers.Arrangement import Arrangement
 from rmtc.Transducers.Arrangements.ApplyInIsolation import ApplyInIsolation
 from rmtc.Transducers.Arrangements.ApplyToRest import ApplyToRest
+from rmtc.Transducers.Arrangements.AssignmentSegment import AssignmentSegment
 from rmtc.Transducers.Arrangements.LeftRightNaryOperatorMultipleHeads import LeftRightNaryOperatorMultipleHeads
 from rmtc.Transducers.Arrangements.Comments import RawComment
 from rmtc.Transducers.Arrangements.Constituents import Constituent
@@ -176,7 +177,8 @@ def define_default_anoky_transducer_chain():
                                        Arrangement([
                                            #Comment(),
                                            RawComment(),
-                                           
+
+                                           AssignmentSegment(),
                                            Segment(),
                                            
                                            ParenthesisWithHead(),

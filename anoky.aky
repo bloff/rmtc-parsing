@@ -6,7 +6,6 @@ import:
 
     from astformatter: ASTFormatter
 
-
     from rmtc.Common.Globals:        G
     from rmtc.Common.Record:         Record
     from rmtc.Expansion.Expander:    DefaultExpander
@@ -15,15 +14,13 @@ import:
     from rmtc.Streams.FileStream:    FileStream
     from rmtc.Syntax.LispPrinter:    indented_lisp_printer
     from rmtc.Common.Errors:         CompilerError
+    from rmtc.Streams.StringStream:  StringStream
 
-    #    rmtc.Common.Options as Options
+
+    from prompt_toolkit.history: InMemoryHistory
+    from prompt_toolkit:         prompt
 
 
-# if a: return b
-
-    if a:
-    return b
-    return
 
 
 def compile_anoky(options):
@@ -31,12 +28,22 @@ def compile_anoky(options):
     try:
         #
         if options.interactive:
-            stream = FileStream(sys.stdin)
+            interactive_history = InMemoryHistory()
+            def interactive_prompt():
+                while True:
+                    written_code =
+                        prompt:
+                            ">>> "
+                            history=interactive_history
+                            multiline=True
+                    stream = StringStream(written_code, "<interactive>")
+                    input_node = parser.parse(stream)
+                    yield input_node
+            segment_generator = interactive_prompt()
         else:
             filename = options.filename
             stream = FileStream(filename)
-
-        segment_generator = parser.each_segment(stream)
+            segment_generator = parser.each_segment(stream)
 
         code_generator = DefaultGenerator()
         code_expander = DefaultExpander()

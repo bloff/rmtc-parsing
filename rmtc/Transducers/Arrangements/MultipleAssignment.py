@@ -1,3 +1,4 @@
+from rmtc.Syntax.Identifier import Identifier
 from rmtc.Syntax.PreSeq import PreSeq
 from rmtc.Syntax.Form import Form
 from rmtc.Syntax.PreForm import PreForm
@@ -12,11 +13,11 @@ class MultipleAssignment(ArrangementRule):
     """
     ::
 
-         := ⋅  INDENT   ⦅:= ⟅⟆ ⟅ ARGBREAK ⟆⦆ ⋅
+         := ⋅  INDENT   ⦅= ⟅⟆ ⟅ ARGBREAK ⟆⦆ ⋅
 
-         := ⋅   ⦅:= ⟅⟆ ⟅⟆⦆ ⋅
+         := ⋅   ⦅= ⟅⟆ ⟅⟆⦆ ⋅
 
-         := ⋅     ⦅:= ⟅⟆⦆ ⋅
+         := ⋅     ⦅= ⟅⟆⦆ ⋅
 
     ``⟅⟆`` denote PreTuples.
 
@@ -27,8 +28,7 @@ class MultipleAssignment(ArrangementRule):
         self.symbols = arrows
 
     def applies(self, element:Element):
-        return is_identifier(element.code) and \
-               element.code.name in self.symbols and \
+        return is_identifier(element, ':=') and \
                not element.is_first() and \
                ( isinstance(element.parent, PreForm) or isinstance(element.parent, PreSeq) )
 
@@ -45,7 +45,7 @@ class MultipleAssignment(ArrangementRule):
             form.wrap(element.next, form.last, PreSeq)
         form.remove(element)
         if isinstance(form, PreForm):
-            form.prepend(element)
+            form.prepend(Identifier("="))
         else:
             new_form = form.wrap(form.first, form.last, Form).code
             new_form.prepend(element)
