@@ -3,6 +3,7 @@ from rmtc.Expansion.Macros.Quote import Quote
 from rmtc.Expansion.Macros.Rawmacro import RawMacro, RawSpecialForm
 from rmtc.Generation.SpecialForms.Comparison import Compare
 from rmtc.Generation.SpecialForms.Control import If
+from rmtc.Generation.SpecialForms.Function import Return
 from rmtc.Generation.SpecialForms.Import import MacroImport
 from rmtc.Generation.SpecialForms.SpecialForms import Attribute, Class, Global, Nonlocal
 import rmtc.Generation.SpecialForms.Operation as Op
@@ -69,6 +70,9 @@ default_special_forms_table = {
     "try": Ctl.Try(),
     "assert": Ctl.Assert(),
     "pass": Ctl.Pass(),
+
+
+    "return": Return(),
 
     "with": Ctl.With(),
 

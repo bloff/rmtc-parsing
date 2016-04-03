@@ -59,16 +59,19 @@ def compile_anoky(options):
             if options.interactive:
                 if options.print_python_ast:
                     print('\n——›–  Generated Python AST  –‹——\n')
-                    astpp.parseprint(py_ast)
+                    astpp.parseprint(ast.Module(body=py_ast))
                 if options.print_python_code:
                     try:
-                        python_source = ASTFormatter().format(py_ast)
+                        python_source = ASTFormatter().format(ast.Module(body=py_ast))
                     except Exception:
                         print('\n!–›–  Failed to generate Python Source Code!  –‹–!\n')
                     else:
                         print('\n——›–  Generated Python Source Code  –‹——\n')
                         print(python_source)
-                print('TODO: Interactive code execution!')
+                py_ast = ast.Interactive(body=py_ast)
+                ast.fix_missing_locations(py_ast)
+                compiled_ast = compile(py_ast, filename='<ast>', mode='single')
+                exec(compiled_ast)
             else:
                 module_code.extend(py_ast)
         if not options.interactive:
@@ -104,7 +107,7 @@ def main():
     parser.add_argument('--skip-codegen', action='store_true')
     parser.add_argument('--stdout', action='store_true')
     parser.add_argument('-I', '--include')
-    parser.add_argument('-E', '--execute', action='store_true')
+    parser.add_argument('-E', '--exec', action='store_true')
     parser.add_argument('--version', action='version', version='Anoky α.1')
     parser.add_argument('file', nargs='*')
     parse = parser.parse_args()
@@ -131,7 +134,7 @@ def main():
     options.codegen = not parse.skip_macroexpansion and not parse.skip_arrangement and not parse.skip_codegen
     options.print_python_code = parse.print_python_code
     options.print_python_ast = parse.print_python_ast
-    options.execute = parse.execute
+    options.execute = parse.exec
     if parse.stdout:
         options.output = '<stdout>'
     else:
@@ -139,4 +142,3 @@ def main():
     compile_anoky(options)
 if __name__ == '__main__':
     main()
-

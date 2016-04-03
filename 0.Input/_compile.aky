@@ -1,5 +1,2 @@
-written_code =
-        prompt:
-            ">>> "
-            history=interactive_history
-            multiline=True
+def f(arg):
+      return arg + 1
