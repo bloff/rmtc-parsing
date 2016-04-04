@@ -19,80 +19,85 @@ import argparse
 import ast
 import astpp
 import sys
-def compile_anoky(options):
-    parser = AnokyParser()
-    try:
-        if options.interactive:
-            interactive_history = InMemoryHistory()
-            def interactive_prompt():
-                while True:
-                    written_code = prompt('>>> ', history=interactive_history, multiline=True)
-                    stream = StringStream(written_code, '<interactive>')
-                    input_node = parser.parse(stream)
-                    yield(input_node)
-            segment_generator = interactive_prompt()
+import traceback
+parser = AnokyParser()
+code_generator = DefaultGenerator()
+code_expander = DefaultExpander()
+def anoky_tokenize(stream,options):
+    tokenized_node = parser.tokenize_into_node(stream)
+    if options.print_tokens:
+        print('\n——›–  Tokenized source  –‹——', end='')
+        for token in tokenized_node:
+            print(str(token))
+    return tokenized_node
+def anoky_transduce(node,options):
+    parser.transduce(node)
+    if options.print_parse:
+        print('\n——›–  Parsed source before macro expansion  –‹——', end='')
+        print(indented_lisp_printer(node))
+def anoky_expand(parsed_node,options):
+    code_expander.expand_unit(parsed_node)
+    if options.print_macro_expanded_code:
+        print('\n——›–  Parsed source after macro expansion  –‹——', end='')
+        print(indented_lisp_printer(parsed_node))
+def anoky_generate(parsed_node,options,CG):
+    py_ast = code_generator.generate_elements(parsed_node, CG)
+    if options.print_python_ast:
+        print('\n——›–  Generated Python AST  –‹——')
+        astpp.parseprint(ast.Module(body=py_ast))
+    if options.print_python_code:
+        try:
+            python_source = ASTFormatter().format(ast.Module(body=py_ast))
+        except Exception:
+            print('\n!–›–  Failed to generate Python Source Code!  –‹–!')
+            traceback.print_exc()
         else:
-            filename = options.filename
-            stream = FileStream(filename)
-            segment_generator = parser.each_segment(stream)
-        code_generator = DefaultGenerator()
-        code_expander = DefaultExpander()
-        (CG, init_code) = code_generator.begin()
-        if not options.interactive:
-            module_code = init_code
-        for segment in segment_generator:
-            if options.print_tokens:
-                print('\n——›–  Tokenized source  –‹——\n')
-                for token in segment:
-                    print(str(token))
+            print('\n——›–  Generated Python Source Code  –‹——')
+            print(python_source)
+    return py_ast
+def interactive_anoky(options):
+    (CG, init_code) = code_generator.begin(interactive=True)
+    interactive_history = InMemoryHistory()
+    try:
+        while True:
+            written_code = prompt('>>> ', history=interactive_history, multiline=True)
+            stream = StringStream(written_code, '<interactive>')
+            node = anoky_tokenize(stream, options)
             if not options.arrange:
                 continue
-            parser.transduce(segment)
-            if options.print_parse:
-                print('\n——›–  Parsed source before macro expansion  –‹——\n')
-                print(indented_lisp_printer(segment))
-            code_expander.expand_unit(segment)
-            if options.print_macro_expanded_code:
-                print('\n——›–  Parsed source after macro expansion  –‹——\n')
-                print(indented_lisp_printer(segment))
-            py_ast = code_generator.generate_elements(segment, CG)
-            if options.interactive:
-                if options.print_python_ast:
-                    print('\n——›–  Generated Python AST  –‹——\n')
-                    astpp.parseprint(ast.Module(body=py_ast))
-                if options.print_python_code:
-                    try:
-                        python_source = ASTFormatter().format(ast.Module(body=py_ast))
-                    except Exception:
-                        print('\n!–›–  Failed to generate Python Source Code!  –‹–!\n')
-                    else:
-                        print('\n——›–  Generated Python Source Code  –‹——\n')
-                        print(python_source)
-                py_ast = ast.Interactive(body=py_ast)
-                ast.fix_missing_locations(py_ast)
-                compiled_ast = compile(py_ast, filename='<ast>', mode='single')
-                exec(compiled_ast)
-            else:
-                module_code.extend(py_ast)
-        if not options.interactive:
-            py_module = code_generator.end(module_code, CG)
-            if options.print_python_ast:
-                print('\n——›–  Generated Python AST  –‹——\n')
-                astpp.parseprint(py_module)
-            if options.print_python_code:
-                try:
-                    python_source = ASTFormatter().format(py_module)
-                except Exception:
-                    print('\n!–›–  Failed to generate Python Source Code!  –‹–!\n')
-                else:
-                    print('\n——›–  Generated Python Source Code  –‹——\n')
-                    print(python_source)
+            anoky_transduce(node, options)
+            anoky_expand(node, options)
+            py_ast = anoky_generate(node, options, CG)
+            py_ast = code_generator.end(py_ast, CG)
+            ast.fix_missing_locations(py_ast)
+            compiled_ast = compile(py_ast, filename='<ast>', mode='single')
             if options.execute:
-                ast.fix_missing_locations(py_module)
-                compiled_module = compile(py_module, filename='<ast>', mode='exec')
-                exec(compiled_module)
+                try:
+                    exec(compiled_ast)
+                except Exception as e:
+                    traceback.print_exc()
+    except EOFError:
+        return
+    except KeyboardInterrupt:
+        return
+def non_interactive_anoky(options):
+    (CG, init_code) = code_generator.begin(interactive=False)
+    try:
+        filename = options.filename
+        stream = FileStream(filename)
+        node = anoky_tokenize(stream, options)
+        if not options.arrange:
+            return
+        anoky_transduce(node, options)
+        anoky_expand(node, options)
+        py_ast = anoky_generate(node, options, CG)
+        py_ast = code_generator.end(py_ast, CG)
     except CompilerError as e:
         print(e.trace)
+    if options.execute:
+        ast.fix_missing_locations(py_ast)
+        compiled_module = compile(py_ast, filename='<ast>', mode='exec')
+        exec(compiled_module)
 def main():
     parser = argparse.ArgumentParser(prefix_chars='-')
     parser.add_argument('--print-tokens', action='store_true', help='Prints the tokenizer output.')
@@ -139,6 +144,9 @@ def main():
         options.output = '<stdout>'
     else:
         options.output = '.'
-    compile_anoky(options)
+    if options.interactive:
+        interactive_anoky(options)
+    else:
+        non_interactive_anoky(options)
 if __name__ == '__main__':
     main()

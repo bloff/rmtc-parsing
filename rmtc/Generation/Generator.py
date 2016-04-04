@@ -50,13 +50,14 @@ class DefaultGenerator(Generator):
             assert isinstance(element_code, ast.AST)
             return [element_code]
 
-    def begin(self, **kwargs) -> (GenerationContext, list):
+    def begin(self, interactive=False, **kwargs) -> (GenerationContext, list):
         from rmtc.Generation.DefaultSpecialFormsTable import default_special_forms_table
         context_root_bindings = Record(
             default_generator = self,
             generator = self,
             domain = SDom,
-            special_forms = default_special_forms_table
+            special_forms = default_special_forms_table,
+            interactive=interactive
         )
         context_root_bindings.update(kwargs)
 
@@ -80,8 +81,11 @@ class DefaultGenerator(Generator):
         return GC, initialization_nodes
 
 
-    def end(self, body_nodes, CG:GenerationContext):
-        return ast.Module(body=body_nodes)
+    def end(self, py_ast, CG:GenerationContext):
+        if CG.interactive:
+            return ast.Interactive(body=py_ast)
+        else:
+            return ast.Module(body=py_ast)
 
 
 

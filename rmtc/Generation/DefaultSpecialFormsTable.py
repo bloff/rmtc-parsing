@@ -2,7 +2,7 @@
 from rmtc.Expansion.Macros.Quote import Quote
 from rmtc.Expansion.Macros.Rawmacro import RawMacro, RawSpecialForm
 from rmtc.Generation.SpecialForms.Comparison import Compare
-from rmtc.Generation.SpecialForms.Control import If
+from rmtc.Generation.SpecialForms.Control import If, NotInIsolation
 from rmtc.Generation.SpecialForms.Function import Return
 from rmtc.Generation.SpecialForms.Import import MacroImport
 from rmtc.Generation.SpecialForms.SpecialForms import Attribute, Class, Global, Nonlocal
@@ -62,6 +62,7 @@ default_special_forms_table = {
     "@[]": Cnt.Subscript(),
 
     "if": If(),
+    "else": NotInIsolation(),
 
     "while": Ctl.While(),
     "for": Ctl.For(),

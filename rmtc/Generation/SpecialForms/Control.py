@@ -389,3 +389,17 @@ class Try(SpecialForm):
 
 
         return ast.Try(body_gens, handlers, or_else, finally_body)
+
+
+
+class NotInIsolation(SpecialForm):
+
+    DOMAIN = [SDom, ExDom]
+
+
+    def generate(self, element:Element, GC:GenerationContext):
+
+        self.precheck(element, GC)
+        head_name = element.code[0].code.name
+
+        raise CodeGenerationError(element.code[0].range, "`%s` form cannot appear in isolation." % head_name)

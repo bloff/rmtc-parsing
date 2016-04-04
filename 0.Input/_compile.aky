@@ -1,2 +1,1 @@
-def f(arg):
-      return arg + 1
+print 2

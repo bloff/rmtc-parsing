@@ -70,21 +70,21 @@ class RMTCParser(object):
             node.append(token)
         return node
 
-    def each_segment(self, stream: CharacterStream) -> Node:
-        while not stream.next_is_EOF():
-            node = Node()
-            first_begin = None
-            for token in self.tokenize(stream):
-                if first_begin is None:
-                    first_begin = token
-                    if not is_token(token, Tokens.BEGIN):
-                        raise TokenizingError(first_begin.range,
-                                              "Expected a `BEGIN` token, found `%s`." % token.__class__.__name__)
-                node.append(token)
-                if is_token(token, Tokens.END) and token.begin is first_begin:
-                    break
-
-            yield node
+    # def each_segment(self, stream: CharacterStream) -> Node:
+    #     while not stream.next_is_EOF():
+    #         node = Node()
+    #         first_begin = None
+    #         for token in self.tokenize(stream):
+    #             if first_begin is None:
+    #                 first_begin = token
+    #                 if not is_token(token, Tokens.BEGIN):
+    #                     raise TokenizingError(first_begin.range,
+    #                                           "Expected a `BEGIN` token, found `%s`." % token.__class__.__name__)
+    #             node.append(token)
+    #             if is_token(token, Tokens.END) and token.begin is first_begin:
+    #                 break
+    #
+    #         yield node
 
     def tokenize_with_intervals(self, code_or_stream:Union[str, CharacterStream], filler=None):
         for token in self.tokenize(code_or_stream):
