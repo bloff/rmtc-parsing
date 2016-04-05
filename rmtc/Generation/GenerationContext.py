@@ -19,6 +19,7 @@ class GenerationContext(Context):
 
         ast =  self.generator.generate(element, self)
 
+        # copy line and column number info from the generated element
         range = element.range
         if range is not None:
             lineno = range.first_position.line
