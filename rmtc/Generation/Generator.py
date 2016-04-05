@@ -96,8 +96,6 @@ class DefaultGenerator(Generator):
 
         acode = element.code
 
-
-
         if isinstance(acode, Form):
 
             head = acode.first
@@ -179,7 +177,6 @@ class DefaultGenerator(Generator):
                                 arg_code = GC.generate(arg_element)
 
                         args.append(arg_code)
-
 
                 return expr_wrap(ast.Call(func_code, args, keywords), GC)
 

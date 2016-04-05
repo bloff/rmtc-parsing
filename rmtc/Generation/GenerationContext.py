@@ -17,5 +17,20 @@ class GenerationContext(Context):
 
     def generate(self, element):
 
-        return self.generator.generate(element, self)
+        ast =  self.generator.generate(element, self)
+
+        range = element.range
+        if range is not None:
+            lineno = range.first_position.line
+            col_offset = range.first_position.column
+            if isinstance(ast, list):
+                for node in ast:
+                    node.lineno = lineno
+                    node.col_offset = col_offset
+            else:
+                ast.lineno = lineno
+                ast.col_offset = col_offset
+
+        return ast
+
 
