@@ -19,8 +19,9 @@ class Strings(ArrangementRule):
 
        BEGIN_MACRO("“") ⋅  END_MACRO   ⦅str ⦆ ⋅
     """
-    def __init__(self, string_delimiters):
+    def __init__(self, string_delimiters, string_literal_type = "STRING (PLACEHOLDER TYPE)"):
         ArrangementRule.__init__(self, "Strings")
+        self.string_literal_type = string_literal_type
         self.str_delims = string_delimiters
 
     def applies(self, element):
@@ -34,7 +35,7 @@ class Strings(ArrangementRule):
             string_token = element.next
             parent.remove(element)
             parent.remove(element.end)
-            string_token.code = Literal("STRING(PLACEHOLDER)", string_token.value, string_token.range)
+            string_token.code = Literal(self.string_literal_type, string_token.value, string_token.range)
             return string_token.next
         else:
             new_form_element = element.parent.wrap(element, element.end, Form)
@@ -48,7 +49,7 @@ class Strings(ArrangementRule):
             elm = new_form[1] # first element
             while elm is not None:
                 if is_token(elm, Tokens.STRING):
-                    elm.code = Literal("STRING(PLACEHOLDER)", elm.value, elm.range)
+                    elm.code = Literal(self.string_literal_type, elm.value, elm.range)
                 if is_token(elm, Tokens.BEGIN_MACRO):
                     elm = elm.end.next
                 else:

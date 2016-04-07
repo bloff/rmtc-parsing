@@ -5,13 +5,10 @@ from rmtc.Expansion.Macro import Macro
 from rmtc.Generation.GenerationContext import GenerationContext
 from rmtc.Generation.SpecialForms.SpecialForms import SpecialForm
 from rmtc.Generation.Util import expr_wrap
-from rmtc.Syntax.Code import Code
 from rmtc.Syntax.Form import Form
 from rmtc.Syntax.Identifier import Identifier
 from rmtc.Syntax.Literal import Literal
 from rmtc.Syntax.Node import Element
-
-import rmtc.Module as __aky__
 from rmtc.Syntax.Seq import Seq
 
 
@@ -110,10 +107,10 @@ class Quote(Macro, SpecialForm):
 
             assert isinstance(acode, Literal)
 
-            if acode.type == "STRING(PLACEHOLDER)":
+            if acode.type is str:
                 value_code = ast.Str(acode.value)
             else:
-                assert acode.type in ["INT(PLACEHOLDER)", ]
+                assert acode.type in [int, float]
                 value_code = ast.Num(acode.value)
 
             return ast.Call(func=ast.Attribute(value=ast.Name(id="__aky__", ctx=ast.Load()),

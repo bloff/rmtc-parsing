@@ -11,9 +11,10 @@ class Constituent(ArrangementRule):
     """
     Replaces CONSTITUENT tokens with Identifiers or (int or float) Literals.
     """
-    def __init__(self):
+    def __init__(self, int_literal_type = "INT (PLACEHOLDER TYPE)", float_literal_type = "FLOAT (PLACEHOLDER TYPE)"):
         ArrangementRule.__init__(self, "Constituent")
-        # self.stalling_identifiers = stalling_identifiers if stalling_identifiers is not None else {}
+        self.int_literal_type = int_literal_type
+        self.float_literal_type = float_literal_type
 
     def applies(self, element):
         return is_token(element, Tokens.CONSTITUENT) and element.code is None
@@ -37,9 +38,9 @@ class Constituent(ArrangementRule):
 
     def apply(self, element) -> Element:
         if Constituent.is_int(element.value):
-            new_element = element.parent.replace(element, Literal("INT(PLACEHOLDER)", int(element.value), element.range))
+            new_element = element.parent.replace(element, Literal(self.int_literal_type, int(element.value), element.range))
         elif Constituent.is_float(element.value):
-            new_element = element.parent.replace(element, Literal("FLOAT(PLACEHOLDER)", float(element.value), element.range))
+            new_element = element.parent.replace(element, Literal(self.float_literal_type, float(element.value), element.range))
         else:
             new_element = element.parent.replace(element, Identifier(element.value, element.range))
             # if element.value in self.stalling_identifiers:

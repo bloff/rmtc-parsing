@@ -84,14 +84,6 @@ default_special_forms_table = {
     "quote": Quote(),
     "rawmacro": RawMacro(),
     "rawspecial": RawSpecialForm()
-    # "quote" :
-    # # from rmtc.Expansion.Macros.Quote import Quote
-    # special_forms["quote"] = kwargs["EC"].macro_table["quote"]
-    # #
-    # # from rmtc.Expansion.Macros.Rawmacro import RawMacro
-    # # special_forms["rawmacro"] = RawMacro()
-    # special_forms["rawmacro"] = kwargs["EC"].macro_table["rawmacro"]
-    # special_forms["rawspecial"] = kwargs["EC"].macro_table["rawspecial"]
 
 }
 

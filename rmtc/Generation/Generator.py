@@ -1,5 +1,6 @@
 import ast
 
+from rmtc.Common.Errors import CodeGenerationError
 from rmtc.Common.Record import Record
 from rmtc.Expansion.ExpansionContext import ExpansionContext
 
@@ -26,57 +27,60 @@ class Generator(object):
 
 
 class DefaultGenerator(Generator):
+    def generate_unit(self, unit: Node, **kwargs):
 
+        GC, body_nodes = self.begin(**kwargs)
 
-    def generate_unit(self, unit:Node, **kwargs):
+        body_nodes.extend(self.generate_elements(unit, GC))
 
-        assert(isinstance(unit, Node))
+        return ast.Module(body=body_nodes)
 
-        # from rmtc.Generation.SpecialForms.SpecialForms import Assign, \
-        #     Attribute
-        # from rmtc.Generation.SpecialForms.AugAssign import AddAssign
-        # from rmtc.Generation.SpecialForms.Operation import AddOp
+    def generate_elements(self, elements, GC) -> list:
+        code = []
+        for element in elements:
+            new_gens = self.generate_element(element, GC)
+            code.extend(new_gens)
+        return code
 
+    def generate_element(self, element, GC) -> list:
+        element_code = GC.generate(element)
+        if isinstance(element_code, list) or isinstance(element_code, tuple):
+            return element_code
+        else:
+            assert isinstance(element_code, ast.AST)
+            return [element_code]
+
+    def begin(self, **kwargs) -> (GenerationContext, list):
         from rmtc.Generation.DefaultSpecialFormsTable import default_special_forms_table
-        special_forms = default_special_forms_table
-
-
         context_root_bindings = Record(
             default_generator = self,
             generator = self,
             domain = SDom,
-            special_forms = special_forms
+            special_forms = default_special_forms_table
         )
         context_root_bindings.update(kwargs)
 
         GC = GenerationContext(**context_root_bindings.__dict__)
+        initialization_nodes = []
 
-        body_nodes = []
-
+        # Prepend anoky unit initialization code
+        # Something like:
+        # import rmtc.AnokyImporter as __akyimp__
+        # import rmtc.Module as __aky__
+        # __macros__ = {}
+        # __id_macros__ = {}
+        # __special_forms__ = {}
 
         from rmtc.Generation.SpecialForms.Import \
             import macrostore_init_code as mic, akyimport_init_code as aic
-        body_nodes.extend(aic)
-        body_nodes.extend(mic)
+        initialization_nodes.extend(aic)
+        initialization_nodes.extend(mic)
 
 
-        for element in unit:
-
-            element_code = GC.generate(element)
-
-            if isinstance(element_code, list) or isinstance(element_code, tuple):
-                body_nodes.extend(element_code)
-
-            else:
-
-                assert isinstance(element_code, ast.AST)
-
-                body_nodes.append(element_code)
+        return GC, initialization_nodes
 
 
-
-
-
+    def end(self, body_nodes, CG:GenerationContext):
         return ast.Module(body=body_nodes)
 
 
@@ -178,43 +182,27 @@ class DefaultGenerator(Generator):
 
 
         if isinstance(acode, Seq):
-
-            # are seqs ever not tuples
-
             seq_codes = []
+            for e in acode:
+                seq_codes.append(GC.generate(e))
 
-            # NEED TO FIX THIS
-
-            # there's a better way to do this probably
             if GC.domain == LVDom:
-                with GC.let(domain=LVDom):
-                    for e in seq_codes:
-                        seq_codes.append(GC.generate(e))
                 return ast.Tuple(seq_codes, ast.Store())
-
-            with GC.let(domain=ExDom):
-                # does var scope extend outside with block?
-                #seq_codes = [GC.generate(e) for e in acode]
-                for e in acode:
-                    seq_codes.append(GC.generate(e))
-
-
-
-            # elif GC.domain == SDom:
-
-
-            return expr_wrap(ast.Tuple(seq_codes, ast.Load()), GC)
+            elif GC.domain in [ExDom, SDom]:
+                return expr_wrap(ast.Tuple(seq_codes, ast.Load()), GC)
+            else:
+                raise CodeGenerationError(acode.range, "Unexpected seq in domain `%s`." % str(GC.domain))
 
 
 
         if isinstance(acode, Literal):
 
-            if acode.type == "STRING(PLACEHOLDER)":
+            if acode.type is str:
                 return expr_wrap(ast.Str(acode.value), GC)
-
-            elif acode.type in ["INT(PLACEHOLDER)", ]:
-            # .. acode.type is numeric
+            elif acode.type in [int, float]:
                 return expr_wrap(ast.Num(acode.value), GC)
+            else:
+                assert False
 
 
 

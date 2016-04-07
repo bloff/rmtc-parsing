@@ -15,44 +15,71 @@ from rmtc.Common.Errors import CompilerError
 import argparse
 import ast
 import astpp
+import sys
 def compile_anoky(options):
     parser = AnokyParser()
     try:
-        filename = options.filename
-        stream = FileStream(filename)
-        node_with_tokens = parser.tokenize_into_node(stream)
-        if options.print_tokens:
-            print('\n——›–  Tokenized source  –‹——\n')
-            for token in node_with_tokens:
-                print(str(token))
-        if not options.arrange:
-            return()
-        file_node = parser.transduce(node_with_tokens)
-        if options.print_parse:
-            print('\n——›–  Parsed source before macro expansion  –‹——\n')
-            print(indented_lisp_printer(file_node))
-        expander = DefaultExpander()
-        ec = expander.expand_unit(file_node)
-        if options.print_macro_expanded_code:
-            print('\n——›–  Parsed source macro expansion  –‹——\n')
-            print(indented_lisp_printer(file_node))
-        generator = DefaultGenerator()
-        py_module = generator.generate_unit(file_node, EC=ec)
-        if options.print_python_ast:
-            print('\n——›–  Generated Python AST  –‹——\n')
-            astpp.parseprint(py_module)
-        if options.print_python_code:
-            try:
-                python_source = ASTFormatter().format(py_module)
-            except Exception:
-                print('\nFailed to generate Python Source Code!!!\n')
+        if options.interactive:
+            stream = FileStream(sys.stdin)
+            raise NotImplementedError()
+        else:
+            filename = options.filename
+            stream = FileStream(filename)
+            segment_generator = parser.each_segment(stream)
+
+        code_generator = DefaultGenerator()
+        code_expander = DefaultExpander()
+        (CG, init_code) = code_generator.begin()
+        if not options.interactive:
+            module_code = init_code
+        for segment in segment_generator:
+            if options.print_tokens:
+                print('\n——›–  Tokenized source  –‹——\n')
+                for token in segment:
+                    print(str(token))
+            if not options.arrange:
+                continue
+            parser.transduce(segment)
+            if options.print_parse:
+                print('\n——›–  Parsed source before macro expansion  –‹——\n')
+                print(indented_lisp_printer(segment))
+            code_expander.expand_unit(segment)
+            if options.print_macro_expanded_code:
+                print('\n——›–  Parsed source after macro expansion  –‹——\n')
+                print(indented_lisp_printer(segment))
+            py_ast = code_generator.generate_elements(segment, CG)
+            if options.interactive:
+                if options.print_python_ast:
+                    print('\n——›–  Generated Python AST  –‹——\n')
+                    astpp.parseprint(py_ast)
+                if options.print_python_code:
+                    try:
+                        python_source = ASTFormatter().format(py_ast)
+                    except Exception:
+                        print('\n!–›–  Failed to generate Python Source Code!  –‹–!\n')
+                    else:
+                        print('\n——›–  Generated Python Source Code  –‹——\n')
+                        print(python_source)
+                print('TODO: Interactive code execution!')
             else:
-                print('\n——›–  Generated Python Source Code  –‹——\n')
-                print(python_source)
-        if options.execute:
-            ast.fix_missing_locations(py_module)
-            compiled_module = compile(py_module, filename='<ast>', mode='exec')
-            exec(compiled_module)
+                module_code.extend(py_ast)
+        if not options.interactive:
+            py_module = code_generator.end(module_code, CG)
+            if options.print_python_ast:
+                print('\n——›–  Generated Python AST  –‹——\n')
+                astpp.parseprint(py_module)
+            if options.print_python_code:
+                try:
+                    python_source = ASTFormatter().format(py_module)
+                except Exception:
+                    print('\n!–›–  Failed to generate Python Source Code!  –‹–!\n')
+                else:
+                    print('\n——›–  Generated Python Source Code  –‹——\n')
+                    print(python_source)
+            if options.execute:
+                ast.fix_missing_locations(py_module)
+                compiled_module = compile(py_module, filename='<ast>', mode='exec')
+                exec(compiled_module)
     except CompilerError as e:
         print(e.trace)
 def main():
@@ -71,7 +98,7 @@ def main():
     parser.add_argument('-I', '--include')
     parser.add_argument('-E', '--execute', action='store_true')
     parser.add_argument('--version', action='version', version='Anoky α.1')
-    parser.add_argument('file', nargs='+')
+    parser.add_argument('file', nargs='*')
     parse = parser.parse_args()
     options = Record()
     options.print_tokens = parse.print_tokens
@@ -84,7 +111,11 @@ def main():
     options.include_dirs = parse.include.split(':') if parse.include else ['.']
     if len(parse.file) > 1:
         raise NotImplementedError()
-    options.filename = parse.file[0]
+    elif len(parse.file) == 0:
+        options.interactive = True
+    else:
+        options.interactive = False
+        options.filename = parse.file[0]
     options.arrange = not parse.skip_arrangement
     if not options.arrange:
         options.print_tokens = True

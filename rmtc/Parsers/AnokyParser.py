@@ -168,7 +168,7 @@ def define_default_anoky_transducer_chain():
 
 
     tt_constituent = TopDownTreeTransducer("Constituent",
-                                           Arrangement([Constituent()]))
+                                           Arrangement([Constituent(int, float)]))
 
     # comments, \, indentation, strings
     tt_primary = TopDownTreeTransducer("Primary",
@@ -185,7 +185,7 @@ def define_default_anoky_transducer_chain():
                                            
                                            Delimiters({'[','{'}),
                                            
-                                           Strings({"'",'"'}), # "'''",'"""'}),
+                                           Strings({"'",'"'}, str), # "'''",'"""'}),
 
                                            LeftRightBinaryTokenCapturingOperator({'.'}),
                                            
