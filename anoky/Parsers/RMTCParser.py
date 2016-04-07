@@ -6,8 +6,8 @@ from anoky.Streams.StreamPosition import StreamPosition
 from anoky.Streams.StringStream import StringStream
 from anoky.Syntax.Node import Node
 from anoky.Syntax.Token import is_token
-from anoky.Tokenization.Readtable import RT
-from anoky.Tokenization.Tokenizers.Util import print_tokens
+from anoky.tokenization.readtable import RT
+from anoky.tokenization.tokenizers.util import print_tokens
 from anoky.transducers.tree_transducer import apply_transducer_chain
 from anoky.common.globals import G
 import anoky.Syntax.Tokens as Tokens

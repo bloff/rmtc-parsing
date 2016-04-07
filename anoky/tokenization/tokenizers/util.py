@@ -1,14 +1,14 @@
 from anoky.common.errors import TokenizingError
 from anoky.Streams.CharacterStream import CharacterStream
-from anoky.Tokenization.Readtable import RT
-from anoky.Tokenization import TokenizationContext, Readtable
-from anoky.Tokenization.Tokenizer import Tokenizer
+from anoky.tokenization.readtable import RT
+from anoky.tokenization import tokenization_context, readtable
+from anoky.tokenization.tokenizer import Tokenizer
 
 
 
 # Skips all white lines until it finds the first non-whitspace, non-newline sequence
 # The stream will be positioned on the first character of said sequence
-def skip_white_lines(stream:CharacterStream, readtable:Readtable):
+def skip_white_lines(stream:CharacterStream, readtable:readtable):
     while not stream.next_is_EOF():
         seq, properties = readtable.probe(stream)
         seq_type = properties.type
@@ -18,7 +18,7 @@ def skip_white_lines(stream:CharacterStream, readtable:Readtable):
             stream.unread_seq(seq)
             return
 
-def read_and_concatenate_constituent_sequences(stream:CharacterStream, readtable:Readtable):
+def read_and_concatenate_constituent_sequences(stream:CharacterStream, readtable:readtable):
     concatenation = ""
     while not stream.next_is_EOF():
         seq, properties = readtable.probe(stream)

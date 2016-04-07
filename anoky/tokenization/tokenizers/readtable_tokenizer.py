@@ -2,11 +2,11 @@ from sys import maxsize as MAX_INT
 
 from anoky.common.errors import TokenizingError
 from anoky.Streams.IndentedCharacterStream import IndentedCharacterStream
-from anoky.Tokenization.Readtable import RT
-from anoky.Tokenization.TokenizationContext import TokenizationContext
-from anoky.Tokenization.Tokenizer import Tokenizer
+from anoky.tokenization.readtable import RT
+from anoky.tokenization.tokenization_context import TokenizationContext
+from anoky.tokenization.tokenizer import Tokenizer
 import anoky.Syntax.Tokens as Tokens
-from anoky.Tokenization.Tokenizers import Util
+from anoky.tokenization.tokenizers import util
 
 
 class IndentationReadtableTokenizer(Tokenizer):
@@ -34,7 +34,7 @@ class IndentationReadtableTokenizer(Tokenizer):
 
             # Find first non-whitespace, non-newline sequence
             # make sure that it begins at the first column
-            Util.skip_white_lines(stream, readtable)
+            util.skip_white_lines(stream, readtable)
 
             # If we find an EOF or a closing sequence, we're done tokenizing the stream
             if stream.next_is_EOF(): return
@@ -92,7 +92,7 @@ class IndentationReadtableTokenizer(Tokenizer):
                     # 2.7
                     elif seq_type == RT.CONSTITUENT:
                         first_position = stream.absolute_position_of_unread_seq(seq)
-                        concatenation =  seq + Util.read_and_concatenate_constituent_sequences(stream, readtable)
+                        concatenation = seq + util.read_and_concatenate_constituent_sequences(stream, readtable)
                         yield Tokens.CONSTITUENT(concatenation, first_position, stream.copy_absolute_position())
                     # 2.8
                     elif seq_type == RT.INVALID:
@@ -103,7 +103,7 @@ class IndentationReadtableTokenizer(Tokenizer):
             # Stage 3 (Parsing of sub-blocks)
             W = MAX_INT
             while True:
-                Util.skip_white_lines(stream, readtable)
+                util.skip_white_lines(stream, readtable)
                 relative_column_number = stream.visual_column
                 # 3.2
                 if stream.next_is_EOF():

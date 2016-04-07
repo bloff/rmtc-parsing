@@ -1,7 +1,7 @@
 from anoky.common.errors import TokenizingError
 from anoky.Streams.StreamPosition import StreamPosition
-from anoky.Tokenization import TokenizationContext
-from anoky.Tokenization.Tokenizer import Tokenizer
+from anoky.tokenization import tokenization_context
+from anoky.tokenization.tokenizer import Tokenizer
 import anoky.Syntax.Tokens as Tokens
 
 
@@ -18,7 +18,7 @@ class DelimitedIdentifierTokenizer(Tokenizer):
     OPENING_DELIMITER = "«"
     CLOSING_DELIMITER = "»"
 
-    def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
+    def __init__(self, context: tokenization_context, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
         Tokenizer.__init__(self, context)
 
         if opening_delimiter != self.__class__.OPENING_DELIMITER:

@@ -3,14 +3,14 @@ from typing import Union
 from anoky.Parsers.RMTCParser import RMTCParser
 from anoky.Streams.CharacterStream import CharacterStream
 from anoky.Streams.IndentedCharacterStream import IndentedCharacterStream
-from anoky.Tokenization.Readtable import make_readtable, RT
-from anoky.Tokenization.Tokenizers.RawComment import RawCommentTokenizer
-from anoky.Tokenization.Tokenizers.Comment import CommentTokenizer
-from anoky.Tokenization.Tokenizers.DelimitedIdentifierTokenizer import DelimitedIdentifierTokenizer
-from anoky.Tokenization.Tokenizers.Delimiter import DelimiterTokenizer
-from anoky.Tokenization.Tokenizers.IndentationReadtable import IndentationReadtableTokenizer
-from anoky.Tokenization.Tokenizers.String import StringTokenizer
-from anoky.Tokenization.TokenizationContext import TokenizationContext
+from anoky.tokenization.readtable import make_readtable, RT
+from anoky.tokenization.tokenizers.raw_comment_tokenizer import RawCommentTokenizer
+from anoky.tokenization.tokenizers.comment_tokenizer import CommentTokenizer
+from anoky.tokenization.tokenizers.delimited_identifier_tokenizer import DelimitedIdentifierTokenizer
+from anoky.tokenization.tokenizers.delimiter_tokenizer import DelimiterTokenizer
+from anoky.tokenization.tokenizers.readtable_tokenizer import IndentationReadtableTokenizer
+from anoky.tokenization.tokenizers.string_tokenizer import StringTokenizer
+from anoky.tokenization.tokenization_context import TokenizationContext
 from anoky.transducers.arrangements.apply_to_rest import ApplyToRest
 from anoky.transducers.arrangement import Arrangement
 from anoky.transducers.arrangements.left_right_binary_operator import LeftRightBinaryOperator

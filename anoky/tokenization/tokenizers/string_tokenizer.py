@@ -1,12 +1,12 @@
 from anoky.common.errors import TokenizingError
 from anoky.Streams.StreamPosition import StreamPosition
 from anoky.Streams.StreamRange import StreamRange
-from anoky.Tokenization.Readtable import RT
-from anoky.Tokenization.Tokenizers import Util
-from anoky.Tokenization import TokenizationContext
-from anoky.Tokenization.Tokenizer import Tokenizer
+from anoky.tokenization.readtable import RT
+from anoky.tokenization.tokenizers import util
+from anoky.tokenization import tokenization_context
+from anoky.tokenization.tokenizer import Tokenizer
 import anoky.Syntax.Tokens as Tokens
-from anoky.Tokenization.Tokenizers.Util import skip_white_lines
+from anoky.tokenization.tokenizers.util import skip_white_lines
 
 
 class StringTokenizer(Tokenizer):
@@ -19,7 +19,7 @@ class StringTokenizer(Tokenizer):
     MY_CLOSING_DELIMITER = '"'
     MY_CLOSING_DELIMITER_LENGTH = 1
 
-    def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
+    def __init__(self, context: tokenization_context, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
         Tokenizer.__init__(self, context)
 
         if opening_delimiter != self.__class__.MY_OPENING_DELIMITER:
@@ -120,7 +120,7 @@ class StringTokenizer(Tokenizer):
                     yield token
             elif seq_type == RT.CONSTITUENT:
                 first_position = stream.absolute_position_of_unread_seq(seq)
-                concatenation =  seq + Util.read_and_concatenate_constituent_sequences(stream, readtable)
+                concatenation = seq + util.read_and_concatenate_constituent_sequences(stream, readtable)
                 yield Tokens.CONSTITUENT(concatenation, first_position, stream.copy_absolute_position())
 
             # Step 3

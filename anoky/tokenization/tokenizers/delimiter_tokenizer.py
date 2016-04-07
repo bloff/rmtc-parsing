@@ -1,10 +1,10 @@
 from anoky.common.errors import TokenizingError
 from anoky.Streams.StreamPosition import StreamPosition
 from anoky.Streams.StreamRange import StreamRange
-from anoky.Tokenization import TokenizationContext
-from anoky.Tokenization.Tokenizer import Tokenizer
+from anoky.tokenization import tokenization_context
+from anoky.tokenization.tokenizer import Tokenizer
 import anoky.Syntax.Tokens as Tokens
-from anoky.Tokenization.Tokenizers.Util import skip_white_lines
+from anoky.tokenization.tokenizers.util import skip_white_lines
 
 
 class DelimiterTokenizer(Tokenizer):
@@ -18,7 +18,7 @@ class DelimiterTokenizer(Tokenizer):
         '{' : '}',
         "'" : "'"}
 
-    def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
+    def __init__(self, context: tokenization_context, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
         Tokenizer.__init__(self, context)
 
         if opening_delimiter not in self.__class__.DELIMITER_PAIRS:
