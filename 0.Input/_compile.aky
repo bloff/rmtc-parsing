@@ -1,5 +1,4 @@
-a = 1
+import lisp_printer as lp, b as c from anoky.syntax.lisp_printer
 
-
-print aa
-
+a := quote:
+   a = 1 + 1

@@ -80,6 +80,9 @@ class Import(Macro, SpecialForm):
 # where each module_name is either a name (an Identifier) or
 #    (as name newname)
 
+    # todo fix syntax
+    # import a.b.c from module_name
+
     def generate(self, element:Element, GC:GenerationContext):
 
         acode = element.code
@@ -126,7 +129,8 @@ class Import(Macro, SpecialForm):
                 else:
                     raise CodeGenerationError(to_import_element.range, "Special form `import` expected a module path (`a.b.c`) or an import alias `(as a.b.c name)`, but found `%s`." % succinct_lisp_printer(to_import_element))
 
-        import_statements.append(ast.Import(imports_list))
+        if len(imports_list) > 0:
+            import_statements.append(ast.Import(imports_list))
         return import_statements
 
 

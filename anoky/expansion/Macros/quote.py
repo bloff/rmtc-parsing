@@ -115,7 +115,7 @@ class Quote(Macro, SpecialForm):
 
             return ast.Call(func=ast.Attribute(value=ast.Name(id="__aky__", ctx=ast.Load()),
                                             attr="Literal", ctx=ast.Load()),
-                            args=[ast.Str(acode.type), # assuming acode.type is a string
+                            args=[ast.Name(id=acode.type.__name__, ctx=ast.Load()), # assuming acode.type is a string
                                   value_code],
                             keywords=[])
 

@@ -10,14 +10,18 @@ from anoky.transducers.arrangement_rule import ArrangementRule
 
 
 class MultipleAssignment(ArrangementRule):
+    # TODO:
+    # := ⋅ : INDENT   ⦅= ⟅, ⟆ ⟅: ARGBREAK  (whatever segment does)⟆⦆ ⋅
     """
     ::
 
-         := ⋅  INDENT   ⦅= ⟅⟆ ⟅ ARGBREAK ⟆⦆ ⋅
+         := ⋅  INDENT   ⦅= ⟅,⟆ ⟅, ARGBREAK, ⟆⦆ ⋅
 
-         := ⋅   ⦅= ⟅⟆ ⟅⟆⦆ ⋅
 
-         := ⋅     ⦅= ⟅⟆⦆ ⋅
+
+         := ⋅   ⦅= ⟅,⟆ ⟅,⟆⦆ ⋅
+
+         := ⋅     ⦅= ⟅,⟆⦆ ⋅
 
     ``⟅⟆`` denote PreTuples.
 
