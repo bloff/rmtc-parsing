@@ -8,8 +8,8 @@ from anoky.Syntax.PreSeq import PreSeq
 from anoky.Syntax.Punctuator import Punctuator
 from anoky.Syntax.Token import is_token
 from anoky.Syntax.Util import is_identifier
-from anoky.Transducers.ArrangementRule import ArrangementRule
-import anoky.Transducers.Arrangements.Util as Util
+from anoky.transducers.arrangement_rule import ArrangementRule
+import anoky.transducers.arrangements.util as Util
 
 # returns element after the head
 

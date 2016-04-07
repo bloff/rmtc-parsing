@@ -6,9 +6,9 @@ from anoky.Syntax.Node import Element
 from anoky.Syntax.PreSeq import PreSeq
 from anoky.Syntax.Punctuator import Punctuator
 from anoky.Syntax.Token import is_token
-from anoky.Transducers.ArrangementRule import ArrangementRule
-from anoky.Transducers.Arrangements.Segment import Segment
-import anoky.Transducers.Arrangements.Util as Util
+from anoky.transducers.arrangement_rule import ArrangementRule
+from anoky.transducers.arrangements.segment import Segment
+import anoky.transducers.arrangements.util as Util
 
 
 class ApplyParenthesis(ArrangementRule):

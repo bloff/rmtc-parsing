@@ -2,7 +2,7 @@ from anoky.Syntax.Form import Form
 from anoky.Syntax.Identifier import Identifier
 from anoky.Syntax.Node import Element
 from anoky.Syntax.Util import is_identifier
-from anoky.Transducers.ArrangementRule import ArrangementRule
+from anoky.transducers.arrangement_rule import ArrangementRule
 
 
 class LeftRightBinaryOperatorTwoSymbols(ArrangementRule):

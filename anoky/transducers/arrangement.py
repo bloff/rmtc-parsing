@@ -4,7 +4,7 @@ from anoky.Syntax.Identifier import Identifier
 from anoky.Syntax.Node import Node
 from anoky.Syntax.LispPrinter import lisp_printer
 from anoky.common.globals import G
-from anoky.Transducers.ReadDirection import ReadDirection
+from anoky.transducers.read_direction import ReadDirection
 
 
 class Arrangement(object):

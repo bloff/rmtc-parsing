@@ -4,7 +4,7 @@ from anoky.Syntax.Literal import Literal
 from anoky.Syntax.Node import Element
 from anoky.Syntax.Token import is_token
 import anoky.Syntax.Tokens as Tokens
-from anoky.Transducers.ArrangementRule import ArrangementRule
+from anoky.transducers.arrangement_rule import ArrangementRule
 
 # from Semantics.Types.Bootstrap0 import String
 

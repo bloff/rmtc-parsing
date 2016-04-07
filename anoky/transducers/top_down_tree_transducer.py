@@ -1,6 +1,6 @@
 from anoky.Syntax.Node import Node
-from anoky.Transducers.Arrangement import Arrangement
-from anoky.Transducers.TreeTransducer import TreeTransducer
+from anoky.transducers.arrangement import Arrangement
+from anoky.transducers.tree_transducer import TreeTransducer
 
 class TopDownTreeTransducer(TreeTransducer):
     """

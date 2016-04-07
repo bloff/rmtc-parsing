@@ -5,7 +5,7 @@ from anoky.Syntax.PreSeq import PreSeq
 from anoky.Syntax.Token import is_token
 from anoky.Syntax.Tokens import PUNCTUATION, INDENT
 from anoky.Syntax.Util import is_form, is_seq, is_identifier
-from anoky.Transducers.ArrangementRule import ArrangementRule
+from anoky.transducers.arrangement_rule import ArrangementRule
 
 
 class DefaultPunctuation(ArrangementRule):

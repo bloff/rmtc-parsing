@@ -5,7 +5,7 @@ from anoky.Syntax.Node import Node
 from anoky.Syntax.Seq import Seq
 from anoky.Syntax.PreSeq import PreSeq
 from anoky.Syntax.PreForm import PreForm
-from anoky.Transducers.TreeTransducer import TreeTransducer
+from anoky.transducers.tree_transducer import TreeTransducer
 
 class ConvertPreforms(TreeTransducer):
     """

@@ -8,7 +8,7 @@ from anoky.Syntax.Node import Node
 from anoky.Syntax.Token import is_token
 from anoky.Tokenization.Readtable import RT
 from anoky.Tokenization.Tokenizers.Util import print_tokens
-from anoky.Transducers.TreeTransducer import apply_transducer_chain
+from anoky.transducers.tree_transducer import apply_transducer_chain
 from anoky.common.globals import G
 import anoky.Syntax.Tokens as Tokens
 

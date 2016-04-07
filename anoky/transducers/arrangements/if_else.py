@@ -1,7 +1,7 @@
 from anoky.Syntax.Form import Form
 from anoky.Syntax.Node import Element
 from anoky.Syntax.Util import is_identifier, is_form
-from anoky.Transducers.ArrangementRule import ArrangementRule
+from anoky.transducers.arrangement_rule import ArrangementRule
 
 
 class InfixIfElse(ArrangementRule):

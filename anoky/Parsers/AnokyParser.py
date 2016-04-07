@@ -9,37 +9,37 @@ from anoky.Tokenization.Tokenizers.Delimiter import DelimiterTokenizer
 from anoky.Tokenization.Tokenizers.IndentationReadtable import IndentationReadtableTokenizer
 from anoky.Tokenization.Tokenizers.RawComment import RawCommentTokenizer
 from anoky.Tokenization.Tokenizers.String import StringTokenizer
-from anoky.Transducers.Arrangement import Arrangement
-from anoky.Transducers.Arrangements.ApplyInIsolation import ApplyInIsolation
-from anoky.Transducers.Arrangements.ApplyToRest import ApplyToRest
-from anoky.Transducers.Arrangements.AssignmentSegment import AssignmentSegment
-from anoky.Transducers.Arrangements.LeftRightNaryOperatorMultipleHeads import LeftRightNaryOperatorMultipleHeads
-from anoky.Transducers.Arrangements.Comments import RawComment
-from anoky.Transducers.Arrangements.Constituents import Constituent
-from anoky.Transducers.Arrangements.DefaultPunctuation import DefaultPunctuation, DefaultFormPunctuation, \
+from anoky.transducers.arrangement import Arrangement
+from anoky.transducers.arrangements.apply_in_isolation import ApplyInIsolation
+from anoky.transducers.arrangements.apply_to_rest import ApplyToRest
+from anoky.transducers.arrangements.assignment_segment import AssignmentSegment
+from anoky.transducers.arrangements.left_right_nary_operator_multiple_heads import LeftRightNaryOperatorMultipleHeads
+from anoky.transducers.arrangements.comments import RawComment
+from anoky.transducers.arrangements.constituents import Constituent
+from anoky.transducers.arrangements.default_punctuation import DefaultPunctuation, DefaultFormPunctuation, \
     DefaultSeqPunctuation, ForPunctuation, Skip2Punctuation
-from anoky.Transducers.Arrangements.Delimiters import ParenthesisWithHead, ParenthesisNoHead, \
+from anoky.transducers.arrangements.delimiters import ParenthesisWithHead, ParenthesisNoHead, \
     Delimiters
-from anoky.Transducers.Arrangements.IfElse import InfixIfElse, FormWithDirectives
-from anoky.Transducers.Arrangements.LeftRightBinaryOperator import LeftRightBinaryOperator
-from anoky.Transducers.Arrangements.LeftRightBinaryOperatorTwoSymbols import LeftRightBinaryOperatorTwoSymbols
-from anoky.Transducers.Arrangements.LeftRightBinaryTokenCapturingOperator import LeftRightBinaryTokenCapturingOperator
-from anoky.Transducers.Arrangements.LeftRightNaryOperator import LeftRightNaryOperator
-from anoky.Transducers.Arrangements.LeftRightUnaryPrefixNospaceOperator import LeftRightUnaryPrefixNospaceOperator
-from anoky.Transducers.Arrangements.LeftRightUnaryPrefixNospaceTokenCapturingOperator import LeftRightUnaryPrefixNospaceTokenCapturingOperator
-from anoky.Transducers.Arrangements.MultipleAssignment import MultipleAssignment
-from anoky.Transducers.Arrangements.RightLeftBinaryOperator import RightLeftBinaryOperator
-from anoky.Transducers.Arrangements.RightLeftUnaryPrefixOperator import RightLeftUnaryPrefixOperator
-from anoky.Transducers.Arrangements.Segment import Segment
-from anoky.Transducers.Arrangements.Strings import Strings
-from anoky.Transducers.Arrangements.TransformationArrow import TransformationArrow
-from anoky.Transducers.ConvertPreForms import ConvertPreforms
-from anoky.Transducers.TopDownTreeTransducer import TopDownTreeTransducer
+from anoky.transducers.arrangements.if_else import InfixIfElse, FormWithDirectives
+from anoky.transducers.arrangements.left_right_binary_operator import LeftRightBinaryOperator
+from anoky.transducers.arrangements.left_right_binary_operator_two_symbols import LeftRightBinaryOperatorTwoSymbols
+from anoky.transducers.arrangements.left_right_binary_token_capturing_operator import LeftRightBinaryTokenCapturingOperator
+from anoky.transducers.arrangements.left_right_nary_operator import LeftRightNaryOperator
+from anoky.transducers.arrangements.left_right_unary_prefix_nospace_operator import LeftRightUnaryPrefixNospaceOperator
+from anoky.transducers.arrangements.left_right_unary_prefix_nospace_token_capturing_operator import LeftRightUnaryPrefixNospaceTokenCapturingOperator
+from anoky.transducers.arrangements.multiple_assignment import MultipleAssignment
+from anoky.transducers.arrangements.right_left_binary_operator import RightLeftBinaryOperator
+from anoky.transducers.arrangements.right_left_unary_prefix_operator import RightLeftUnaryPrefixOperator
+from anoky.transducers.arrangements.segment import Segment
+from anoky.transducers.arrangements.strings import Strings
+from anoky.transducers.arrangements.transformation_arrow import TransformationArrow
+from anoky.transducers.convert_preforms import ConvertPreforms
+from anoky.transducers.top_down_tree_transducer import TopDownTreeTransducer
 
 from anoky.Expansion.ExpansionContext import ExpansionContext
 from anoky.Expansion.Expander import DefaultExpander
 
-#from anoky.Transducers.Arrangements.Delimiters import BracketsWithHead
+#from anoky.transducers.arrangements.Delimiters import BracketsWithHead
 
 
 

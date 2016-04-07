@@ -3,7 +3,7 @@ from anoky.Syntax.identifier_in import identifier_in
 from anoky.Syntax.Form import Form
 from anoky.Syntax.Identifier import Identifier
 from anoky.Syntax.Node import Element
-from anoky.Transducers.ArrangementRule import ArrangementRule
+from anoky.transducers.arrangement_rule import ArrangementRule
 from anoky.Syntax.Token import is_token
 
 

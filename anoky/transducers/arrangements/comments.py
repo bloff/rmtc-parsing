@@ -3,7 +3,7 @@ from anoky.Syntax.Identifier import Identifier
 from anoky.Syntax.Node import Element
 from anoky.Syntax.Token import is_token
 import anoky.Syntax.Tokens as Tokens
-from anoky.Transducers.ArrangementRule import ArrangementRule
+from anoky.transducers.arrangement_rule import ArrangementRule
 
 
 class RawComment(ArrangementRule):

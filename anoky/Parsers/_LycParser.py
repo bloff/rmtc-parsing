@@ -11,31 +11,31 @@ from anoky.Tokenization.Tokenizers.Delimiter import DelimiterTokenizer
 from anoky.Tokenization.Tokenizers.IndentationReadtable import IndentationReadtableTokenizer
 from anoky.Tokenization.Tokenizers.String import StringTokenizer
 from anoky.Tokenization.TokenizationContext import TokenizationContext
-from anoky.Transducers.Arrangements.ApplyToRest import ApplyToRest
-from anoky.Transducers.Arrangement import Arrangement
-from anoky.Transducers.Arrangements.LeftRightBinaryOperator import LeftRightBinaryOperator
-from anoky.Transducers.TopDownTreeTransducer import TopDownTreeTransducer
-from anoky.Transducers.ConvertPreForms import ConvertPreforms
-from anoky.Transducers.ReadDirection import ReadDirection
-from anoky.Transducers.Arrangements.Segment import Segment
-from anoky.Transducers.Arrangements.Comments import Comment, RawComment
-from anoky.Transducers.Arrangements.Constituents import Constituent
-from anoky.Transducers.Arrangements.DefaultPunctuation import DefaultPunctuation
-from anoky.Transducers.Arrangements.Delimiters import ParenthesisWithHead, ParenthesisNoHead, \
+from anoky.transducers.arrangements.apply_to_rest import ApplyToRest
+from anoky.transducers.arrangement import Arrangement
+from anoky.transducers.arrangements.left_right_binary_operator import LeftRightBinaryOperator
+from anoky.transducers.top_down_tree_transducer import TopDownTreeTransducer
+from anoky.transducers.convert_preforms import ConvertPreforms
+from anoky.transducers.read_direction import ReadDirection
+from anoky.transducers.arrangements.segment import Segment
+from anoky.transducers.arrangements.comments import Comment, RawComment
+from anoky.transducers.arrangements.constituents import Constituent
+from anoky.transducers.arrangements.default_punctuation import DefaultPunctuation
+from anoky.transducers.arrangements.delimiters import ParenthesisWithHead, ParenthesisNoHead, \
     ApplyParenthesis, Delimiters
-from anoky.Transducers.Arrangements.IfElse import InfixIfElse, FormWithDirectives
-from anoky.Transducers.Arrangements.LeftRightBinaryOperatorReversedArgs import LeftRightBinaryOperatorReversedArgs
-from anoky.Transducers.Arrangements.LeftRightBinaryOperatorTwoSymbols import LeftRightBinaryOperatorTwoSymbols
-from anoky.Transducers.Arrangements.LeftRightBinaryTokenCapturingOperator import LeftRightBinaryTokenCapturingOperator
-from anoky.Transducers.Arrangements.LeftRightNaryOperator import LeftRightNaryOperator
-from anoky.Transducers.Arrangements.LeftRightUnaryPostfixNospaceOperator import LeftRightUnaryPostfixNospaceOperator
-from anoky.Transducers.Arrangements.LeftRightUnaryPrefixNospaceTokenCapturingOperator import \
+from anoky.transducers.arrangements.if_else import InfixIfElse, FormWithDirectives
+from anoky.transducers.arrangements.left_right_binary_operator_reversed_args import LeftRightBinaryOperatorReversedArgs
+from anoky.transducers.arrangements.left_right_binary_operator_two_symbols import LeftRightBinaryOperatorTwoSymbols
+from anoky.transducers.arrangements.left_right_binary_token_capturing_operator import LeftRightBinaryTokenCapturingOperator
+from anoky.transducers.arrangements.left_right_nary_operator import LeftRightNaryOperator
+from anoky.transducers.arrangements.left_right_unary_postfix_nospace_operator import LeftRightUnaryPostfixNospaceOperator
+from anoky.transducers.arrangements.left_right_unary_prefix_nospace_token_capturing_operator import \
     LeftRightUnaryPrefixNospaceTokenCapturingOperator
-from anoky.Transducers.Arrangements.RightLeftBinaryOperator import RightLeftBinaryOperator
-from anoky.Transducers.Arrangements.RightLeftUnaryPrefixNospaceOperator import RightLeftUnaryPrefixNospaceOperator
-from anoky.Transducers.Arrangements.RightLeftUnaryPrefixOperator import RightLeftUnaryPrefixOperator
-from anoky.Transducers.Arrangements.Strings import Strings
-from anoky.Transducers.Arrangements.TransformationArrow import TransformationArrow
+from anoky.transducers.arrangements.right_left_binary_operator import RightLeftBinaryOperator
+from anoky.transducers.arrangements.right_left_unary_prefix_nospace_operator import RightLeftUnaryPrefixNospaceOperator
+from anoky.transducers.arrangements.right_left_unary_prefix_operator import RightLeftUnaryPrefixOperator
+from anoky.transducers.arrangements.strings import Strings
+from anoky.transducers.arrangements.transformation_arrow import TransformationArrow
 
 
 
@@ -121,7 +121,7 @@ default_lyc_transducer_chain = None
 def define_default_lyc_transducer_chain():
     global default_lyc_transducer_chain
 
-    #region Transducers
+    #region transducers
     tt_constituent = \
         TopDownTreeTransducer("Constituent",
             Arrangement([Constituent()]))

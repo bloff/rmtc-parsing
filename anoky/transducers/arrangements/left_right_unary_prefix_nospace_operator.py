@@ -6,7 +6,7 @@ from anoky.Syntax.Identifier import Identifier
 from anoky.Syntax.Node import Element
 from anoky.Syntax.Token import is_token
 from anoky.Syntax.Tokens import BEGIN_MACRO
-from anoky.Transducers.ArrangementRule import ArrangementRule
+from anoky.transducers.arrangement_rule import ArrangementRule
 
 
 class LeftRightUnaryPrefixNospaceOperator(ArrangementRule):
