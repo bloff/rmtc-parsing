@@ -1,4 +1,4 @@
-from anoky.Syntax.Node import Node
+from anoky.syntax.node import Node
 from anoky.transducers.arrangement import Arrangement
 from anoky.transducers.tree_transducer import TreeTransducer
 

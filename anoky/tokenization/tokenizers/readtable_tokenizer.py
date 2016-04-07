@@ -5,7 +5,7 @@ from anoky.Streams.IndentedCharacterStream import IndentedCharacterStream
 from anoky.tokenization.readtable import RT
 from anoky.tokenization.tokenization_context import TokenizationContext
 from anoky.tokenization.tokenizer import Tokenizer
-import anoky.Syntax.Tokens as Tokens
+import anoky.syntax.tokens as Tokens
 from anoky.tokenization.tokenizers import util
 
 

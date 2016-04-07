@@ -1,4 +1,4 @@
-from anoky.Syntax.Node import Node, ElementOperation
+from anoky.syntax.node import Node, ElementOperation
 
 
 class Seq(Node):
@@ -10,7 +10,7 @@ class Seq(Node):
         Node.__init__(self, *children, new_element=new_element)
 
     def __str__(self):
-        from anoky.Syntax.LispPrinter import lisp_printer
+        from anoky.syntax.lisp_printer import lisp_printer
         return lisp_printer(self)
 
     def copy(self):

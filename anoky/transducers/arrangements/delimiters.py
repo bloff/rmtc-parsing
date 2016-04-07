@@ -1,14 +1,13 @@
-import anoky.Syntax.Tokens as Tokens
+import anoky.syntax.tokens as Tokens
+import anoky.transducers.arrangements.util as Util
 from anoky.common.errors import TokenizingError
-from anoky.Syntax.Form import Form
-from anoky.Syntax.Identifier import Identifier
-from anoky.Syntax.Node import Element
-from anoky.Syntax.PreSeq import PreSeq
-from anoky.Syntax.Punctuator import Punctuator
-from anoky.Syntax.Token import is_token
+from anoky.syntax.token import is_token
+from anoky.syntax.form import Form
+from anoky.syntax.identifier import Identifier
+from anoky.syntax.node import Element
+from anoky.syntax.preseq import PreSeq
 from anoky.transducers.arrangement_rule import ArrangementRule
 from anoky.transducers.arrangements.segment import Segment
-import anoky.transducers.arrangements.util as Util
 
 
 class ApplyParenthesis(ArrangementRule):

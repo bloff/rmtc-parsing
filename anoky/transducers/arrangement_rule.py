@@ -1,4 +1,4 @@
-from anoky.Syntax.Node import Element
+from anoky.syntax.node import Element
 
 
 

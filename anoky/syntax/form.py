@@ -1,4 +1,4 @@
-from anoky.Syntax.Node import Node, ElementOperation
+from anoky.syntax.node import Node, ElementOperation
 
 
 class Form(Node):
@@ -22,7 +22,7 @@ class Form(Node):
         raise NotImplementedError()
 
     def __str__(self):
-        import anoky.Syntax.LispPrinter as LispPrinter
+        import anoky.syntax.lisp_printer as LispPrinter
         return LispPrinter.lisp_printer(self)
 
 

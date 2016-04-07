@@ -8,7 +8,7 @@ from anoky.Streams.StreamPosition import StreamPosition
 from anoky.Streams.StreamRange import StreamRange
 from anoky.Streams.StringStream import StringStream
 import anoky.common.options
-import anoky.Syntax.Tokens as Tokens
+import anoky.syntax.tokens as Tokens
 
 VERBOSE = True
 anoky.common.options.PRINT_ERRORS_ON_CREATION = True

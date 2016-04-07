@@ -1,8 +1,8 @@
-from anoky.Syntax.Form import Form
-from anoky.Syntax.Identifier import Identifier
-from anoky.Syntax.Node import Element
-from anoky.Syntax.Seq import Seq
-from anoky.Syntax.Util import is_identifier, identifier_in, is_form
+from anoky.syntax.form import Form
+from anoky.syntax.identifier import Identifier
+from anoky.syntax.node import Element
+from anoky.syntax.seq import Seq
+from anoky.syntax.util import is_identifier, identifier_in, is_form
 from anoky.transducers.arrangement_rule import ArrangementRule
 
 

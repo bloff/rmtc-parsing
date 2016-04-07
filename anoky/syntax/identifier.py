@@ -1,5 +1,5 @@
 from anoky.Streams.StreamRange import StreamRange
-from anoky.Syntax.Code import *
+from anoky.syntax.code import *
 
 class Identifier(Code):
     """

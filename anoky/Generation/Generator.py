@@ -10,12 +10,12 @@ from anoky.Generation.Domain import StatementDomain as SDom,\
 
 
 
-from anoky.Syntax.Form import Form
-from anoky.Syntax.Identifier import Identifier
-from anoky.Syntax.Literal import Literal
-from anoky.Syntax.Node import Element, Node
-from anoky.Syntax.Seq import Seq
-from anoky.Syntax.Util import is_form
+from anoky.syntax.form import Form
+from anoky.syntax.identifier import Identifier
+from anoky.syntax.literal import Literal
+from anoky.syntax.node import Element, Node
+from anoky.syntax.seq import Seq
+from anoky.syntax.util import is_form
 
 
 class Generator(object):

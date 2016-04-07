@@ -1,12 +1,12 @@
 from anoky.Expansion.ExpansionContext import ExpansionContext
 from anoky.Expansion.Expander import Expander, DefaultExpander
-from anoky.Syntax.Code import Code
+from anoky.syntax.code import Code
 
-from anoky.Syntax.Node import Node, Element
-from anoky.Syntax.Form import Form
-from anoky.Syntax.Seq import Seq
-from anoky.Syntax.Literal import Literal
-from anoky.Syntax.Identifier import Identifier
+from anoky.syntax.node import Node, Element
+from anoky.syntax.form import Form
+from anoky.syntax.seq import Seq
+from anoky.syntax.literal import Literal
+from anoky.syntax.identifier import Identifier
 
 
 

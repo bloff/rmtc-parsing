@@ -7,10 +7,10 @@ from anoky.Generation.SpecialForms.SpecialForms import SpecialForm
 from anoky.Generation.Domain import StatementDomain as SDom,\
     ExpressionDomain as ExDom, LValueDomain as LVDom, DeletionDomain as DelDom
 
-from anoky.Syntax.Form import Form
-from anoky.Syntax.Identifier import Identifier
-from anoky.Syntax.LispPrinter import succinct_lisp_printer
-from anoky.Syntax.Node import Element
+from anoky.syntax.form import Form
+from anoky.syntax.identifier import Identifier
+from anoky.syntax.lisp_printer import succinct_lisp_printer
+from anoky.syntax.node import Element
 
 
 
@@ -26,7 +26,7 @@ from anoky.Syntax.Node import Element
 # raise
 # assert
 # pass
-from anoky.Syntax.Util import is_form, is_identifier
+from anoky.syntax.util import is_form, is_identifier
 
 
 class If(SpecialForm):

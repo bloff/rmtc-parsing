@@ -1,9 +1,7 @@
-from anoky.common.errors import ArrangementError
 from anoky.common.util import is_not_none
-from anoky.Syntax import Tokens as Tokens
-from anoky.Syntax.Node import Element
-from anoky.Syntax.Punctuator import Punctuator
-from anoky.Syntax.Token import is_token
+from anoky.syntax import tokens as Tokens
+from anoky.syntax.token import is_token
+from anoky.syntax.node import Element
 
 
 def is_opening_delimiter(element:Element, opening_delimiter_str:str):

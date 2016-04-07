@@ -1,5 +1,5 @@
 from anoky.Streams.StreamRange import StreamRange
-from anoky.Syntax.Code import Code
+from anoky.syntax.code import Code
 
 
 class Literal(Code):

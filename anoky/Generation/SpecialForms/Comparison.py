@@ -4,7 +4,7 @@ from anoky.Generation.Domain import ExpressionDomain, StatementDomain
 from anoky.Generation.GenerationContext import GenerationContext
 from anoky.Generation.SpecialForms.SpecialForms import SpecialForm
 from anoky.Generation.Util import expr_wrap
-from anoky.Syntax.Node import Element
+from anoky.syntax.node import Element
 
 
 class Compare(SpecialForm):

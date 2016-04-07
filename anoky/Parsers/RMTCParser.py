@@ -4,13 +4,13 @@ from anoky.common.errors import TokenizingError
 from anoky.Streams.CharacterStream import CharacterStream
 from anoky.Streams.StreamPosition import StreamPosition
 from anoky.Streams.StringStream import StringStream
-from anoky.Syntax.Node import Node
-from anoky.Syntax.Token import is_token
+from anoky.syntax.node import Node
+from anoky.syntax.token import is_token
 from anoky.tokenization.readtable import RT
 from anoky.tokenization.tokenizers.util import print_tokens
 from anoky.transducers.tree_transducer import apply_transducer_chain
 from anoky.common.globals import G
-import anoky.Syntax.Tokens as Tokens
+import anoky.syntax.tokens as Tokens
 
 class RMTCParser(object):
 

@@ -1,5 +1,5 @@
 from anoky.common.context import Context
-from anoky.Syntax.Node import Element #, Node
+from anoky.syntax.node import Element #, Node
 
 class ExpansionContext(Context):
 

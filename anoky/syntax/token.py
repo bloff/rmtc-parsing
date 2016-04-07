@@ -1,5 +1,5 @@
 from anoky.Streams.StreamRange import StreamRange
-from anoky.Syntax.Node import Element
+from anoky.syntax.node import Element
 
 class Token(Element):
     """

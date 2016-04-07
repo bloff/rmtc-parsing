@@ -2,11 +2,11 @@ from unittest import TestCase
 
 from anoky.common.errors import ArrangementError
 from anoky.Parsers._LycParser import LycParser
-from anoky.Syntax.Code import Code
-from anoky.Syntax.Identifier import Identifier
-from anoky.Syntax.LispPrinter import lisp_printer
-from anoky.Syntax.Literal import Literal
-from anoky.Syntax.Node import Node
+from anoky.syntax.code import Code
+from anoky.syntax.identifier import Identifier
+from anoky.syntax.lisp_printer import lisp_printer
+from anoky.syntax.literal import Literal
+from anoky.syntax.node import Node
 
 lyc_parser = LycParser()
 arrange = lyc_parser.parse

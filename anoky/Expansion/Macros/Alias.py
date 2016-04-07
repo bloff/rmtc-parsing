@@ -2,10 +2,10 @@ from anoky.Expansion.ExpansionContext import ExpansionContext
 from anoky.Expansion.Macro import Macro, IdentifierMacro
 from anoky.Generation.GenerationContext import GenerationContext
 
-from anoky.Syntax.Code import Code
-from anoky.Syntax.Node import Element, Node
-from anoky.Syntax.Form import Form
-from anoky.Syntax.Identifier import Identifier
+from anoky.syntax.code import Code
+from anoky.syntax.node import Element, Node
+from anoky.syntax.form import Form
+from anoky.syntax.identifier import Identifier
 
 
 

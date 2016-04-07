@@ -5,11 +5,11 @@ from anoky.Expansion.Macro import Macro
 from anoky.Generation.GenerationContext import GenerationContext
 from anoky.Generation.SpecialForms.SpecialForms import SpecialForm
 from anoky.Generation.Util import expr_wrap
-from anoky.Syntax.Form import Form
-from anoky.Syntax.Identifier import Identifier
-from anoky.Syntax.Literal import Literal
-from anoky.Syntax.Node import Element
-from anoky.Syntax.Seq import Seq
+from anoky.syntax.form import Form
+from anoky.syntax.identifier import Identifier
+from anoky.syntax.literal import Literal
+from anoky.syntax.node import Element
+from anoky.syntax.seq import Seq
 
 
 

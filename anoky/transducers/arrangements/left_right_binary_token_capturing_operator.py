@@ -1,9 +1,9 @@
 from anoky.common.errors import ArrangementError
-from anoky.Syntax.Util import is_identifier, identifier_in, is_literal, is_form
-from anoky.Syntax.Form import Form
-from anoky.Syntax.Node import Element
-from anoky.Syntax.Token import is_token
-import anoky.Syntax.Tokens as Tokens
+from anoky.syntax.util import is_identifier, identifier_in, is_literal, is_form
+from anoky.syntax.form import Form
+from anoky.syntax.node import Element
+from anoky.syntax.token import is_token
+import anoky.syntax.tokens as Tokens
 from anoky.transducers.arrangement_rule import ArrangementRule
 
 

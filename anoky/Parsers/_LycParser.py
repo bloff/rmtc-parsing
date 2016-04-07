@@ -4,26 +4,22 @@ from anoky.Parsers.RMTCParser import RMTCParser
 from anoky.Streams.CharacterStream import CharacterStream
 from anoky.Streams.IndentedCharacterStream import IndentedCharacterStream
 from anoky.tokenization.readtable import make_readtable, RT
-from anoky.tokenization.tokenizers.raw_comment_tokenizer import RawCommentTokenizer
+from anoky.tokenization.string_tokenizer import StringTokenizer
+from anoky.tokenization.tokenization_context import TokenizationContext
 from anoky.tokenization.tokenizers.comment_tokenizer import CommentTokenizer
 from anoky.tokenization.tokenizers.delimited_identifier_tokenizer import DelimitedIdentifierTokenizer
 from anoky.tokenization.tokenizers.delimiter_tokenizer import DelimiterTokenizer
+from anoky.tokenization.tokenizers.raw_comment_tokenizer import RawCommentTokenizer
 from anoky.tokenization.tokenizers.readtable_tokenizer import IndentationReadtableTokenizer
-from anoky.tokenization.tokenizers.string_tokenizer import StringTokenizer
-from anoky.tokenization.tokenization_context import TokenizationContext
-from anoky.transducers.arrangements.apply_to_rest import ApplyToRest
 from anoky.transducers.arrangement import Arrangement
-from anoky.transducers.arrangements.left_right_binary_operator import LeftRightBinaryOperator
-from anoky.transducers.top_down_tree_transducer import TopDownTreeTransducer
-from anoky.transducers.convert_preforms import ConvertPreforms
-from anoky.transducers.read_direction import ReadDirection
-from anoky.transducers.arrangements.segment import Segment
+from anoky.transducers.arrangements.apply_to_rest import ApplyToRest
 from anoky.transducers.arrangements.comments import Comment, RawComment
 from anoky.transducers.arrangements.constituents import Constituent
 from anoky.transducers.arrangements.default_punctuation import DefaultPunctuation
 from anoky.transducers.arrangements.delimiters import ParenthesisWithHead, ParenthesisNoHead, \
     ApplyParenthesis, Delimiters
 from anoky.transducers.arrangements.if_else import InfixIfElse, FormWithDirectives
+from anoky.transducers.arrangements.left_right_binary_operator import LeftRightBinaryOperator
 from anoky.transducers.arrangements.left_right_binary_operator_reversed_args import LeftRightBinaryOperatorReversedArgs
 from anoky.transducers.arrangements.left_right_binary_operator_two_symbols import LeftRightBinaryOperatorTwoSymbols
 from anoky.transducers.arrangements.left_right_binary_token_capturing_operator import LeftRightBinaryTokenCapturingOperator
@@ -34,8 +30,11 @@ from anoky.transducers.arrangements.left_right_unary_prefix_nospace_token_captur
 from anoky.transducers.arrangements.right_left_binary_operator import RightLeftBinaryOperator
 from anoky.transducers.arrangements.right_left_unary_prefix_nospace_operator import RightLeftUnaryPrefixNospaceOperator
 from anoky.transducers.arrangements.right_left_unary_prefix_operator import RightLeftUnaryPrefixOperator
-from anoky.transducers.arrangements.strings import Strings
+from anoky.transducers.arrangements.segment import Segment
 from anoky.transducers.arrangements.transformation_arrow import TransformationArrow
+from anoky.transducers.convert_preforms import ConvertPreforms
+from anoky.transducers.read_direction import ReadDirection
+from anoky.transducers.top_down_tree_transducer import TopDownTreeTransducer
 
 
 

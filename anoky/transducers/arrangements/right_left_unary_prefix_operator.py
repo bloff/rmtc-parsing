@@ -1,6 +1,6 @@
-from anoky.Syntax.Form import Form
-from anoky.Syntax.Node import Element
-from anoky.Syntax.Util import is_identifier, identifier_in, is_head
+from anoky.syntax.form import Form
+from anoky.syntax.node import Element
+from anoky.syntax.util import is_identifier, identifier_in, is_head
 from anoky.transducers.arrangement_rule import ArrangementRule
 
 

@@ -7,7 +7,7 @@ from anoky.common.record import Record
 from anoky.common.old_args_parser import SysArgsParser
 from anoky.Parsers._LycParser import LycParser
 from anoky.Streams.FileStream import FileStream
-from anoky.Syntax.LispPrinter import indented_lisp_printer
+from anoky.syntax.lisp_printer import indented_lisp_printer
 import anoky.common.options as Options
 
 

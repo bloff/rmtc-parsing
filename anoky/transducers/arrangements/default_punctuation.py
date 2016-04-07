@@ -1,10 +1,10 @@
-import anoky.Syntax.Tokens as Tokens
+import anoky.syntax.tokens as Tokens
 from anoky.common.errors import ArrangementError
-from anoky.Syntax.Node import Node, Element
-from anoky.Syntax.PreSeq import PreSeq
-from anoky.Syntax.Token import is_token
-from anoky.Syntax.Tokens import PUNCTUATION, INDENT
-from anoky.Syntax.Util import is_form, is_seq, is_identifier
+from anoky.syntax.node import Node, Element
+from anoky.syntax.preseq import PreSeq
+from anoky.syntax.token import is_token
+from anoky.syntax.tokens import PUNCTUATION, INDENT
+from anoky.syntax.util import is_form, is_seq, is_identifier
 from anoky.transducers.arrangement_rule import ArrangementRule
 
 

@@ -1,10 +1,9 @@
 from anoky.common.errors import TokenizingError
-from anoky.Syntax.Form import Form
-from anoky.Syntax.Punctuator import Punctuator
-from anoky.Syntax.Node import Node
-from anoky.Syntax.Seq import Seq
-from anoky.Syntax.PreSeq import PreSeq
-from anoky.Syntax.PreForm import PreForm
+from anoky.syntax.form import Form
+from anoky.syntax.node import Node
+from anoky.syntax.seq import Seq
+from anoky.syntax.preseq import PreSeq
+from anoky.syntax.preform import PreForm
 from anoky.transducers.tree_transducer import TreeTransducer
 
 class ConvertPreforms(TreeTransducer):
@@ -36,8 +35,6 @@ class ConvertPreforms(TreeTransducer):
                 else:
                     code.wrap(code.first, code.last, Seq)
                     node.replace(e, code.first)
-            elif isinstance(code, Punctuator):
-                raise TokenizingError("Unexpected unprocessed punctuator.")
                 # last = e
                 # for subelm in code:
                 #     code.remove(subelm)

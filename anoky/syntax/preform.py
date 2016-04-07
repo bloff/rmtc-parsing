@@ -1,4 +1,4 @@
-from anoky.Syntax.Form import Form
+from anoky.syntax.form import Form
 
 
 

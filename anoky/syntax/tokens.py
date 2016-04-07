@@ -2,7 +2,7 @@ from enum import Enum
 
 from anoky.Streams.StreamPosition import StreamPosition
 from anoky.Streams.StreamRange import StreamRange
-from anoky.Syntax.Token import Token, is_token
+from anoky.syntax.token import Token, is_token
 
 
 class _TokenTypes(Enum):

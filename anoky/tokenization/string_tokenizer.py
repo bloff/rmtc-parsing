@@ -5,7 +5,7 @@ from anoky.tokenization.readtable import RT
 from anoky.tokenization.tokenizers import util
 from anoky.tokenization import tokenization_context
 from anoky.tokenization.tokenizer import Tokenizer
-import anoky.Syntax.Tokens as Tokens
+import anoky.syntax.tokens as Tokens
 from anoky.tokenization.tokenizers.util import skip_white_lines
 
 

@@ -9,12 +9,12 @@ from anoky.Generation.Generator import Generator
 #from anoky.Generation.SpecialForms.AugAssign import *
 
 
-from anoky.Syntax.Identifier import Identifier
-from anoky.Syntax.Node import Element
+from anoky.syntax.identifier import Identifier
+from anoky.syntax.node import Element
 
 
 ##=====================
-from anoky.Syntax.Seq import Seq
+from anoky.syntax.seq import Seq
 
 
 ##=====================

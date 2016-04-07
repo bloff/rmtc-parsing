@@ -3,7 +3,7 @@ from anoky.Streams.StreamPosition import StreamPosition
 from anoky.Streams.StreamRange import StreamRange
 from anoky.tokenization import tokenization_context
 from anoky.tokenization.tokenizer import Tokenizer
-import anoky.Syntax.Tokens as Tokens
+import anoky.syntax.tokens as Tokens
 from anoky.tokenization.tokenizers.util import skip_white_lines
 
 

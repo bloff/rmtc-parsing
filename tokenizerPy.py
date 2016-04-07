@@ -9,7 +9,7 @@ from anoky.common.errors import CompilerError
 from anoky.Parsers.AnokyParser import AnokyParser
 from anoky.Streams.StringStream import StringStream
 from anoky.common.record import Record
-import anoky.Syntax.Tokens as Tokens
+import anoky.syntax.tokens as Tokens
 
 
 def unicode_encoder(obj):

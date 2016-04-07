@@ -1,11 +1,11 @@
 from typing import Union
 
-from anoky.Syntax.Code import Code
-from anoky.Syntax.Form import Form
-from anoky.Syntax.Identifier import Identifier
-from anoky.Syntax.Literal import Literal
-from anoky.Syntax.Node import Element
-from anoky.Syntax.Seq import Seq
+from anoky.syntax.code import Code
+from anoky.syntax.form import Form
+from anoky.syntax.identifier import Identifier
+from anoky.syntax.literal import Literal
+from anoky.syntax.node import Element
+from anoky.syntax.seq import Seq
 
 
 def _identifier_eq(name, semantic_extra, equal_to_name, equal_to_semantic_extra):

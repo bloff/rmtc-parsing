@@ -1,7 +1,7 @@
-from anoky.Syntax.Form import Form
-from anoky.Syntax.Node import Element
-from anoky.Syntax.PreForm import PreForm
-from anoky.Syntax.Util import is_identifier
+from anoky.syntax.form import Form
+from anoky.syntax.node import Element
+from anoky.syntax.preform import PreForm
+from anoky.syntax.util import is_identifier
 from anoky.transducers.arrangement_rule import ArrangementRule
 
 

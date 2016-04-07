@@ -6,7 +6,7 @@ from anoky.Generation.Domain import StatementDomain as SDom,\
     ExpressionDomain as ExDom, LValueDomain as LVDom, DeletionDomain as DelDom
 from anoky.Generation.Util import expr_wrap
 
-from anoky.Syntax.Node import Element
+from anoky.syntax.node import Element
 
 
 

@@ -1,8 +1,8 @@
-from anoky.Syntax.Form import Form
-from anoky.Syntax.Identifier import Identifier
-from anoky.Syntax.Node import Element
-from anoky.Syntax.Token import is_token
-import anoky.Syntax.Tokens as Tokens
+from anoky.syntax.form import Form
+from anoky.syntax.identifier import Identifier
+from anoky.syntax.node import Element
+from anoky.syntax.token import is_token
+import anoky.syntax.tokens as Tokens
 from anoky.transducers.arrangement_rule import ArrangementRule
 
 

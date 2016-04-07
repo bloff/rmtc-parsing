@@ -1,4 +1,4 @@
-from anoky.Syntax.Seq import Seq
+from anoky.syntax.seq import Seq
 
 
 

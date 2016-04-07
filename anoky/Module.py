@@ -1,9 +1,9 @@
-from anoky.Syntax.Code import Code
-from anoky.Syntax.Node import Element, Node
-from anoky.Syntax.Form import Form
-from anoky.Syntax.Seq import Seq
-from anoky.Syntax.Identifier import Identifier
-from anoky.Syntax.Literal import Literal
+from anoky.syntax.code import Code
+from anoky.syntax.node import Element, Node
+from anoky.syntax.form import Form
+from anoky.syntax.seq import Seq
+from anoky.syntax.identifier import Identifier
+from anoky.syntax.literal import Literal
 
 
 #from anoky.Expansion

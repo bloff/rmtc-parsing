@@ -4,7 +4,7 @@ from anoky.Expansion.ExpansionContext import ExpansionContext
 from anoky.Expansion.Macro import Macro
 from anoky.Generation.GenerationContext import GenerationContext
 from anoky.Generation.SpecialForms.SpecialForms import SpecialForm
-from anoky.Syntax.Node import Element
+from anoky.syntax.node import Element
 
 
 

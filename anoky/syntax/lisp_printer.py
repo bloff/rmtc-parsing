@@ -1,19 +1,17 @@
 from anoky.common.util import is_not_none
-from anoky.Syntax.Form import Form
-from anoky.Syntax.Node import Element, Node
-from anoky.Syntax.PreForm import PreForm
-from anoky.Syntax.Punctuator import Punctuator
-from anoky.Syntax.Code import Code
-from anoky.Syntax.Seq import Seq
-from anoky.Syntax.PreSeq import PreSeq
-from anoky.Syntax.Token import Token
+from anoky.syntax.form import Form
+from anoky.syntax.node import Element, Node
+from anoky.syntax.preform import PreForm
+from anoky.syntax.code import Code
+from anoky.syntax.seq import Seq
+from anoky.syntax.preseq import PreSeq
+from anoky.syntax.token import Token
 
 _delimiters = {
                   PreForm:("⟅", "⟆", False),
                   PreSeq:("⟅", "⟆", True),
                   Form:("(", ")", False),
                   Seq:("(", ")", True),
-                  Punctuator:('⟨', '⟩', False),
                 }
 
 # TODO: refactor all __str__ and __repr__ methods to allow for each language to choose its own representation

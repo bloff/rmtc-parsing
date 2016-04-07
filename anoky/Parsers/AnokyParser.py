@@ -4,19 +4,18 @@ from anoky.Parsers.RMTCParser import RMTCParser
 from anoky.Streams.CharacterStream import CharacterStream
 from anoky.Streams.IndentedCharacterStream import IndentedCharacterStream
 from anoky.tokenization.readtable import make_readtable, RT
+from anoky.tokenization.string_tokenizer import StringTokenizer
 from anoky.tokenization.tokenization_context import TokenizationContext
 from anoky.tokenization.tokenizers.delimiter_tokenizer import DelimiterTokenizer
-from anoky.tokenization.tokenizers.readtable_tokenizer import IndentationReadtableTokenizer
 from anoky.tokenization.tokenizers.raw_comment_tokenizer import RawCommentTokenizer
-from anoky.tokenization.tokenizers.string_tokenizer import StringTokenizer
+from anoky.tokenization.tokenizers.readtable_tokenizer import IndentationReadtableTokenizer
 from anoky.transducers.arrangement import Arrangement
 from anoky.transducers.arrangements.apply_in_isolation import ApplyInIsolation
 from anoky.transducers.arrangements.apply_to_rest import ApplyToRest
 from anoky.transducers.arrangements.assignment_segment import AssignmentSegment
-from anoky.transducers.arrangements.left_right_nary_operator_multiple_heads import LeftRightNaryOperatorMultipleHeads
 from anoky.transducers.arrangements.comments import RawComment
 from anoky.transducers.arrangements.constituents import Constituent
-from anoky.transducers.arrangements.default_punctuation import DefaultPunctuation, DefaultFormPunctuation, \
+from anoky.transducers.arrangements.default_punctuation import DefaultFormPunctuation, \
     DefaultSeqPunctuation, ForPunctuation, Skip2Punctuation
 from anoky.transducers.arrangements.delimiters import ParenthesisWithHead, ParenthesisNoHead, \
     Delimiters
@@ -25,6 +24,7 @@ from anoky.transducers.arrangements.left_right_binary_operator import LeftRightB
 from anoky.transducers.arrangements.left_right_binary_operator_two_symbols import LeftRightBinaryOperatorTwoSymbols
 from anoky.transducers.arrangements.left_right_binary_token_capturing_operator import LeftRightBinaryTokenCapturingOperator
 from anoky.transducers.arrangements.left_right_nary_operator import LeftRightNaryOperator
+from anoky.transducers.arrangements.left_right_nary_operator_multiple_heads import LeftRightNaryOperatorMultipleHeads
 from anoky.transducers.arrangements.left_right_unary_prefix_nospace_operator import LeftRightUnaryPrefixNospaceOperator
 from anoky.transducers.arrangements.left_right_unary_prefix_nospace_token_capturing_operator import LeftRightUnaryPrefixNospaceTokenCapturingOperator
 from anoky.transducers.arrangements.multiple_assignment import MultipleAssignment
@@ -32,12 +32,8 @@ from anoky.transducers.arrangements.right_left_binary_operator import RightLeftB
 from anoky.transducers.arrangements.right_left_unary_prefix_operator import RightLeftUnaryPrefixOperator
 from anoky.transducers.arrangements.segment import Segment
 from anoky.transducers.arrangements.strings import Strings
-from anoky.transducers.arrangements.transformation_arrow import TransformationArrow
 from anoky.transducers.convert_preforms import ConvertPreforms
 from anoky.transducers.top_down_tree_transducer import TopDownTreeTransducer
-
-from anoky.Expansion.ExpansionContext import ExpansionContext
-from anoky.Expansion.Expander import DefaultExpander
 
 #from anoky.transducers.arrangements.Delimiters import BracketsWithHead
 

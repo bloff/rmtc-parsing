@@ -12,7 +12,7 @@ from anoky.Expansion.Expander import DefaultExpander
 from anoky.Generation.Generator import DefaultGenerator
 from anoky.Parsers.AnokyParser import AnokyParser
 from anoky.Streams.FileStream import FileStream
-from anoky.Syntax.LispPrinter import indented_lisp_printer
+from anoky.syntax.lisp_printer import indented_lisp_printer
 import anoky.common.options as Options
 
 import astpp

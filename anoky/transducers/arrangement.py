@@ -1,8 +1,8 @@
 from anoky.common.string_stuff import indent_string
-from anoky.Syntax.Code import Code
-from anoky.Syntax.Identifier import Identifier
-from anoky.Syntax.Node import Node
-from anoky.Syntax.LispPrinter import lisp_printer
+from anoky.syntax.code import Code
+from anoky.syntax.identifier import Identifier
+from anoky.syntax.node import Node
+from anoky.syntax.lisp_printer import lisp_printer
 from anoky.common.globals import G
 from anoky.transducers.read_direction import ReadDirection
 
