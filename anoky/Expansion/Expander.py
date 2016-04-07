@@ -1,4 +1,4 @@
-from anoky.Common.Record import Record
+from anoky.common.record import Record
 from anoky.Expansion.ExpansionContext import ExpansionContext
 
 from anoky.Syntax.Node import Node, Element

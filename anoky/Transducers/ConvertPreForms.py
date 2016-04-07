@@ -1,4 +1,4 @@
-from anoky.Common.Errors import TokenizingError
+from anoky.common.errors import TokenizingError
 from anoky.Syntax.Form import Form
 from anoky.Syntax.Punctuator import Punctuator
 from anoky.Syntax.Node import Node

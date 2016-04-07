@@ -1,16 +1,16 @@
 import sys
 
 import msgpack
-from anoky.Common.Errors import CompilerError
+from anoky.common.errors import CompilerError
 
-from anoky.Common.Record import Record
-from anoky.Common.SysArgsParser import SysArgsParser
+from anoky.common.record import Record
+from anoky.common.old_args_parser import SysArgsParser
 #from anoky.Parsers.LycParser import LycParser
 from anoky.Expansion.Expander import DefaultExpander
 from anoky.Parsers.AnokyParser import AnokyParser
 from anoky.Streams.FileStream import FileStream
 from anoky.Syntax.LispPrinter import indented_lisp_printer
-import anoky.Common.Options as Options
+import anoky.common.options as Options
 
 
 def unicode_encoder(obj):

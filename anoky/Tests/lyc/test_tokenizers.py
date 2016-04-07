@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from anoky.Common.Errors import TokenizingError
+from anoky.common.errors import TokenizingError
 from anoky.Parsers._LycParser import LycParser
 
 parser = LycParser()

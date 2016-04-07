@@ -1,7 +1,7 @@
 
 import ast
 
-from anoky.Common.Errors import CodeGenerationError
+from anoky.common.errors import CodeGenerationError
 from anoky.Generation.GenerationContext import GenerationContext
 from anoky.Generation.SpecialForms.SpecialForms import SpecialForm
 from anoky.Generation.Domain import StatementDomain as SDom,\

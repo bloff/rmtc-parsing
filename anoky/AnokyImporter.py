@@ -10,8 +10,8 @@ import sys
 #from importlib._bootstrap_external import _validate_bytecode_header, _code_to_bytecode, _compile_bytecode
 from importlib.util import cache_from_source
 
-from anoky.Common.Record import Record
-import anoky.Common.Options as Options
+from anoky.common.record import Record
+import anoky.common.options as Options
 import compiler_anoky as akycomp
 
 

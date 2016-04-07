@@ -2,16 +2,16 @@ from typing import Union
 import zmq
 import msgpack
 
-from anoky.Common.Errors import TokenizingError, CompilerError
+from anoky.common.errors import TokenizingError, CompilerError
 from anoky.Parsers.AnokyParser import AnokyParser
 from anoky.Streams.StreamPosition import StreamPosition
 from anoky.Streams.StreamRange import StreamRange
 from anoky.Streams.StringStream import StringStream
-import anoky.Common.Options
+import anoky.common.options
 import anoky.Syntax.Tokens as Tokens
 
 VERBOSE = True
-anoky.Common.Options.PRINT_ERRORS_ON_CREATION = True
+anoky.common.options.PRINT_ERRORS_ON_CREATION = True
 
 port = "5556"
 context = zmq.Context()

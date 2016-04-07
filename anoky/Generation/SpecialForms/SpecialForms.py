@@ -1,6 +1,6 @@
 import ast
 
-from anoky.Common.Errors import CodeGenerationError
+from anoky.common.errors import CodeGenerationError
 from anoky.Generation.Domain import StatementDomain as SDom,\
     ExpressionDomain as ExDom, LValueDomain as LVDom, DeletionDomain as DelDom
 from anoky.Generation.GenerationContext import GenerationContext

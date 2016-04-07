@@ -1,5 +1,5 @@
-from anoky.Common.Globals import G
-import anoky.Common.Options
+from anoky.common.globals import G
+import anoky.common.options
 
 class CompilerError(Exception):
     name = "Generic Error"

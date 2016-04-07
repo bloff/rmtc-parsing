@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from anoky.Common.Errors import ArrangementError
+from anoky.common.errors import ArrangementError
 from anoky.Parsers._LycParser import LycParser
 from anoky.Syntax.Code import Code
 from anoky.Syntax.Identifier import Identifier

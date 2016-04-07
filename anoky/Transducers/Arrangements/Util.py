@@ -1,5 +1,5 @@
-from anoky.Common.Errors import ArrangementError
-from anoky.Common.Util import is_not_none
+from anoky.common.errors import ArrangementError
+from anoky.common.util import is_not_none
 from anoky.Syntax import Tokens as Tokens
 from anoky.Syntax.Node import Element
 from anoky.Syntax.Punctuator import Punctuator

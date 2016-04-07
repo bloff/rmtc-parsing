@@ -1,5 +1,5 @@
 import anoky.Syntax.Tokens as Tokens
-from anoky.Common.Errors import TokenizingError
+from anoky.common.errors import TokenizingError
 from anoky.Syntax.Form import Form
 from anoky.Syntax.Identifier import Identifier
 from anoky.Syntax.Node import Element

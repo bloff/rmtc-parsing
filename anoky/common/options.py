@@ -1,4 +1,4 @@
-from anoky.Common.Globals import G
+from anoky.common.globals import G
 
 G.Options.PRINT_ERRORS_ON_CREATION = True
 G.Options.PRINT_TOKENS = False

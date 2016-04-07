@@ -1,5 +1,5 @@
-from anoky.Common.Errors import ArrangementError
-from anoky.Common.Util import is_not_none
+from anoky.common.errors import ArrangementError
+from anoky.common.util import is_not_none
 from anoky.Syntax.Util import is_identifier, is_literal, identifier_in
 from anoky.Syntax.Form import Form
 from anoky.Syntax.Node import Element

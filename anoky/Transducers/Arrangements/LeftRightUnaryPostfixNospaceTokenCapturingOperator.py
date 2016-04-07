@@ -1,4 +1,4 @@
-from anoky.Common.Util import is_not_none
+from anoky.common.util import is_not_none
 from anoky.Syntax.identifier_in import identifier_in
 from anoky.Syntax.Form import Form
 from anoky.Syntax.Identifier import Identifier

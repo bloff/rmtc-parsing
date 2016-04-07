@@ -4,14 +4,14 @@ __macros__ = {}
 __id_macros__ = {}
 __special_forms__ = {}
 from astformatter import ASTFormatter
-from anoky.Common.Globals import G
-from anoky.Common.Record import Record
+from anoky.common.globals import G
+from anoky.common.record import Record
 from anoky.Expansion.Expander import DefaultExpander
 from anoky.Generation.Generator import DefaultGenerator
 from anoky.Parsers.AnokyParser import AnokyParser
 from anoky.Streams.FileStream import FileStream
 from anoky.Syntax.LispPrinter import indented_lisp_printer
-from anoky.Common.Errors import CompilerError
+from anoky.common.errors import CompilerError
 from anoky.Streams.StringStream import StringStream
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit import prompt

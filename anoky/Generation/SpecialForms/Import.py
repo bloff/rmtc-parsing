@@ -2,7 +2,7 @@ import ast
 
 from importlib import import_module
 
-from anoky.Common.Errors import CodeGenerationError
+from anoky.common.errors import CodeGenerationError
 from anoky.Expansion.ExpansionContext import ExpansionContext
 from anoky.Expansion.Macro import Macro, IdentifierMacro
 from anoky.Generation.GenerationContext import GenerationContext

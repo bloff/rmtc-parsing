@@ -1,5 +1,5 @@
 
-from anoky.Common.StringStuff import EOF
+from anoky.common.string_stuff import EOF
 from anoky.Streams.CharacterStream import CharacterStream
 from anoky.Streams.StreamPosition import StreamPosition
 

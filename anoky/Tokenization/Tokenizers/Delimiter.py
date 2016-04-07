@@ -1,4 +1,4 @@
-from anoky.Common.Errors import TokenizingError
+from anoky.common.errors import TokenizingError
 from anoky.Streams.StreamPosition import StreamPosition
 from anoky.Streams.StreamRange import StreamRange
 from anoky.Tokenization import TokenizationContext

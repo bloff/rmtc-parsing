@@ -1,7 +1,7 @@
 import ast
 
-from anoky.Common.Errors import CodeGenerationError
-from anoky.Common.Record import Record
+from anoky.common.errors import CodeGenerationError
+from anoky.common.record import Record
 from anoky.Expansion.ExpansionContext import ExpansionContext
 
 from anoky.Generation.GenerationContext import GenerationContext

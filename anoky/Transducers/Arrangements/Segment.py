@@ -1,5 +1,5 @@
 import anoky.Syntax.Tokens as Tokens
-from anoky.Common.Errors import ArrangementError
+from anoky.common.errors import ArrangementError
 from anoky.Syntax.Node import Element
 from anoky.Syntax.PreForm import PreForm
 from anoky.Syntax.PreSeq import PreSeq

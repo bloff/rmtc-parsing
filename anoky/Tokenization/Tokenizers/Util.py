@@ -1,4 +1,4 @@
-from anoky.Common.Errors import TokenizingError
+from anoky.common.errors import TokenizingError
 from anoky.Streams.CharacterStream import CharacterStream
 from anoky.Tokenization.Readtable import RT
 from anoky.Tokenization import TokenizationContext, Readtable

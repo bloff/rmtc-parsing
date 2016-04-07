@@ -3,12 +3,12 @@ import sys
 #import msgpack
 
 
-from anoky.Common.SysArgsParser import SysArgsParser
-from anoky.Common.Errors import CompilerError
+from anoky.common.old_args_parser import SysArgsParser
+from anoky.common.errors import CompilerError
 #from anoky.Parsers.LycParser import LycParser
 from anoky.Parsers.AnokyParser import AnokyParser
 from anoky.Streams.StringStream import StringStream
-from anoky.Common.Record import Record
+from anoky.common.record import Record
 import anoky.Syntax.Tokens as Tokens
 
 

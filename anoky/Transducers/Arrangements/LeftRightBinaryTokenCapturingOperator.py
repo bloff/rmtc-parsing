@@ -1,4 +1,4 @@
-from anoky.Common.Errors import ArrangementError
+from anoky.common.errors import ArrangementError
 from anoky.Syntax.Util import is_identifier, identifier_in, is_literal, is_form
 from anoky.Syntax.Form import Form
 from anoky.Syntax.Node import Element

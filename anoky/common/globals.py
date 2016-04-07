@@ -1,5 +1,5 @@
 import builtins
-from anoky.Common.Record import Record
+from anoky.common.record import Record
 
 class _Globals(object):
     def __getattr__(self, name:str):

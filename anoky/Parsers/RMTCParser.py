@@ -1,6 +1,6 @@
 from typing import Union
 
-from anoky.Common.Errors import TokenizingError
+from anoky.common.errors import TokenizingError
 from anoky.Streams.CharacterStream import CharacterStream
 from anoky.Streams.StreamPosition import StreamPosition
 from anoky.Streams.StringStream import StringStream
@@ -9,7 +9,7 @@ from anoky.Syntax.Token import is_token
 from anoky.Tokenization.Readtable import RT
 from anoky.Tokenization.Tokenizers.Util import print_tokens
 from anoky.Transducers.TreeTransducer import apply_transducer_chain
-from anoky.Common.Globals import G
+from anoky.common.globals import G
 import anoky.Syntax.Tokens as Tokens
 
 class RMTCParser(object):

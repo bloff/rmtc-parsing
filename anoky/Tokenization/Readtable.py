@@ -1,6 +1,6 @@
 from enum import Enum
 
-from anoky.Common.Record import Record
+from anoky.common.record import Record
 from anoky.Streams.CharacterStream import CharacterStream
 
 

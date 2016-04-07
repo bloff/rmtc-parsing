@@ -1,7 +1,7 @@
 from typing import List
 
-from anoky.Common.Globals import G
-from anoky.Common.StringStuff import indent_string
+from anoky.common.globals import G
+from anoky.common.string_stuff import indent_string
 from anoky.Syntax.Code import Code
 from anoky.Syntax.LispPrinter import indented_lisp_printer
 from anoky.Syntax.Node import Node

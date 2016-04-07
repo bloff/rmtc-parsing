@@ -1,4 +1,4 @@
-from anoky.Common.StringStuff import EOF, special_visual_width_characters
+from anoky.common.string_stuff import EOF, special_visual_width_characters
 from anoky.Streams.CharacterStream import CharacterStream
 from anoky.Streams.StreamPosition import StreamPosition
 

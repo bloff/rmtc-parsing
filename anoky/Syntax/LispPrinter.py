@@ -1,4 +1,4 @@
-from anoky.Common.Util import is_not_none
+from anoky.common.util import is_not_none
 from anoky.Syntax.Form import Form
 from anoky.Syntax.Node import Element, Node
 from anoky.Syntax.PreForm import PreForm
