@@ -1,14 +1,14 @@
 import sys
 
 import msgpack
-from rmtc.Common.Errors import CompilerError
+from anoky.Common.Errors import CompilerError
 
-from rmtc.Common.Record import Record
-from rmtc.Common.SysArgsParser import SysArgsParser
-from rmtc.Parsers._LycParser import LycParser
-from rmtc.Streams.FileStream import FileStream
-from rmtc.Syntax.LispPrinter import indented_lisp_printer
-import rmtc.Common.Options as Options
+from anoky.Common.Record import Record
+from anoky.Common.SysArgsParser import SysArgsParser
+from anoky.Parsers._LycParser import LycParser
+from anoky.Streams.FileStream import FileStream
+from anoky.Syntax.LispPrinter import indented_lisp_printer
+import anoky.Common.Options as Options
 
 
 def unicode_encoder(obj):

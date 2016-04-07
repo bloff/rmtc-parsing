@@ -3,13 +3,13 @@ import sys
 #import msgpack
 
 
-from rmtc.Common.SysArgsParser import SysArgsParser
-from rmtc.Common.Errors import CompilerError
-#from rmtc.Parsers.LycParser import LycParser
-from rmtc.Parsers.AnokyParser import AnokyParser
-from rmtc.Streams.StringStream import StringStream
-from rmtc.Common.Record import Record
-import rmtc.Syntax.Tokens as Tokens
+from anoky.Common.SysArgsParser import SysArgsParser
+from anoky.Common.Errors import CompilerError
+#from anoky.Parsers.LycParser import LycParser
+from anoky.Parsers.AnokyParser import AnokyParser
+from anoky.Streams.StringStream import StringStream
+from anoky.Common.Record import Record
+import anoky.Syntax.Tokens as Tokens
 
 
 def unicode_encoder(obj):

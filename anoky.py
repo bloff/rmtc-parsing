@@ -1,18 +1,18 @@
-import rmtc.AnokyImporter as __akyimp__
-import rmtc.Module as __aky__
+import anoky.AnokyImporter as __akyimp__
+import anoky.Module as __aky__
 __macros__ = {}
 __id_macros__ = {}
 __special_forms__ = {}
 from astformatter import ASTFormatter
-from rmtc.Common.Globals import G
-from rmtc.Common.Record import Record
-from rmtc.Expansion.Expander import DefaultExpander
-from rmtc.Generation.Generator import DefaultGenerator
-from rmtc.Parsers.AnokyParser import AnokyParser
-from rmtc.Streams.FileStream import FileStream
-from rmtc.Syntax.LispPrinter import indented_lisp_printer
-from rmtc.Common.Errors import CompilerError
-from rmtc.Streams.StringStream import StringStream
+from anoky.Common.Globals import G
+from anoky.Common.Record import Record
+from anoky.Expansion.Expander import DefaultExpander
+from anoky.Generation.Generator import DefaultGenerator
+from anoky.Parsers.AnokyParser import AnokyParser
+from anoky.Streams.FileStream import FileStream
+from anoky.Syntax.LispPrinter import indented_lisp_printer
+from anoky.Common.Errors import CompilerError
+from anoky.Streams.StringStream import StringStream
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit import prompt
 import argparse
