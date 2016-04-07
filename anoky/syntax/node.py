@@ -1,6 +1,6 @@
 from typing import Union
 
-from anoky.Streams.StreamRange import StreamRange
+from anoky.streams.stream_range import StreamRange
 from anoky.syntax.code import Code
 
 

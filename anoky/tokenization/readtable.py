@@ -1,7 +1,7 @@
 from enum import Enum
 
 from anoky.common.record import Record
-from anoky.Streams.CharacterStream import CharacterStream
+from anoky.streams.character_stream import CharacterStream
 
 
 class RT(Enum):

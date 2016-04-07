@@ -1,5 +1,5 @@
 from anoky.common.errors import TokenizingError
-from anoky.Streams.CharacterStream import CharacterStream
+from anoky.streams.character_stream import CharacterStream
 from anoky.tokenization.readtable import RT
 from anoky.tokenization import tokenization_context, readtable
 from anoky.tokenization.tokenizer import Tokenizer

@@ -6,13 +6,13 @@ __special_forms__ = {}
 from astformatter import ASTFormatter
 from anoky.common.globals import G
 from anoky.common.record import Record
-from anoky.Expansion.Expander import DefaultExpander
-from anoky.Generation.Generator import DefaultGenerator
-from anoky.Parsers.AnokyParser import AnokyParser
-from anoky.Streams.FileStream import FileStream
+from anoky.expansion.expander import DefaultExpander
+from anoky.generation.generator import DefaultGenerator
+from anoky.parsers.anoky_parser import AnokyParser
+from anoky.streams.file_stream import FileStream
 from anoky.syntax.lisp_printer import indented_lisp_printer
 from anoky.common.errors import CompilerError
-from anoky.Streams.StringStream import StringStream
+from anoky.streams.string_stream import StringStream
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit import prompt
 import argparse

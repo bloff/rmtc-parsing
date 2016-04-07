@@ -1,7 +1,7 @@
 from sys import maxsize as MAX_INT
 
 from anoky.common.errors import TokenizingError
-from anoky.Streams.IndentedCharacterStream import IndentedCharacterStream
+from anoky.streams.indented_character_stream import IndentedCharacterStream
 from anoky.tokenization.readtable import RT
 from anoky.tokenization.tokenization_context import TokenizationContext
 from anoky.tokenization.tokenizer import Tokenizer

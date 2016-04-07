@@ -5,9 +5,9 @@ import sys
 
 from anoky.common.old_args_parser import SysArgsParser
 from anoky.common.errors import CompilerError
-#from anoky.Parsers.LycParser import LycParser
-from anoky.Parsers.AnokyParser import AnokyParser
-from anoky.Streams.StringStream import StringStream
+#from anoky.parsers.LycParser import LycParser
+from anoky.parsers.anoky_parser import AnokyParser
+from anoky.streams.string_stream import StringStream
 from anoky.common.record import Record
 import anoky.syntax.tokens as Tokens
 

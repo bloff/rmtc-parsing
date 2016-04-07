@@ -1,5 +1,5 @@
 from anoky.common.errors import TokenizingError
-from anoky.Streams.StreamPosition import StreamPosition
+from anoky.streams.stream_position import StreamPosition
 from anoky.tokenization.readtable import RT
 from anoky.tokenization.tokenizers import util
 from anoky.tokenization import tokenization_context

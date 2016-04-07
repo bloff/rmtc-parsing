@@ -7,11 +7,11 @@ from anoky.common.errors import CompilerError
 
 from anoky.common.record import Record
 from anoky.common.old_args_parser import SysArgsParser
-#from anoky.Parsers.LycParser import LycParser
-from anoky.Expansion.Expander import DefaultExpander
-from anoky.Generation.Generator import DefaultGenerator
-from anoky.Parsers.AnokyParser import AnokyParser
-from anoky.Streams.FileStream import FileStream
+#from anoky.parsers.LycParser import LycParser
+from anoky.expansion.expander import DefaultExpander
+from anoky.generation.generator import DefaultGenerator
+from anoky.parsers.anoky_parser import AnokyParser
+from anoky.streams.file_stream import FileStream
 from anoky.syntax.lisp_printer import indented_lisp_printer
 import anoky.common.options as Options
 

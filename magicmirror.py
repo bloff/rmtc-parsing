@@ -3,10 +3,10 @@ import zmq
 import msgpack
 
 from anoky.common.errors import TokenizingError, CompilerError
-from anoky.Parsers.AnokyParser import AnokyParser
-from anoky.Streams.StreamPosition import StreamPosition
-from anoky.Streams.StreamRange import StreamRange
-from anoky.Streams.StringStream import StringStream
+from anoky.parsers.anoky_parser import AnokyParser
+from anoky.streams.stream_position import StreamPosition
+from anoky.streams.stream_range import StreamRange
+from anoky.streams.string_stream import StringStream
 import anoky.common.options
 import anoky.syntax.tokens as Tokens
 

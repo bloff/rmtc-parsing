@@ -5,8 +5,8 @@ from anoky.common.errors import CompilerError
 
 from anoky.common.record import Record
 from anoky.common.old_args_parser import SysArgsParser
-from anoky.Parsers._LycParser import LycParser
-from anoky.Streams.FileStream import FileStream
+from anoky.parsers._LycParser import LycParser
+from anoky.streams.file_stream import FileStream
 from anoky.syntax.lisp_printer import indented_lisp_printer
 import anoky.common.options as Options
 

@@ -1,7 +1,7 @@
 from enum import Enum
 
-from anoky.Streams.StreamPosition import StreamPosition
-from anoky.Streams.StreamRange import StreamRange
+from anoky.streams.stream_position import StreamPosition
+from anoky.streams.stream_range import StreamRange
 from anoky.syntax.token import Token, is_token
 
 
