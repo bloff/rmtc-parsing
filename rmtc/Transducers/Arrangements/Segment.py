@@ -76,16 +76,15 @@ class Segment(ArrangementRule):
 
 
         if not has_colon: # If the segment does not have a colon, then we are in list-of-args mode
-            # In list-of-args mode, we replace every newline with a comma, and "open-up"
+            # In list-of-args mode, we replace every newline with an ARGBREAK, and "open-up"
             # every segment in the indented block that doesn't have indented sub-blocks or a colon
 
             first_begin_after_indentation = indent.next
 
-            # replace indent with comma when there are some elements
+            # replace indent with ARGBREAK when there are some elements
             # between the head and the indent token
             if indent.prev is not new_form.first:
-                new_comma = Tokens.PUNCTUATION(None, ",", None, None)
-                new_form.insert(indent, new_comma)
+                new_form.insert(indent, Tokens.ARGBREAK())
 
             new_form.remove(indent)
 

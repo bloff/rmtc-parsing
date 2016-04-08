@@ -26,6 +26,7 @@ from rmtc.Transducers.Arrangements.LeftRightBinaryTokenCapturingOperator import 
 from rmtc.Transducers.Arrangements.LeftRightNaryOperator import LeftRightNaryOperator
 from rmtc.Transducers.Arrangements.LeftRightUnaryPrefixNospaceOperator import LeftRightUnaryPrefixNospaceOperator
 from rmtc.Transducers.Arrangements.LeftRightUnaryPrefixNospaceTokenCapturingOperator import LeftRightUnaryPrefixNospaceTokenCapturingOperator
+from rmtc.Transducers.Arrangements.MultipleAssignment import MultipleAssignment
 from rmtc.Transducers.Arrangements.RightLeftBinaryOperator import RightLeftBinaryOperator
 from rmtc.Transducers.Arrangements.RightLeftUnaryPrefixOperator import RightLeftUnaryPrefixOperator
 from rmtc.Transducers.Arrangements.Segment import Segment
@@ -92,7 +93,7 @@ default_readtable = make_readtable( [
      ['.', '..', '...',
       '+', '-', '*', '/', '//', '%', '**', '@',
       '&', '^', '<<', '>>', '~',
-      '=',
+      '=', ':=',
       '==', '!=', '<', '>', '<=', '>=',
       '+=', '-=', '*=', '/=', '//=', '%=',
       '**=', '@=', '|=', '^=', '&=', '<<=', '>>=',
@@ -196,7 +197,7 @@ def define_default_anoky_transducer_chain():
     
     tt_infix_special_ops = TopDownTreeTransducer("Infix Gather-Alls",
                              Arrangement([
-                                TransformationArrow({'<-'}),
+                                MultipleAssignment({':='}),
                                 ApplyInIsolation({'del', 'pass', 'break', 'continue', 'import', 'global', 'nonlocal', 'assert'}),
                                 ApplyToRest({ 'return', 'raise', 'yield',}),]))
 
