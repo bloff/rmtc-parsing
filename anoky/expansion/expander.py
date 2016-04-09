@@ -1,3 +1,4 @@
+from anoky.common.errors import MacroExpansionError
 from anoky.common.record import Record
 from anoky.expansion.expansion_context import ExpansionContext
 
@@ -121,7 +122,8 @@ class DefaultExpander(Expander):
                 idmac.expand(element, EC)
 
 #                element.parent.replace(element, idmac.expand(element, context))
-
+            elif code.full_name in EC.macro_table:
+                raise MacroExpansionError(code.range, "Refering to macro `%s` by name requires the use of `the`." % code.full_name)
 
 
 

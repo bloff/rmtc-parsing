@@ -117,7 +117,7 @@ class Def(SpecialForm):
                         initializer_code = GC.generate(param_code[2])
 
                     assert isinstance(param_code[1].code, Identifier)
-                    arg_object = ast.arg(arg=param_code[1].full_name, annotation=None)
+                    arg_object = ast.arg(arg=param_code[1].code.full_name, annotation=None)
 
                     if poststar:
 

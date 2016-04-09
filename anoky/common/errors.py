@@ -40,10 +40,18 @@ class DispatchError(CompilerError):
     def __init__(self, range_or_pos, message:str):
         CompilerError.__init__(self, range_or_pos, message)
 
-class CodeGenerationError(CompilerError):
-    name = "Code Generation Error"
+class MacroExpansionError(CompilerError):
+    name = "Macro Generation Error"
     def __init__(self, range_or_pos, message:str):
         CompilerError.__init__(self, range_or_pos, message)
+
+class CodeGenerationError(CompilerError):
+    name = "Code Generation Error"
+
+    def __init__(self, range_or_pos, message: str):
+        CompilerError.__init__(self, range_or_pos, message)
+
+
 
 class MetaError(CompilerError):
     name = "Meta Error"

@@ -88,7 +88,7 @@ class DefaultPunctuation(ArrangementRule):
         # This function will wrap the last group of tokens in a PreSeq
         def finish_groups(last_element_in_group):
             nonlocal first_small_group
-            if start_of_group not in [None, node[0], last_element_in_group, start_of_group]:
+            if start_of_group not in [None, node[0], last_element_in_group] and last_element_in_group is not None:
                 node.wrap(start_of_group, last_element_in_group, PreSeq)
 
         if start_of_group is None:

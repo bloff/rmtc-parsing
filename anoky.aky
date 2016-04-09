@@ -10,15 +10,15 @@ import:
 
     from astformatter: ASTFormatter
 
-    from rmtc.Common.Globals:        G
-    from rmtc.Common.Record:         Record
-    from rmtc.Expansion.Expander:    DefaultExpander
-    from rmtc.Generation.Generator:  DefaultGenerator
-    from rmtc.Parsers.AnokyParser:   AnokyParser
-    from rmtc.Streams.FileStream:    FileStream
-    from rmtc.Syntax.LispPrinter:    indented_lisp_printer
-    from rmtc.Common.Errors:         CompilerError
-    from rmtc.Streams.StringStream:  StringStream
+    from anoky.common.globals:         G
+    from anoky.common.record:          Record
+    from anoky.expansion.expander:     DefaultExpander
+    from anoky.generation.generator:   DefaultGenerator
+    from anoky.parsers.anoky_parser:   AnokyParser
+    from anoky.streams.file_stream:    FileStream
+    from anoky.syntax.lisp_printer:    indented_lisp_printer
+    from anoky.common.errors:          CompilerError
+    from anoky.streams.string_stream:  StringStream
 
 
     from prompt_toolkit.history: InMemoryHistory
@@ -55,21 +55,31 @@ def anoky_expand(parsed_node, options):
         print indented_lisp_printer(parsed_node)
 
 
+def print_ast(py_ast, message="\n——›–  Generated Python AST  –‹——"):
+    print message
+    try:
+        astpp.parseprint(py_ast)
+    except Exception:
+        print  "\n!–›–  Failed to print Python AST!  –‹–!"
+        traceback.print_exc()
+
+def print_python_code(py_ast, message="\n——›–  Generated Python Source Code  –‹——"):
+    try:
+        python_source = ASTFormatter().format(py_ast)
+    except Exception:
+        print  "\n!–›–  Failed to generate Python Source Code!  –‹–!"
+        traceback.print_exc()
+    else:
+        print message
+        print python_source
+
 def anoky_generate(parsed_node, options, CG):
     py_ast = code_generator.generate_elements(parsed_node, CG)
 
     if options.print_python_ast:
-        print  "\n——›–  Generated Python AST  –‹——"
-        astpp.parseprint(ast.Module(body=py_ast))
+        print_ast(ast.Module(body=py_ast))
     if options.print_python_code:
-        try:
-            python_source = ASTFormatter().format(ast.Module(body=py_ast))
-        except Exception:
-            print  "\n!–›–  Failed to generate Python Source Code!  –‹–!"
-            traceback.print_exc()
-        else:
-            print  "\n——›–  Generated Python Source Code  –‹——"
-            print python_source
+        print_python_code(ast.Module(body=py_ast))
 
     return py_ast
 
@@ -88,32 +98,46 @@ def interactive_anoky(options):
 
             stream = StringStream(written_code, "<interactive>")
 
-            node = anoky_tokenize(stream, options)
+            try:
+                node = anoky_tokenize(stream, options)
 
-            if not options.arrange:
-                continue
+                if not options.arrange:
+                    continue
 
-            anoky_transduce(node, options)
+                anoky_transduce(node, options)
 
-            anoky_expand(node, options)
+                anoky_expand(node, options)
 
-            py_ast = anoky_generate(node, options, CG)
+                py_ast = anoky_generate(node, options, CG)
 
-            py_ast = code_generator.end(py_ast, CG)
+                py_ast = code_generator.end(py_ast, CG)
 
-            ast.fix_missing_locations(py_ast)
+            except CompilerError as e:
+                print(e.trace)
+            except Exception:
+                print  "\n!—›–  Compiler raised unhandled exception (this is not supposed to happen)!!!  –‹—!"
+                traceback.print_exc()
+            else:
+                # compile and execute generated python AST
+                ast.fix_missing_locations(py_ast)
 
-            compiled_ast =
-                compile:
-                    py_ast
-                    filename="<ast>"
-                    mode="single"
-
-            if options.execute:
                 try:
-                    exec(compiled_ast)
-                except Exception as e:
+                    compiled_ast =
+                        compile:
+                            py_ast
+                            filename="<ast>"
+                            mode="single"
+                except Exception:
+                    print  "\n——›–  AST compilation failed !!!  –‹——"
                     traceback.print_exc()
+                    print_ast(py_ast)
+                    print_python_code(py_ast)
+                else:
+                    if options.execute:
+                        try:
+                            exec(compiled_ast)
+                        except Exception as e:
+                            traceback.print_exc()
     except EOFError:
         return
     except KeyboardInterrupt:
@@ -142,15 +166,15 @@ def non_interactive_anoky(options):
 
     except CompilerError as e:
         print(e.trace)
+    else:
+        if options.execute:
+            ast.fix_missing_locations(py_ast)
+            compiled_module =
+                compile: py_ast
+                    filename="<ast>"
+                    mode="exec"
 
-    if options.execute:
-        ast.fix_missing_locations(py_ast)
-        compiled_module =
-            compile: py_ast
-                filename="<ast>"
-                mode="exec"
-
-        exec(compiled_module)
+            exec(compiled_module)
 
 
 

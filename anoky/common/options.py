@@ -1,6 +1,6 @@
 from anoky.common.globals import G
 
-G.Options.PRINT_ERRORS_ON_CREATION = True
+G.Options.PRINT_ERRORS_ON_CREATION = False
 G.Options.PRINT_TOKENS = False
 G.Options.PRINT_TREE_TRANSDUCER_OUTPUTS = False
 G.Options.PRINT_TREE_TRANSDUCER_OUTPUTS_LIST = None # ['Primary', 'Punctuation', 'Block']

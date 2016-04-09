@@ -1,4 +1,7 @@
-import lisp_printer as lp, b as c from anoky.syntax.lisp_printer
+a = 1, = 2 # parses as (a (= (=, 1) 2) !
 
-a := quote:
+
+# import lisp_printer as lp, b as c from anoky.syntax.lisp_printer
+
+ a := quote:
    a = 1 + 1

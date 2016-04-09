@@ -218,6 +218,9 @@ class DefaultGenerator(Generator):
             elif acode.full_name == "None":
                 return expr_wrap(ast.NameConstant(None), GC)
 
+            elif acode.full_name in GC.special_forms:
+                raise CodeGenerationError(acode.range, "Refering to special form `%s` by name requires the use of `the`." % acode.full_name)
+
 
             elif GC.domain == LVDom:
                 return ast.Name(acode.full_name, ast.Store())
