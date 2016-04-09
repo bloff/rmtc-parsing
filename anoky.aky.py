@@ -20,6 +20,7 @@ import ast
 import astpp
 import sys
 import traceback
+import os.path as path
 parser = AnokyParser()
 code_generator = DefaultGenerator()
 code_expander = DefaultExpander()
@@ -79,7 +80,6 @@ def interactive_anoky(options):
                 py_ast = anoky_generate(node, options, CG)
                 py_ast = code_generator.end(py_ast, CG)
             except CompilerError as e:
-                print('\n——›–  Compilation Error  –‹——')
                 print(e.trace)
             except Exception:
                 print('\n!—›–  Compiler raised unhandled exception (this is not supposed to happen)!!!  –‹—!')
@@ -113,11 +113,22 @@ def non_interactive_anoky(options):
             return
         anoky_transduce(node, options)
         anoky_expand(node, options)
-        py_ast = anoky_generate(node, options, CG)
+        py_ast = init_code + anoky_generate(node, options, CG)
         py_ast = code_generator.end(py_ast, CG)
     except CompilerError as e:
-        print(e.trace)
+        print(e.trace, file=sys.stderr)
     else:
+        if options.compile_to_python:
+            try:
+                python_source = ASTFormatter().format(py_ast)
+            except Exception:
+                print('\n!–›–  Failed to generate Python Source Code!  –‹–!', file=sys.stderr)
+                traceback.print_exc()
+                return
+            else:
+                out_file = open(filename + '.py', 'w')
+                print(python_source, file=out_file)
+                out_file.close()
         if options.execute:
             ast.fix_missing_locations(py_ast)
             compiled_module = compile(py_ast, filename='<ast>', mode='exec')
@@ -137,6 +148,7 @@ def main():
     parser.add_argument('--stdout', action='store_true')
     parser.add_argument('-I', '--include', help='A colon-separated list of source paths where to search for imported modules.')
     parser.add_argument('-E', '--exec', action='store_true', help='Executes the compiled code.')
+    parser.add_argument('-CP', '--compile-to-python', action='store_true', help='Compiles to Python, outputing the result into a .py file on the same path.')
     parser.add_argument('--version', action='version', version='Anoky α.1')
     parser.add_argument('file', nargs='*')
     parse = parser.parse_args()
@@ -153,9 +165,11 @@ def main():
         raise NotImplementedError()
     elif len(parse.file) == 0:
         options.interactive = True
+        options.compile_to_python = False
     else:
         options.interactive = False
         options.filename = parse.file[0]
+        options.compile_to_python = parse.compile_to_python
     options.arrange = not parse.skip_arrangement
     if not options.arrange:
         options.print_tokens = True
@@ -174,3 +188,4 @@ def main():
         non_interactive_anoky(options)
 if __name__ == '__main__':
     main()
+

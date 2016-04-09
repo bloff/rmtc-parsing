@@ -78,7 +78,7 @@ def expand(options):
         expander = DefaultExpander()
         ec = expander.expand_unit(file_node)
         # print("\n〰〰〰〰〰〰 After macro expansion 〰〰〰〰〰〰")
-        print(indented_lisp_printer(file_node))
+        # print(indented_lisp_printer(file_node))
 
         generator = DefaultGenerator()
         py_module = generator.generate_unit(file_node,
@@ -86,7 +86,7 @@ def expand(options):
                                             EC=ec)
 
         # print("\n〰〰〰〰〰〰 Generated Python code 〰〰〰〰〰〰\n")
-        astpp.parseprint(py_module)
+        # astpp.parseprint(py_module)
 
         # print("\n〰〰〰〰〰〰 Python retrosource 〰〰〰〰〰〰\n")
         print(ASTFormatter().format(py_module))

@@ -184,8 +184,9 @@ class DefaultGenerator(Generator):
 
         if isinstance(acode, Seq):
             seq_codes = []
-            for e in acode:
-                seq_codes.append(GC.generate(e))
+            with GC.let(domain=ExDom):
+                for e in acode:
+                    seq_codes.append(GC.generate(e))
 
             if GC.domain == LVDom:
                 return ast.Tuple(seq_codes, ast.Store())

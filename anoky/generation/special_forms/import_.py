@@ -2,7 +2,7 @@ import ast
 
 from importlib import import_module
 
-from anoky.common.errors import CodeGenerationError
+from anoky.common.errors import CodeGenerationError, SyntaxError
 from anoky.expansion.expansion_context import ExpansionContext
 from anoky.expansion.macro import Macro, IdentifierMacro
 from anoky.generation.generation_context import GenerationContext
@@ -15,18 +15,97 @@ from anoky.syntax.identifier import Identifier
 from anoky.syntax.lisp_printer import succinct_lisp_printer
 
 from anoky.syntax.node import Element
-from anoky.syntax.util import is_form, is_identifier
+from anoky.syntax.util import is_form, is_identifier, is_seq
 
 
-def get_import_name(element:Element) -> str:
-    if is_identifier(element):
+def _get_module_path(element:Element) -> str:
+    if not _is_module_path(element):
+            raise CodeGenerationError(element.range, "Expected a module path (`a.b.c`) , but found `%s`." % succinct_lisp_printer(element))
+    elif is_identifier(element):
         return element.code.full_name # TODO: name mangling?
     elif is_form(element, '.'):
-        return ".".join(get_import_name(e) for e in element.code.iterate_from(1))
-    else:
-        raise CodeGenerationError(element.range, "Expected a module path (`a.b.c`) , but found `%s`." % succinct_lisp_printer(element))
+        return _get_module_path(element.code[1]) + "." + _get_module_path(element.code[2])
+
+
+def _is_module_path(element:Element) -> bool:
+    return is_identifier(element) or \
+               is_form(element, ".") and \
+               len(element.code) == 3 and \
+               _is_module_path(element.code[1]) and \
+               is_identifier(element.code[2])
+
+def _get_name(element:Element):
+    if not is_identifier(element):
+        raise SyntaxError(element.range, "Expected a module name , but found `%s`." % succinct_lisp_printer(element))
+    return element.code.full_name
 
 class Import(Macro, SpecialForm):
+    """
+    # One day this will be the code of this special form:
+
+    def-special import:
+        syntax:
+            `import`( import_element* )
+
+            import_element.alias  :=  `as`( module_path, name )
+            import_element.simple :=  module_path
+            import_element.node   :=  module_path( module_import* )
+            import_element.node   :=  (module_path, module_import*)
+
+            module_path.composite :=  module_path.name
+            module_path.simple    :=  name
+
+            module_import.alias  :=  `as`( name, name )
+            module_import.simple :=  name
+
+            is_identifier(name)
+
+        def get_path(module_path):
+            case composite:
+                return get(module_path) + "." + get(name)
+            case simple:
+                return get(name)
+
+        def get_name(name):
+            return str(name)
+
+        generate:
+            import_list = []
+            import_statements = []
+
+            with-each import_element:
+                case simple:
+                    imports_list.append
+                        ast.alias
+                            name = get_path(module_path)
+                            asname = None
+                case alias:
+                    imports_list.append
+                        ast.alias
+                            name = get_path(module_path)
+                            asname = get_name(name)
+                case node:
+                    to_import_module_name = get_path(module_path)
+                    imported_names_from_module = []
+
+                    with-each module_import:
+                        case simple:
+                            imported_names_from_module.append
+                                ast.alias
+                                    name = get_name(name)
+                                    asname = None
+                        case alias:
+                            imported_names_from_module.append
+                                ast.alias
+                                    name = get_name(name[0])
+                                    asname = get_name(name[1])
+
+            if len(imports_list) > 0:
+                import_statements.append(ast.Import(imports_list))
+
+            return import_statements
+
+    """
 
     HEADTEXT = "import"
     DOMAIN = SDom
@@ -37,51 +116,6 @@ class Import(Macro, SpecialForm):
 
         return
 
-        # acode = element.code
-        #
-        #
-        # imports_list = []
-        #
-        # for to_import_element in acode[1:]:
-        #
-        #     if isinstance(to_import_element.code, Identifier):
-        #
-        #         to_import_name = to_import_element.code.full_name
-        #
-        #         imports_list.append(to_import_name)
-        #
-        #     else:
-        #
-        #         assert isinstance(to_import_element.code, Form) \
-        #             and isinstance(to_import_element.code[0].code, Identifier) \
-        #             and to_import_element.code[0].code.full_name == "as"
-        #
-        #         # assert 1 and 2 are also code
-        #
-        #         to_import_name = to_import_element.code[1].code.full_name
-        #         to_import_asname = to_import_element.code[2].code.full_name
-        #
-        #         imports_list.append((to_import_name, to_import_asname))
-        #
-        # for to_import_name in imports_list:
-        #
-        #     if isinstance(to_import_name, str):
-        #
-        #         raise NotImplementedError()
-        #
-        #     else:
-        #
-        #         # assert isinstance(to_import_name, tuple)
-        #
-        #         raise NotImplementedError()
-
-
-# (import module_names+)
-# where each module_name is either a name (an Identifier) or
-#    (as name newname)
-
-    # todo fix syntax
-    # import a.b.c from module_name
 
     def generate(self, element:Element, GC:GenerationContext):
 
@@ -92,42 +126,43 @@ class Import(Macro, SpecialForm):
 
         with GC.let(domain=ExDom):
 
-            for to_import_element in acode[1:]:
+            for import_element in acode[1:]:
 
-                if isinstance(to_import_element.code, Identifier) or is_form(to_import_element.code, "."):
+                if _is_module_path(import_element):
+                    to_import_name = _get_module_path(import_element)
+                    imports_list.append(ast.alias(name=to_import_name, asname=None))
 
-                    to_import_name = get_import_name(to_import_element)
-
-                    imports_list.append(ast.alias(name=to_import_name,
-                                                  asname=None))
-                elif is_form(to_import_element.code, "as"):
-                    # (as module_name as_name)
-
-                    # assert isinstance(to_import_element.code, Form) \
-                    #     and isinstance(to_import_element.code[0].code, Identifier) \
-                    #     and to_import_element.code[0].code.full_name == "as"
-
-                    to_import_name = get_import_name(to_import_element.code[1])
-                    to_import_asname = to_import_element.code[2].code.full_name
+                elif is_form(import_element.code, "as"):
+                    to_import_name = _get_module_path(import_element.code[1])
+                    to_import_asname = _get_name(import_element.code[2])
 
                     imports_list.append(ast.alias(name=to_import_name,
                                                   asname=to_import_asname))
-                elif is_form(to_import_element.code, "from"):
-                    to_import_module_name = get_import_name(to_import_element.code[1])
+                elif is_form(import_element.code) or is_seq(import_element.code):
+                    to_import_module_name = _get_module_path(import_element.code[0])
                     imported_names_from_module = []
-                    for to_import_item_element in to_import_element.code[2:]:
-                        if isinstance(to_import_item_element.code, Identifier) or is_form(to_import_item_element.code, "."):
-                            to_import_name = get_import_name(to_import_item_element)
+
+                    for to_import_item_element in import_element.code[1:]:
+
+                        if is_identifier(to_import_item_element):
+                            to_import_name = _get_name(to_import_item_element)
                             imported_names_from_module.append(ast.alias(name=to_import_name, asname=None))
 
                         elif is_form(to_import_item_element.code, "as"):
-                            to_import_name = get_import_name(to_import_item_element.code[1])
-                            to_import_asname = to_import_item_element.code[2].code.full_name
+                            to_import_name = _get_name(to_import_item_element.code[1])
+                            to_import_asname = _get_name(to_import_item_element.code[2])
                             imported_names_from_module.append(ast.alias(name=to_import_name,
                                                           asname=to_import_asname))
                     import_statements.append(ast.ImportFrom(to_import_module_name, imported_names_from_module, 0))
                 else:
-                    raise CodeGenerationError(to_import_element.range, "Special form `import` expected a module path (`a.b.c`) or an import alias `(as a.b.c name)`, but found `%s`." % succinct_lisp_printer(to_import_element))
+                    raise CodeGenerationError(import_element.range, "Special form `import` expected an import specifier but found `%s`."
+                                                                    "For example:"
+                                                                    "```"
+                                                                    "import"
+                                                                    "   a.b.c"
+                                                                    "   x.y.z as name"
+                                                                    "   u.v.w( var1, var2 as v )"
+                                                                    "```" % succinct_lisp_printer(import_element))
 
         if len(imports_list) > 0:
             import_statements.append(ast.Import(imports_list))
@@ -219,7 +254,7 @@ class MacroImport(Macro, SpecialForm):
 
         acode1 = acode[1].code
 
-        module_name = get_import_name(acode1[1])
+        module_name = _get_import_name(acode1[1])
 
         macro_name = acode1[2].code.full_name
 
