@@ -17,6 +17,7 @@ from anoky.syntax.lisp_printer import succinct_lisp_printer
 from anoky.syntax.node import Element
 from anoky.syntax.util import is_form, is_identifier, is_seq
 
+# todo: relative import (import ..bla)
 
 def _get_module_path(element:Element) -> str:
     if not _is_module_path(element):
@@ -55,50 +56,50 @@ class Import(Macro, SpecialForm):
             module_path.composite :=  module_path.name
             module_path.simple    :=  name
 
-            module_import.alias  :=  `as`( name, name )
-            module_import.simple :=  name
+            module_import.alias   :=  `as`( name, name )
+            module_import.simple  :=  name
 
-            is_identifier(name)
+            is-identifier(name)
 
-        def get_path(module_path):
+        def get-path(module_path):
             case composite:
-                return get(module_path) + "." + get(name)
+                return get_path(module_path) + "." + get_name(name)
             case simple:
-                return get(name)
+                return get_name(name)
 
-        def get_name(name):
+        def get-name(name):
             return str(name)
 
         generate:
-            import_list = []
+            imports_list = []
             import_statements = []
 
             with-each import_element:
                 case simple:
                     imports_list.append
                         ast.alias
-                            name = get_path(module_path)
+                            name = get-path(module_path)
                             asname = None
                 case alias:
                     imports_list.append
                         ast.alias
-                            name = get_path(module_path)
-                            asname = get_name(name)
+                            name = get-path(module_path)
+                            asname = get-name(name)
                 case node:
-                    to_import_module_name = get_path(module_path)
+                    to_import_module_name = get-path(module_path)
                     imported_names_from_module = []
 
                     with-each module_import:
                         case simple:
                             imported_names_from_module.append
                                 ast.alias
-                                    name = get_name(name)
+                                    name = get-name(name)
                                     asname = None
                         case alias:
                             imported_names_from_module.append
                                 ast.alias
-                                    name = get_name(name[0])
-                                    asname = get_name(name[1])
+                                    name = get-name(name[0])
+                                    asname = get-name(name[1])
 
             if len(imports_list) > 0:
                 import_statements.append(ast.Import(imports_list))
@@ -171,67 +172,6 @@ class Import(Macro, SpecialForm):
 
 
 
-# class ImportFrom(Macro, SpecialForm):
-#
-#     HEADTEXT = "from"
-#     DOMAIN = SDom
-#
-#     # (from module_name import names+)
-#     # where each name is either an identifier or
-#     #   (as name newname)
-#
-#
-#     def expand(self, element:Element, EC:ExpansionContext):
-#
-#         acode = element.code
-#
-#         module_name = acode[1].code.full_name
-#
-#         #assert acode[2].code.full_name == "import"
-#
-#         imports_list = []
-#
-#         for to_import_element in acode [3:]:
-#
-#             if isinstance(to_import_element.code, Identifier):
-#
-#                 to_import_name = to_import_element.code.full_name
-#
-#                 imports_list.append(to_import_name)
-#
-#             else:
-#
-#                 assert isinstance(to_import_element.code, Form) \
-#                     and isinstance(to_import_element.code[0].code, Identifier) \
-#                     and to_import_element.code[0].code.full_name == "as"
-#
-#                 # assert 1 and 2 are also code
-#
-#                 to_import_name = to_import_element.code[1].code.full_name
-#                 to_import_asname = to_import_element.code[2].code.full_name
-#
-#                 imports_list.append((to_import_name, to_import_asname))
-#
-#
-#
-#
-#
-#     def generate(self, element:Element, GC:GenerationContext):
-#
-#         acode = element.code
-#
-#
-#
-#
-#
-#
-#
-#         # return
-
-
-
-
-
 
 
 
@@ -254,7 +194,7 @@ class MacroImport(Macro, SpecialForm):
 
         acode1 = acode[1].code
 
-        module_name = _get_import_name(acode1[1])
+        module_name = _get_module_path(acode1[1])
 
         macro_name = acode1[2].code.full_name
 

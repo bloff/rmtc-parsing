@@ -23,11 +23,14 @@ def read_and_concatenate_constituent_sequences(stream:CharacterStream, readtable
     while not stream.next_is_EOF():
         seq, properties = readtable.probe(stream)
 
-        if properties.type != RT.CONSTITUENT:
+        if properties.type == RT.CONSTITUENT:
+            concatenation += seq
+        elif properties.type == RT.ISOLATED_CONSTITUENT and hasattr(properties, "dont_isolate_infix"):
+            concatenation += seq
+        else:
             stream.unread_seq(seq)
             return concatenation
-        else:
-            concatenation += seq
+
     return concatenation
 
 

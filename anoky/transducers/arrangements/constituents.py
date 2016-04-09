@@ -42,7 +42,10 @@ class Constituent(ArrangementRule):
         elif Constituent.is_float(element.value):
             new_element = element.parent.replace(element, Literal(self.float_literal_type, float(element.value), element.range))
         else:
-            new_element = element.parent.replace(element, Identifier(element.value, element.range))
+            identifier_name = element.value
+            if identifier_name != "-":
+                identifier_name = identifier_name.replace("-", "_")
+            new_element = element.parent.replace(element, Identifier(identifier_name, element.range))
             # if element.value in self.stalling_identifiers:
             #     return element
 

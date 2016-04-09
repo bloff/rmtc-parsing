@@ -67,13 +67,13 @@ class CharacterStream(object):
         self.unread()
         return char
 
-    def prev(self):
+    def prev(self, n:int=1):
         """
-        Returns the character that was read previously.
+        Returns the n characters that was read previously.
         :return:
         """
-        char = self.unread()
-        self.read()
+        char = self.unread(n)
+        self.readn(n)
         return char
 
 

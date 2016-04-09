@@ -116,15 +116,11 @@ class Readtable(object):
                 if seq != "":
                     stream.unread()
                     properties = self._return_properties(node_properties_pair[1])
-                    if "unread_chars" in properties:
-                        stream.unread(properties.unread_chars)
                     return seq, properties
                 else:
                     return char, self._return_properties(None)
         if seq != "":
             properties = self._return_properties(node_properties_pair[1])
-            if "unread_chars" in properties:
-                stream.unread(properties.unread_chars)
             return seq, properties
         assert False
 
