@@ -184,6 +184,6 @@ Table of contents
 
 .. toctree::
    :glob:
-   :maxdepth: 1
-       
+   :maxdepth: 4
+
    API/*

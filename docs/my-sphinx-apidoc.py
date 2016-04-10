@@ -95,7 +95,7 @@ def create_module_file(package, module, opts):
 
 def create_package_file(root, master_package, subroot, py_files, opts, subs):
     """Build the text of the file and write the file."""
-    text = format_heading(1, '%s package' % makename(master_package, subroot))
+    text = format_heading(1, '%s' % makename(master_package, subroot))
 
     if opts.modulefirst:
         text += format_directive(subroot, master_package)
@@ -124,7 +124,7 @@ def create_package_file(root, master_package, subroot, py_files, opts, subs):
 
                 # generate separate file for this module
                 if not opts.noheadings:
-                    filetext = format_heading(1, '%s module' % modfile)
+                    filetext = format_heading(1, '%s' % modfile)
                 else:
                     filetext = ''
                 filetext += format_directive(makename(subroot, submod),
@@ -134,7 +134,7 @@ def create_package_file(root, master_package, subroot, py_files, opts, subs):
             for submod in submods:
                 modfile = makename(master_package, makename(subroot, submod))
                 if not opts.noheadings:
-                    text += format_heading(2, '%s module' % modfile)
+                    text += format_heading(2, '%s' % modfile)
                 text += format_directive(makename(subroot, submod),
                                          master_package)
                 text += '\n'
