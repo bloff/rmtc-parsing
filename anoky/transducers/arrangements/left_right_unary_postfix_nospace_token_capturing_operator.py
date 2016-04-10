@@ -1,10 +1,11 @@
 from anoky.common.util import is_not_none
-from anoky.syntax.identifier_in import identifier_in
+from anoky.syntax.util import identifier_in
 from anoky.syntax.form import Form
 from anoky.syntax.identifier import Identifier
 from anoky.syntax.node import Element
 from anoky.transducers.arrangement_rule import ArrangementRule
 from anoky.syntax.token import is_token
+import anoky.syntax.tokens as Tokens
 
 
 class LeftRightUnaryPostfixNospaceTokenCapturingOperator(ArrangementRule):

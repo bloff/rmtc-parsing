@@ -25,7 +25,6 @@ class Segment(ArrangementRule):
 
         BEGIN⋅ head  INDENT  END  ⟨⟅head  INDENT ⟆⟩⋅
 
-    (``INDENT`` is signaled as the ``end_punctuation_marker`` of the punctuator, see :ref:`Punctuator`).
 
     Currently more than one INDENT token is unimplemented (and raises ``NotImplementedError``).
     """

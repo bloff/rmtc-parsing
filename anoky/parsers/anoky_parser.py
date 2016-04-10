@@ -4,12 +4,12 @@ from anoky.parsers.rmtc_parser import RMTCParser
 from anoky.streams.character_stream import CharacterStream
 from anoky.streams.indented_character_stream import IndentedCharacterStream
 from anoky.tokenization.readtable import make_readtable, RT
-from anoky.tokenization.string_tokenizer import StringTokenizer
 from anoky.tokenization.tokenization_context import TokenizationContext
-from anoky.tokenization.tokenizers.delimiter_tokenizer import DelimiterTokenizer, SharpDelimiterTokenizer
-from anoky.tokenization.tokenizers.lispmode_tokenizer import LispModeTokenizer
-from anoky.tokenization.tokenizers.raw_comment_tokenizer import RawCommentTokenizer
-from anoky.tokenization.tokenizers.readtable_tokenizer import IndentationReadtableTokenizer
+from anoky.tokenization.tokenizers.delimiter import DelimiterTokenizer, SharpDelimiterTokenizer
+from anoky.tokenization.tokenizers.lispmode import LispModeTokenizer
+from anoky.tokenization.tokenizers.raw_comment import RawCommentTokenizer
+from anoky.tokenization.tokenizers.indentation_readtable import IndentationReadtableTokenizer
+from anoky.tokenization.tokenizers.string import StringTokenizer
 from anoky.transducers.arrangement import Arrangement
 from anoky.transducers.arrangements.apply_in_isolation import ApplyInIsolation
 from anoky.transducers.arrangements.apply_to_rest import ApplyToRest

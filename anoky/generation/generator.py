@@ -72,7 +72,7 @@ class DefaultGenerator(Generator):
         # __id_macros__ = {}
         # __special_forms__ = {}
 
-        from anoky.generation.special_forms.import_ \
+        from anoky.generation.special_forms.specialform_import \
             import macrostore_init_code as mic, akyimport_init_code as aic
         initialization_nodes.extend(aic)
         initialization_nodes.extend(mic)

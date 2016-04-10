@@ -37,7 +37,7 @@ class DefaultExpander(Expander):
         from anoky.expansion.Macros.alias import DefAlias
         from anoky.expansion.Macros.quote import Quote
         from anoky.expansion.Macros.rawmacro import RawMacro, RawSpecialForm
-        from anoky.generation.special_forms.import_ import MacroImport
+        from anoky.generation.special_forms.specialform_import import MacroImport
 
         assert(isinstance(unit, Node))
         context_root_bindings = Record(

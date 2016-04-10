@@ -4,7 +4,7 @@ from anoky.expansion.Macros.rawmacro import RawMacro, RawSpecialForm
 from anoky.generation.special_forms.comparison import Compare
 from anoky.generation.special_forms.control import If, NotInIsolation
 from anoky.generation.special_forms.function import Return
-from anoky.generation.special_forms.import_ import MacroImport
+from anoky.generation.special_forms.specialform_import import MacroImport
 from anoky.generation.special_forms.special_forms import Attribute, Class, Global, Nonlocal
 import anoky.generation.special_forms.operation as Op
 # import anoky.generation.special_forms.Comparison as Cmp
@@ -12,7 +12,7 @@ import anoky.generation.special_forms.assign as As
 import anoky.generation.special_forms.containers as Cnt
 import anoky.generation.special_forms.function as Fn
 import anoky.generation.special_forms.control as Ctl
-import anoky.generation.special_forms.import_ as Imp
+import anoky.generation.special_forms.specialform_import as Imp
 
 default_special_forms_table = {
     "=": As.Assign(),

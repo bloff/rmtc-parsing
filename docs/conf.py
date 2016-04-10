@@ -53,8 +53,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'rmtc-parsing'
-copyright = '2015, Bruno Loff'
+project = 'anoky'
+copyright = '2016, Bruno Loff'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
