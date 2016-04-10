@@ -85,7 +85,7 @@ class LispModeTokenizer(Tokenizer):
                             raise TokenizingError(stream.copy_absolute_position(),
                                                   "Empty form/seq.")
                         else:
-                            opening_delimiter_token.form_or_seq = node_type
+                            opening_delimiter_token.node_type = node_type
                             # return the delimiter tokenizers to their usual selves
                             self.set_delimiter_tokenizers(readtable, "DelimiterTokenizer", "LispModeTokenizer")
                             yield Tokens.END_MACRO(opening_delimiter_token,
