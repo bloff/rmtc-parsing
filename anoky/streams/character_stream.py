@@ -37,6 +37,17 @@ class CharacterStream(object):
             n -= 1
         return ret
 
+    def read_seq(self, seq: str):
+        """
+        Unreads a character from a stream.
+        :param seq: The sequence of characters to unread.
+        :return: The string which was unread.
+        :raises WrongSeqError when the sequence that was unread does not match the given string.
+        """
+        unread = self.read(len(seq))
+        if unread != seq:
+            raise WrongSeqError("Tried to read sequence %s, but got %s." % (repr(seq), repr(unread)))
+
 
     def unread(self, n:int = 1) -> str:
         """

@@ -1,8 +1,8 @@
+import anoky.syntax.tokens as Tokens
 from anoky.common.errors import TokenizingError
 from anoky.streams.stream_position import StreamPosition
-from anoky.tokenization import tokenization_context
+from anoky.tokenization.tokenization_context import TokenizationContext
 from anoky.tokenization.tokenizer import Tokenizer
-import anoky.syntax.tokens as Tokens
 
 
 # _multiple_escape_delimiter_pairs = {
@@ -18,7 +18,7 @@ class DelimitedIdentifierTokenizer(Tokenizer):
     OPENING_DELIMITER = "«"
     CLOSING_DELIMITER = "»"
 
-    def __init__(self, context: tokenization_context, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
+    def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
         Tokenizer.__init__(self, context)
 
         if opening_delimiter != self.__class__.OPENING_DELIMITER:

@@ -27,7 +27,7 @@ code_expander = DefaultExpander()
 def anoky_tokenize(stream,options):
     tokenized_node = parser.tokenize_into_node(stream)
     if options.print_tokens:
-        print('\n——›–  Tokenized source  –‹——', end='')
+        print('\n——›–  Tokenized source  –‹——')
         for token in tokenized_node:
             print(str(token))
     return tokenized_node

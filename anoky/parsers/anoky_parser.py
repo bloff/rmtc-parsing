@@ -6,7 +6,8 @@ from anoky.streams.indented_character_stream import IndentedCharacterStream
 from anoky.tokenization.readtable import make_readtable, RT
 from anoky.tokenization.string_tokenizer import StringTokenizer
 from anoky.tokenization.tokenization_context import TokenizationContext
-from anoky.tokenization.tokenizers.delimiter_tokenizer import DelimiterTokenizer
+from anoky.tokenization.tokenizers.delimiter_tokenizer import DelimiterTokenizer, SharpDelimiterTokenizer
+from anoky.tokenization.tokenizers.lispmode_tokenizer import LispModeTokenizer
 from anoky.tokenization.tokenizers.raw_comment_tokenizer import RawCommentTokenizer
 from anoky.tokenization.tokenizers.readtable_tokenizer import IndentationReadtableTokenizer
 from anoky.transducers.arrangement import Arrangement
@@ -27,6 +28,7 @@ from anoky.transducers.arrangements.left_right_nary_operator import LeftRightNar
 from anoky.transducers.arrangements.left_right_nary_operator_multiple_heads import LeftRightNaryOperatorMultipleHeads
 from anoky.transducers.arrangements.left_right_unary_prefix_nospace_operator import LeftRightUnaryPrefixNospaceOperator
 from anoky.transducers.arrangements.left_right_unary_prefix_nospace_token_capturing_operator import LeftRightUnaryPrefixNospaceTokenCapturingOperator
+from anoky.transducers.arrangements.lispmode import LispMode
 from anoky.transducers.arrangements.multiple_assignment import MultipleAssignment
 from anoky.transducers.arrangements.right_left_binary_operator import RightLeftBinaryOperator
 from anoky.transducers.arrangements.right_left_unary_prefix_operator import RightLeftUnaryPrefixOperator
@@ -46,6 +48,9 @@ default_readtable = make_readtable( [
     [RT.MACRO, ['(', '[', '{' ],
      {'tokenizer': 'DelimiterTokenizer'}],
 
+
+    [RT.MACRO, '#(',
+    {'tokenizer': 'LispModeTokenizer'}],
 
     
 # """ strings
@@ -127,7 +132,10 @@ class AnokyDelimiterTokenizer(DelimiterTokenizer):
                         '[' : ']',
                         '{' : '}'}
 
-
+class AnokySharpDelimiterTokenizer(SharpDelimiterTokenizer):
+    DELIMITER_PAIRS = { '#(' : ')',
+                        '#[' : ']',
+                        '#{' : '}'}
 
 
 class AnokySingleQuoteStringTokenizer(StringTokenizer):
@@ -182,6 +190,8 @@ def define_default_anoky_transducer_chain():
                                            
                                            ParenthesisWithHead(),
                                            ParenthesisNoHead(),
+
+                                           LispMode(),
                                            
                                            #BracketsWithHead({'['}),
                                            
@@ -369,11 +379,13 @@ class AnokyParser(RMTCParser):
         self.tokenization_context.set(
             # ..
             DelimiterTokenizer = AnokyDelimiterTokenizer,
+            SharpDelimiterTokenizer = AnokySharpDelimiterTokenizer,
             SingleQuoteStringTokenizer = AnokySingleQuoteStringTokenizer,
             DoubleQuoteStringTokenizer = AnokyDoubleQuoteStringTokenizer,
             # TripleSingleQuoteStringTokenizer = PythonTripleSingleQuoteStringTokenizer,
             # TripleDoubleQuoteStringTokenizer = PythonTripleDoubleQuoteStringTokenizer,
             CommentTokenizer = AnokyCommentTokenizer,
+            LispModeTokenizer = LispModeTokenizer,
             )
 
         # For Anoky we do not make use of DelimitedIdentifiers or non-raw Comments.
@@ -386,23 +398,4 @@ class AnokyParser(RMTCParser):
         if not isinstance(stream, IndentedCharacterStream):
             stream = IndentedCharacterStream(stream)
         return stream
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

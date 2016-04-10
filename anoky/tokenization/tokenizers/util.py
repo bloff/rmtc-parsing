@@ -1,14 +1,11 @@
-from anoky.common.errors import TokenizingError
 from anoky.streams.character_stream import CharacterStream
-from anoky.tokenization.readtable import RT
-from anoky.tokenization import tokenization_context, readtable
-from anoky.tokenization.tokenizer import Tokenizer
+from anoky.tokenization.readtable import RT, Readtable
 
 
 
 # Skips all white lines until it finds the first non-whitspace, non-newline sequence
 # The stream will be positioned on the first character of said sequence
-def skip_white_lines(stream:CharacterStream, readtable:readtable):
+def skip_white_lines(stream:CharacterStream, readtable:Readtable):
     while not stream.next_is_EOF():
         seq, properties = readtable.probe(stream)
         seq_type = properties.type
@@ -18,7 +15,7 @@ def skip_white_lines(stream:CharacterStream, readtable:readtable):
             stream.unread_seq(seq)
             return
 
-def read_and_concatenate_constituent_sequences(stream:CharacterStream, readtable:readtable):
+def read_and_concatenate_constituent_sequences(stream:CharacterStream, readtable:Readtable):
     concatenation = ""
     while not stream.next_is_EOF():
         seq, properties = readtable.probe(stream)
@@ -26,6 +23,19 @@ def read_and_concatenate_constituent_sequences(stream:CharacterStream, readtable
         if properties.type == RT.CONSTITUENT:
             concatenation += seq
         elif properties.type == RT.ISOLATED_CONSTITUENT and hasattr(properties, "dont_isolate_infix"):
+            concatenation += seq
+        else:
+            stream.unread_seq(seq)
+            return concatenation
+
+    return concatenation
+
+def read_and_concatenate_constituent_sequences_ignore_isolation(stream:CharacterStream, readtable:Readtable):
+    concatenation = ""
+    while not stream.next_is_EOF():
+        seq, properties = readtable.probe(stream)
+
+        if properties.type == RT.CONSTITUENT or properties.type == RT.ISOLATED_CONSTITUENT:
             concatenation += seq
         else:
             stream.unread_seq(seq)

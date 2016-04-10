@@ -27,7 +27,7 @@ code_expander = DefaultExpander()
 def anoky_tokenize(stream,options):
     tokenized_node = parser.tokenize_into_node(stream)
     if options.print_tokens:
-        print('\n——›–  Tokenized source  –‹——', end='')
+        print('\n——›–  Tokenized source  –‹——')
         for token in tokenized_node:
             print(str(token))
     return tokenized_node
@@ -147,7 +147,7 @@ def main():
     parser.add_argument('--skip-codegen', action='store_true', help='Stops the compiler immediately after macro-expansion.')
     parser.add_argument('--stdout', action='store_true')
     parser.add_argument('-I', '--include', help='A colon-separated list of source paths where to search for imported modules.')
-    parser.add_argument('-E', '--exec', action='store_true', help='Executes the compiled code.')
+    parser.add_argument('-E', '--toggle-exec', action='store_true', help='Executes the compiled code even in non-interactive mode, and does not execute in interactive mode.')
     parser.add_argument('-CP', '--compile-to-python', action='store_true', help='Compiles to Python, outputing the result into a .py file on the same path.')
     parser.add_argument('--version', action='version', version='Anoky α.1')
     parser.add_argument('file', nargs='*')
@@ -166,10 +166,12 @@ def main():
     elif len(parse.file) == 0:
         options.interactive = True
         options.compile_to_python = False
+        options.execute = not parse.toggle_exec
     else:
         options.interactive = False
         options.filename = parse.file[0]
         options.compile_to_python = parse.compile_to_python
+        options.execute = parse.toggle_exec
     options.arrange = not parse.skip_arrangement
     if not options.arrange:
         options.print_tokens = True
@@ -177,7 +179,6 @@ def main():
     options.codegen = not parse.skip_macroexpansion and not parse.skip_arrangement and not parse.skip_codegen
     options.print_python_code = parse.print_python_code
     options.print_python_ast = parse.print_python_ast
-    options.execute = parse.exec
     if parse.stdout:
         options.output = '<stdout>'
     else:
