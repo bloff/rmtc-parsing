@@ -18,6 +18,8 @@ class StringTokenizer(Tokenizer):
     MY_OPENING_DELIMITER = '"'
     MY_CLOSING_DELIMITER = '"'
     MY_CLOSING_DELIMITER_LENGTH = 1
+    MY_ESCAPE_CHAR = '$'  # assuming escaper is only a single character (for now)
+    #MY_ESCAPE_CHAR_LENGTH?
 
     def __init__(self, context: tokenization_context, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
         Tokenizer.__init__(self, context)
@@ -68,13 +70,13 @@ class StringTokenizer(Tokenizer):
                 if seen_escape:
                     if char == 'n': value += '\n'
                     elif char == 't': value += '\t'
-                    elif char in ('␤', '␉', '$'): value += char
+                    elif char in ('␤', '␉', self.MY_ESCAPE_CHAR): value += char
                     elif char == self.__class__.MY_CLOSING_DELIMITER: value += self.__class__.MY_CLOSING_DELIMITER
                     else:
                         raise TokenizingError(stream.absolute_position_of_unread(), "Unknown escape code sequence “%s”." % char)
                     seen_escape = False
                 else:
-                    if char == '$':
+                    if char == self.MY_ESCAPE_CHAR:
                         yield Tokens.STRING(value, value_first_position, stream.absolute_position_of_unread())
                         for token in self.escape():
                             yield token
@@ -131,7 +133,7 @@ class StringTokenizer(Tokenizer):
                   seq_type == RT.INVALID
                   ):
                 first_position = stream.absolute_position_of_unread_seq(seq)
-                error_message = properties.error_message if 'error_message' in properties else "Unexpected sequence after string interpolation character '$'."
+                error_message = properties.error_message if 'error_message' in properties else "Unexpected sequence after string interpolation character '"+self.MY_ESCAPE_CHAR+"'."
                 raise TokenizingError(first_position, error_message)
 
     def push_stream(self):
