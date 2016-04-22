@@ -2,6 +2,7 @@ import ast
 
 from anoky.common.errors import CodeGenerationError
 from anoky.common.record import Record
+from anoky.expansion.default_macro_table import default_macro_table, default_id_macro_table
 from anoky.expansion.expansion_context import ExpansionContext
 
 from anoky.generation.generation_context import GenerationContext
@@ -56,7 +57,9 @@ class DefaultGenerator(Generator):
             default_generator = self,
             generator = self,
             domain = SDom,
-            special_forms = default_special_forms_table,
+            special_forms = default_special_forms_table(),
+            macros = default_macro_table(),
+            id_macros = default_id_macro_table(),
             interactive=interactive
         )
         context_root_bindings.update(kwargs)
@@ -221,6 +224,12 @@ class DefaultGenerator(Generator):
 
             elif acode.full_name in GC.special_forms:
                 raise CodeGenerationError(acode.range, "Refering to special form `%s` by name requires the use of `the`." % acode.full_name)
+            # elif acode.full_name in GC.macros:
+            #     raise CodeGenerationError(acode.range,
+            #                               "Refering to macro `%s` by name requires the use of `the`." % acode.full_name)
+            # elif acode.full_name in GC.id_macros:
+            #     raise CodeGenerationError(acode.range,
+            #                               "Refering to identifier macro `%s` by name requires the use of `the`." % acode.full_name)
 
 
             elif GC.domain == LVDom:

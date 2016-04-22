@@ -13,6 +13,8 @@ from anoky.streams.file_stream import FileStream
 from anoky.syntax.lisp_printer import indented_lisp_printer
 from anoky.common.errors import CompilerError
 from anoky.streams.string_stream import StringStream
+from anoky.generation.default_special_forms_table import default_special_forms_table
+from anoky.expansion.default_macro_table import default_macro_table, default_id_macro_table
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit import prompt
 import argparse
@@ -23,6 +25,9 @@ import traceback
 import os.path as path
 parser = AnokyParser()
 code_generator = DefaultGenerator()
+__macros__ = default_macro_table()
+__id_macros__ = default_id_macro_table()
+__special_forms__ = default_special_forms_table()
 code_expander = DefaultExpander()
 def anoky_tokenize(stream,options):
     tokenized_node = parser.tokenize_into_node(stream)
@@ -37,7 +42,7 @@ def anoky_transduce(node,options):
         print('\n——›–  Parsed source before macro expansion  –‹——', end='')
         print(indented_lisp_printer(node))
 def anoky_expand(parsed_node,options):
-    code_expander.expand_unit(parsed_node)
+    code_expander.expand_unit(parsed_node, macros=__macros__, id_macros=__id_macros__)
     if options.print_macro_expanded_code:
         print('\n——›–  Parsed source after macro expansion  –‹——', end='')
         print(indented_lisp_printer(parsed_node))
@@ -65,7 +70,7 @@ def anoky_generate(parsed_node,options,CG):
         print_python_code(ast.Module(body=py_ast))
     return py_ast
 def interactive_anoky(options):
-    (CG, init_code) = code_generator.begin(interactive=True)
+    (CG, init_code) = code_generator.begin(interactive=True, special_forms=__special_forms__, macros=__macros__, id_macros=__id_macros__)
     interactive_history = InMemoryHistory()
     try:
         while True:

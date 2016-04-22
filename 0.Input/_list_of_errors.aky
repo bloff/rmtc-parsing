@@ -1,0 +1,12 @@
+str(quote: #(a . b))
+
+str(quote: #(. a  (~ 1)))
+
+
+# This should work at some point
+code_expander := DefaultExpander:
+        macro_table = __macros__
+        id_macros = __id_macros__
+
+
+from anoky.syntax import lisp_printer

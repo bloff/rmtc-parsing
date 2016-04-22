@@ -18,7 +18,8 @@ class DelimiterTokenizer(Tokenizer):
         '(' : ')',
         '[' : ']',
         '{' : '}',
-        "`" : "`"}
+        "`" : "`",
+        "\(" : "\)"}
 
     def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
         Tokenizer.__init__(self, context)

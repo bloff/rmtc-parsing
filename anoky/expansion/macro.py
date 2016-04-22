@@ -22,7 +22,7 @@ class Macro(Expander):
     def __init__(self,
                  specs=None,
                  expand_func=None,
-                 parent_expander:DefaultExpander=None):
+                 parent_expander=None):
 
         self.parent_expander = parent_expander
 

@@ -18,13 +18,16 @@ class RawMacro(Macro, SpecialForm):
     def expand(self, element:Element, EC:ExpansionContext):
 
 
-        for child in element.code:
+        for child in element.code[1:]:
 
             EC.expand(child)
 
 
 
 
+    # tentative syntax:
+    # rawmacro macro_name(element, EC):
+    #     macro-body
     def generate(self, element:Element, GC:GenerationContext):
 
         acode = element.code

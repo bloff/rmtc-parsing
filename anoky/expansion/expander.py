@@ -1,5 +1,6 @@
 from anoky.common.errors import MacroExpansionError
 from anoky.common.record import Record
+from anoky.expansion.default_macro_table import default_macro_table
 from anoky.expansion.expansion_context import ExpansionContext
 
 from anoky.syntax.node import Node, Element
@@ -34,22 +35,12 @@ class DefaultExpander(Expander):
 
     def expand_unit(self, unit:Node, **kwargs):
 
-        from anoky.expansion.Macros.alias import DefAlias
-        from anoky.expansion.Macros.quote import Quote
-        from anoky.expansion.Macros.rawmacro import RawMacro, RawSpecialForm
-        from anoky.generation.special_forms.specialform_import import MacroImport
-
         assert(isinstance(unit, Node))
         context_root_bindings = Record(
             default_expander = self,
             expander = self,
-            macro_table = {"quote":Quote(),
-                           "rawmacro":RawMacro(),
-                           "rawspecial":RawSpecialForm(),
-                           "importmacro":MacroImport()},
-                          #"import" etc.
-                          #"defalias":DefAlias()},
-            id_macro_table = {}
+            macros = default_macro_table(),
+            id_macros = {}
         )
         context_root_bindings.update(kwargs)
         EC = ExpansionContext(**context_root_bindings.__dict__)
@@ -88,9 +79,9 @@ class DefaultExpander(Expander):
             # check if any macros apply
 
             if isinstance(headcode, Identifier) \
-                    and headcode.full_name in EC.macro_table:
+                    and headcode.full_name in EC.macros:
 
-                EC.macro_table[headcode.full_name].expand(element, EC)
+                EC.macros[headcode.full_name].expand(element, EC)
 
             # otherwise expand recursively
             else:
@@ -115,14 +106,14 @@ class DefaultExpander(Expander):
         elif isinstance(code, Identifier):
 
             # IDENTIFIER MACROS
-            if code.full_name in EC.id_macro_table:
+            if code.full_name in EC.id_macros:
 
-                idmac = EC.id_macro_table[code.full_name]
+                idmac = EC.id_macros[code.full_name]
 
                 idmac.expand(element, EC)
 
 #                element.parent.replace(element, idmac.expand(element, context))
-            elif code.full_name in EC.macro_table:
+            elif code.full_name in EC.macros:
                 raise MacroExpansionError(code.range, "Refering to macro `%s` by name requires the use of `the`." % code.full_name)
 
 
