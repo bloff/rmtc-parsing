@@ -1,18 +1,15 @@
 from anoky.common.errors import MacroExpansionError
 from anoky.common.record import Record
-from anoky.expansion.default_macro_table import default_macro_table
+from anoky.expansion.default_macro_table import default_macro_table, default_id_macro_table
 from anoky.expansion.expansion_context import ExpansionContext
+from anoky.generation.default_special_forms_table import default_special_forms_table
 
 from anoky.syntax.node import Node, Element
 from anoky.syntax.form import Form
 from anoky.syntax.seq import Seq
 from anoky.syntax.literal import Literal
 from anoky.syntax.identifier import Identifier
-
-
-
-
-
+from anoky.syntax.util import is_identifier
 
 
 class Expander(object):
@@ -40,7 +37,8 @@ class DefaultExpander(Expander):
             default_expander = self,
             expander = self,
             macros = default_macro_table(),
-            id_macros = {}
+            id_macros = default_id_macro_table(),
+            special_forms = default_special_forms_table()
         )
         context_root_bindings.update(kwargs)
         EC = ExpansionContext(**context_root_bindings.__dict__)
@@ -78,11 +76,11 @@ class DefaultExpander(Expander):
 
             # check if any macros apply
 
-            if isinstance(headcode, Identifier) \
-                    and headcode.full_name in EC.macros:
-
-                EC.macros[headcode.full_name].expand(element, EC)
-
+            if is_identifier(headcode):
+                if headcode.full_name in EC.macros:
+                    EC.macros[headcode.full_name].expand(element, EC)
+                elif headcode.full_name in EC.special_forms:
+                    EC.special_forms[headcode.full_name].expand(element, EC)
             # otherwise expand recursively
             else:
 

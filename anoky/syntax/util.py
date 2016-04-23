@@ -85,3 +85,10 @@ def is_seq(code_or_element: Union[Code, Element]) -> bool:
 
 def is_head(element:Element):
     return isinstance(element.parent, Form) and element.is_first()
+
+
+def force_literal(code_or_value):
+    if isinstance(code_or_value, Code):
+        return code_or_value
+    else:
+        return Literal(code_or_value)

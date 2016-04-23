@@ -32,7 +32,7 @@ code_generator = DefaultGenerator()
 __macros__ = default_macro_table()
 __id_macros__ = default_id_macro_table()
 __special_forms__ = default_special_forms_table()
-code_expander := DefaultExpander()
+code_expander = DefaultExpander()
 
 def anoky_tokenize(stream, options):
     tokenized_node = parser.tokenize_into_node(stream)

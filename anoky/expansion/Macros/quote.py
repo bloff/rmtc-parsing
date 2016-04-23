@@ -2,6 +2,7 @@ import ast
 
 from anoky.expansion.expansion_context import ExpansionContext
 from anoky.expansion.macro import Macro
+from anoky.generation.domain import ExpressionDomain
 from anoky.generation.generation_context import GenerationContext
 from anoky.generation.special_forms.special_forms import SpecialForm
 from anoky.generation.util import expr_wrap
@@ -10,9 +11,7 @@ from anoky.syntax.identifier import Identifier
 from anoky.syntax.literal import Literal
 from anoky.syntax.node import Element
 from anoky.syntax.seq import Seq
-
-
-
+from anoky.syntax.util import is_identifier
 
 
 class Quote(Macro, SpecialForm):
@@ -47,7 +46,7 @@ class Quote(Macro, SpecialForm):
 
         aquote = element.code
 
-        if isinstance(aquote, Form) and aquote[0].code.full_name == "~":
+        if isinstance(aquote, Form) and is_identifier(aquote[0], "~"):
 
             assert len(aquote) == 2
 
@@ -74,11 +73,20 @@ class Quote(Macro, SpecialForm):
         acode = element.code
 
 
-        if isinstance(acode, Form) and acode[0].code.full_name == "~":
+        if isinstance(acode, Form) and is_identifier(acode[0], "~"):
 
             assert len(acode) == 2
 
-            return GC.generate(acode[1])
+            with GC.let(domain=ExpressionDomain):
+                literal_value = GC.generate(acode[1])
+
+            a = ast.Call(func=ast.Attribute(value=ast.Name(id="__aky__", ctx=ast.Load()),
+                                            attr="force_literal",
+                                            ctx=ast.Load()),
+                         args=[literal_value],
+                         keywords=[])
+
+            return a
 
 
         elif isinstance(acode, Form) or isinstance(acode, Seq):

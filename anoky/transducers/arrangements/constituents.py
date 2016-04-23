@@ -38,9 +38,11 @@ class Constituent(ArrangementRule):
 
     def apply(self, element) -> Element:
         if Constituent.is_int(element.value):
-            new_element = element.parent.replace(element, Literal(self.int_literal_type, int(element.value), element.range))
+            new_element = element.parent.replace(element,
+                                                 Literal(int(element.value), self.int_literal_type, element.range))
         elif Constituent.is_float(element.value):
-            new_element = element.parent.replace(element, Literal(self.float_literal_type, float(element.value), element.range))
+            new_element = element.parent.replace(element,
+                                                 Literal(float(element.value), self.float_literal_type, element.range))
         else:
             identifier_name = element.value
             if identifier_name != "-":

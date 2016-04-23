@@ -177,7 +177,7 @@ class Import(Macro, SpecialForm):
 
 class MacroImport(Macro, SpecialForm):
 
-    HEADTEXT = "importmacro"
+    HEADTEXT = "import_macro"
 
 # importmacro module.macro
 # (importmacro (. module macro))

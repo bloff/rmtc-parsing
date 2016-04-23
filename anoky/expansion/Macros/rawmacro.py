@@ -8,6 +8,7 @@ from anoky.syntax.form import Form
 from anoky.syntax.identifier import Identifier
 from anoky.syntax.node import Element
 from anoky.syntax.seq import Seq
+from anoky.syntax.util import is_identifier
 
 
 class RawMacro(Macro, SpecialForm):
@@ -150,7 +151,13 @@ class RawSpecialForm(Macro, SpecialForm):
          for child in element.code:
             EC.expand(child)
 
-
+    # rawspecial name:
+    #    expand(element, EC):
+    #        ... body ...
+    #
+    #    generate(element, EC):
+    #        ... body ...
+    #
     def generate(self, element:Element, GC:GenerationContext):
 
         acode = element.code
@@ -166,17 +173,17 @@ class RawSpecialForm(Macro, SpecialForm):
 
         rawexpand = acode[2].code
 
-        # assert isinstance(rawexpand[0].code, Identifier) \
-        #     and rawexpand[0].code.full_name == "expand"
+        rawexpand_header = rawexpand[0].code
+        assert is_identifier(rawexpand_header[0], "expand")
 
-        rawexpand_params = rawexpand[1].code
+        assert is_identifier(rawexpand_header[1])
+        rawexpand_element_param = rawexpand_header[1].code.full_name
 
-        rawexpand_element_param = rawexpand_params[0].code.full_name
+        assert is_identifier(rawexpand_header[2])
+        rawexpand_context_param = rawexpand_header[2].code.full_name
 
-        rawexpand_context_param = rawexpand_params[1].code.full_name
 
-
-        expand_body_elements = rawexpand[2:]
+        expand_body_elements = rawexpand[1:]
 
         expand_body_code = [GC.generate(b) for b in expand_body_elements]
         # The... second-to-last form? of the original element should be
@@ -208,16 +215,19 @@ class RawSpecialForm(Macro, SpecialForm):
 
 
 
+
         rawgenerate = acode[3].code
 
-        rawgenerate_params = rawgenerate[1].code
+        rawgenerate_header = rawgenerate[0].code
+        assert is_identifier(rawgenerate_header[0], "generate")
 
-        rawgenerate_element_param = rawgenerate_params[0].code.full_name
+        assert is_identifier(rawgenerate_header[1])
+        rawgenerate_element_param = rawgenerate_header[1].code.full_name
 
-        rawgenerate_context_param = rawgenerate_params[1].code.full_name
+        assert is_identifier(rawgenerate_header[2])
+        rawgenerate_context_param = rawgenerate_header[2].code.full_name
 
-
-        generate_body_elements = rawgenerate[2:]
+        generate_body_elements = rawgenerate[1:]
 
         generate_body_code = [GC.generate(b) for b in generate_body_elements]
 
@@ -259,8 +269,6 @@ class RawSpecialForm(Macro, SpecialForm):
         classdef_code = ast.ClassDef(
                 name=sf_name_safe,
                 bases=[ast.Attribute(value=ast.Name(id="__aky__", ctx=ast.Load()),
-                                     attr="Macro", ctx=ast.Load()),
-                       ast.Attribute(value=ast.Name(id="__aky__", ctx=ast.Load()),
                                      attr="SpecialForm", ctx=ast.Load())],
                 keywords=[], decorator_list=[],
                 body=class_body_code)

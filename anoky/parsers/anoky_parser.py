@@ -5,7 +5,7 @@ from anoky.streams.character_stream import CharacterStream
 from anoky.streams.indented_character_stream import IndentedCharacterStream
 from anoky.tokenization.readtable import make_readtable, RT
 from anoky.tokenization.tokenization_context import TokenizationContext
-from anoky.tokenization.tokenizers.delimiter import DelimiterTokenizer, SharpDelimiterTokenizer
+from anoky.tokenization.tokenizers.delimiter import DelimiterTokenizer, SharpDelimiterTokenizer, SingleUseTokenizer
 from anoky.tokenization.tokenizers.lispmode import LispModeTokenizer
 from anoky.tokenization.tokenizers.raw_comment import RawCommentTokenizer
 from anoky.tokenization.tokenizers.indentation_readtable import IndentationReadtableTokenizer
@@ -19,7 +19,7 @@ from anoky.transducers.arrangements.constituents import Constituent
 from anoky.transducers.arrangements.default_punctuation import DefaultFormPunctuation, \
     DefaultSeqPunctuation, ForPunctuation, Skip2Punctuation
 from anoky.transducers.arrangements.delimiters import ParenthesisWithHead, ParenthesisNoHead, \
-    Delimiters
+    Delimiters, CodeQuote
 from anoky.transducers.arrangements.if_else import InfixIfElse, FormWithDirectives
 from anoky.transducers.arrangements.left_right_binary_operator import LeftRightBinaryOperator
 from anoky.transducers.arrangements.left_right_binary_operator_two_symbols import LeftRightBinaryOperatorTwoSymbols
@@ -56,12 +56,13 @@ default_readtable = make_readtable( [
 # """ strings
     
     [RT.MACRO, "'",
-     {'tokenizer': 'SingleQuoteStringTokenizer',
-      'preserve-leading-whitespace': True}],
+     {'tokenizer': 'SingleQuoteStringTokenizer'}],
 
     [RT.MACRO, '"',
-     {'tokenizer': 'DoubleQuoteStringTokenizer',
-      'preserve-leading-whitespace': True}],
+     {'tokenizer': 'DoubleQuoteStringTokenizer'}],
+
+    [RT.MACRO, ["`", "```"],
+     {'tokenizer': 'CodeQuoteTokenizer'}],
 
     #
     # [RT.MACRO, "'''",
@@ -80,9 +81,7 @@ default_readtable = make_readtable( [
       'preserve-leading-whitespace': True}],
 
 
-    [RT.CLOSING, ['"', "'",
-                  # "'''", '"""',
-                  ')', ']', '}'], ],
+    [RT.CLOSING, [')', ']', '}'], ],
 
 
 
@@ -196,6 +195,8 @@ def define_default_anoky_transducer_chain():
                                            #BracketsWithHead({'['}),
                                            
                                            Delimiters({'[','{'}),
+
+                                           CodeQuote({'`','```'}),
                                            
                                            Strings({"'",'"'}, str), # "'''",'"""'}),
 
@@ -386,6 +387,7 @@ class AnokyParser(RMTCParser):
             # TripleDoubleQuoteStringTokenizer = PythonTripleDoubleQuoteStringTokenizer,
             CommentTokenizer = AnokyCommentTokenizer,
             LispModeTokenizer = LispModeTokenizer,
+            CodeQuoteTokenizer = SingleUseTokenizer
             )
 
         # For Anoky we do not make use of DelimitedIdentifiers or non-raw Comments.

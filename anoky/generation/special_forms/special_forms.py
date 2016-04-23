@@ -1,13 +1,15 @@
 import ast
 
 from anoky.common.errors import CodeGenerationError
+from anoky.expansion.expander import Expander
+from anoky.expansion.expansion_context import ExpansionContext
 from anoky.generation.domain import StatementDomain as SDom,\
     ExpressionDomain as ExDom, LValueDomain as LVDom, DeletionDomain as DelDom
 from anoky.generation.generation_context import GenerationContext
 from anoky.generation.generator import Generator
 
 #from anoky.generation.special_forms.AugAssign import *
-
+from anoky.generation.util import expr_wrap
 
 from anoky.syntax.identifier import Identifier
 from anoky.syntax.node import Element
@@ -22,11 +24,15 @@ from anoky.syntax.seq import Seq
 
 
 
-class SpecialForm(Generator):
+class SpecialForm(Expander, Generator):
 
     HEADTEXT = None
     LENGTH = None
     DOMAIN = None
+
+    def expand(self, element: Element, EC: ExpansionContext):
+        for item in element.code:
+            EC.expand(item)
 
     def generate(self, element:Element, GC:GenerationContext):
         raise NotImplementedError()
@@ -91,7 +97,7 @@ class Attribute(SpecialForm):
             return ast.Attribute(base_object_code, att_name, ast.Del())
 
         else:
-            return ast.Attribute(base_object_code, att_name, ast.Load())
+            return expr_wrap(ast.Attribute(base_object_code, att_name, ast.Load()), GC)
 
 
 

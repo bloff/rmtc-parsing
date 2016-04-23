@@ -1,5 +1,5 @@
 from anoky.syntax import *
-
+from anoky.syntax.util import force_literal
 
 #from anoky.expansion
 from anoky.expansion.macro import Macro, IdentifierMacro

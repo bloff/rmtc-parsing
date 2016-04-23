@@ -73,25 +73,24 @@ class DelimiterTokenizer(Tokenizer):
                 else:
                     closing_delimiter_token = Tokens.END_MACRO(opening_delimiter_token, cdem, cdem_position,
                                                                stream.copy_absolute_position())
+                    self.on_close()
                     yield closing_delimiter_token
 
-
-
-
-
+    def on_close(self):
+        pass
 
 
 class SharpDelimiterTokenizer(DelimiterTokenizer):
     """
     Reads blocks of code surrounded by pairs of delimiters. Expects to be called with `#(`, `#{` or `#{`,
     and removes the sharp from the emitted token.
+    This is used by the lisp-mode tokenizer as a fallback to normal tokenization.
     """
 
     DELIMITER_PAIRS = {
         '#(' : ')',
         '#[' : ']',
-        '#{' : '}',
-        "'" : "'"}
+        '#{' : '}'}
 
     def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
         Tokenizer.__init__(self, context)
@@ -103,4 +102,35 @@ class SharpDelimiterTokenizer(DelimiterTokenizer):
         self.opening_delimiter_position = opening_delimiter_position
         self.opening_delimiter_position_after = opening_delimiter_position_after
         self.closing_delimiter = self.__class__.DELIMITER_PAIRS[opening_delimiter]
+
+
+
+class SingleUseTokenizer(DelimiterTokenizer):
+    """
+    Like a normal delimiter, but for equal opening and closing delimiter tokens.
+    Inside the delimiter, no further uses are allowed.
+    """
+
+    def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
+        Tokenizer.__init__(self, context)
+
+
+        self.opening_delimiter = opening_delimiter
+        self.opening_delimiter_position = opening_delimiter_position
+        self.opening_delimiter_position_after = opening_delimiter_position_after
+        self.closing_delimiter = opening_delimiter
+
+
+        # toggle '```' tokenizer between macro character and closing sequence
+        readtable = context.readtable
+        opening_delimiter_properties = readtable.query(opening_delimiter)[0]
+        self.my_tokenizer_name = opening_delimiter_properties["tokenizer"]
+        del opening_delimiter_properties["tokenizer"]
+        opening_delimiter_properties["type"] = RT.CLOSING
+
+    def on_close(self):
+        readtable = self.context.readtable
+        opening_delimiter_properties = readtable.query(self.opening_delimiter)[0]
+        opening_delimiter_properties["tokenizer"] = self.my_tokenizer_name
+        opening_delimiter_properties["type"] = RT.MACRO
 

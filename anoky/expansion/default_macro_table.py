@@ -6,9 +6,7 @@ def default_macro_table():
     from anoky.generation.special_forms.specialform_import import MacroImport
     return {
         "quote": Quote(),
-         "rawmacro": RawMacro(),
-         "rawspecial": RawSpecialForm(),
-         "importmacro": MacroImport()
+         "import_macro": MacroImport()
     }
 
 

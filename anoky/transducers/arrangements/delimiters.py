@@ -161,13 +161,13 @@ class Delimiters(ArrangementRule):
 
 
 
-class Quote(ArrangementRule):
+class CodeQuote(ArrangementRule):
     """
     Applies the transformation::
 
-      BEGIN_MACRO("‘") ⋅  END_MACRO  ⦅quote ⦆ ⋅
+      BEGIN_MACRO("`") ⋅ ... END_MACRO -> (quote ...) ⋅
 
-    Where ``‘`` can be any string in the ``opening_delimiters`` attribute.
+    Where the opening symbol can be any string in the ``opening_delimiters`` attribute.
     """
     def __init__(self, opening_delimiters):
         ArrangementRule.__init__(self, "SingleQuote")
