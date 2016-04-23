@@ -209,7 +209,7 @@ def define_default_anoky_transducer_chain():
     
     tt_infix_special_ops = TopDownTreeTransducer("Infix Gather-Alls",
                              Arrangement([
-                                MultipleAssignment({':='}),
+                                MultipleAssignment(),
                                 ApplyInIsolation({'del', 'pass', 'break', 'continue', 'import', 'global', 'nonlocal', 'assert'}),
                                 ApplyToRest({ 'return', 'raise', 'yield',}),]))
 

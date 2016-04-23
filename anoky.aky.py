@@ -55,6 +55,8 @@ def print_ast(py_ast,message='\n——›–  Generated Python AST  –‹——
         traceback.print_exc()
 def print_python_code(py_ast,message='\n——›–  Generated Python Source Code  –‹——'):
     try:
+        if isinstance(py_ast, ast.Interactive):
+            py_ast = ast.Module(body=py_ast.body)
         python_source = ASTFormatter().format(py_ast)
     except Exception:
         print('\n!–›–  Failed to generate Python Source Code!  –‹–!')
