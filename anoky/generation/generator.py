@@ -3,14 +3,9 @@ import ast
 from anoky.common.errors import CodeGenerationError
 from anoky.common.record import Record
 from anoky.expansion.default_macro_table import default_macro_table, default_id_macro_table
-from anoky.expansion.expansion_context import ExpansionContext
-
-from anoky.generation.generation_context import GenerationContext
 from anoky.generation.domain import StatementDomain as SDom,\
     ExpressionDomain as ExDom, LValueDomain as LVDom, DeletionDomain as DelDom
-
-
-
+from anoky.generation.generation_context import GenerationContext
 from anoky.syntax.form import Form
 from anoky.syntax.identifier import Identifier
 from anoky.syntax.literal import Literal
@@ -75,7 +70,7 @@ class DefaultGenerator(Generator):
         # __id_macros__ = {}
         # __special_forms__ = {}
 
-        from anoky.generation.special_forms.specialform_import \
+        from anoky.special_forms.specialform_import \
             import macrostore_init_code as mic, akyimport_init_code as aic
         initialization_nodes.extend(aic)
         initialization_nodes.extend(mic)

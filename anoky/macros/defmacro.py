@@ -1,9 +1,9 @@
 import ast
 
 from anoky.expansion.expansion_context import ExpansionContext
-from anoky.expansion.macro import Macro
 from anoky.generation.generation_context import GenerationContext
-from anoky.generation.special_forms.special_forms import SpecialForm
+from anoky.macros.macro import Macro
+from anoky.special_forms import SpecialForm
 from anoky.syntax.node import Element
 
 
@@ -61,7 +61,6 @@ class DefMacro(Macro, SpecialForm):
         params_code = ast.List(elts=[ast.Str(s) for s in param_names],
                                ctx=ast.Load())
 
-        from anoky.expansion.Macros.quote import akycode_to_ast
         # rcode_code =
 
         # __aky__.Macro( ... )

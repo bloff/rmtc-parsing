@@ -1,17 +1,21 @@
 
 def default_special_forms_table():
-    import anoky.generation.special_forms.operation as Op
-    from anoky.expansion.Macros.quote import Quote
-    from anoky.expansion.Macros.rawmacro import RawMacro, RawSpecialForm
-    from anoky.generation.special_forms.comparison import Compare
-    from anoky.generation.special_forms.control import If, NotInIsolation
-    from anoky.generation.special_forms.function import Return
-    from anoky.generation.special_forms.special_forms import Attribute, Class, Global, Nonlocal
-    import anoky.generation.special_forms.assign as As
-    import anoky.generation.special_forms.containers as Cnt
-    import anoky.generation.special_forms.function as Fn
-    import anoky.generation.special_forms.control as Ctl
-    import anoky.generation.special_forms.specialform_import as Imp
+    from anoky.fallback import fallback_import
+    Op = fallback_import("anoky.special_forms.operation")
+    As = fallback_import("anoky.special_forms.assign")
+    Cnt = fallback_import("anoky.special_forms.containers")
+    Fn = fallback_import("anoky.special_forms.function")
+    Ctl = fallback_import("anoky.special_forms.control")
+    Imp = fallback_import("anoky.special_forms.specialform_import")
+
+    Quote = fallback_import("anoky.macros.quote", "Quote")
+    (RawMacro, RawSpecialForm) = fallback_import("anoky.macros.rawmacro", "RawMacro", "RawSpecialForm")
+    Compare = fallback_import("anoky.special_forms.comparison", "Compare")
+    (If, NotInIsolation) = fallback_import("anoky.special_forms.control", "If", "NotInIsolation")
+    Return = fallback_import("anoky.special_forms.function", "Return")
+    (Attribute, Class, Global, Nonlocal) = fallback_import("anoky.special_forms.special_forms", "Attribute", "Class", "Global", "Nonlocal")
+
+
     return {
         "=": As.Assign(),
         ".": Attribute(),

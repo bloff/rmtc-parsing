@@ -1,14 +1,10 @@
 from anoky.expansion.expansion_context import ExpansionContext
-from anoky.expansion.macro import Macro, IdentifierMacro
 from anoky.generation.generation_context import GenerationContext
-
+from anoky.macros.macro import Macro, IdentifierMacro
 from anoky.syntax.code import Code
-from anoky.syntax.node import Element, Node
 from anoky.syntax.form import Form
 from anoky.syntax.identifier import Identifier
-
-
-
+from anoky.syntax.node import Element
 
 
 class Alias(IdentifierMacro):

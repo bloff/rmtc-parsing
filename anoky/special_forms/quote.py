@@ -1,11 +1,11 @@
 import ast
 
 from anoky.expansion.expansion_context import ExpansionContext
-from anoky.expansion.macro import Macro
 from anoky.generation.domain import ExpressionDomain
 from anoky.generation.generation_context import GenerationContext
-from anoky.generation.special_forms.special_forms import SpecialForm
 from anoky.generation.util import expr_wrap
+from anoky.macros.macro import Macro
+from anoky.special_forms.special_form import SpecialForm
 from anoky.syntax.form import Form
 from anoky.syntax.identifier import Identifier
 from anoky.syntax.literal import Literal
@@ -14,7 +14,7 @@ from anoky.syntax.seq import Seq
 from anoky.syntax.util import is_identifier
 
 
-class Quote(Macro, SpecialForm):
+class Quote(SpecialForm):
 
     HEADTEXT = "quote" # or "'"?
     LENGTH = 2

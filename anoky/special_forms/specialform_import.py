@@ -1,21 +1,17 @@
 import ast
-
 from importlib import import_module
 
 from anoky.common.errors import CodeGenerationError, SyntaxError
 from anoky.expansion.expansion_context import ExpansionContext
-from anoky.expansion.macro import Macro, IdentifierMacro
-from anoky.generation.generation_context import GenerationContext
-
-from anoky.generation.special_forms.special_forms import SpecialForm
 from anoky.generation.domain import StatementDomain as SDom,\
-    ExpressionDomain as ExDom, LValueDomain as LVDom, DeletionDomain as DelDom
-from anoky.syntax.form import Form
-from anoky.syntax.identifier import Identifier
+    ExpressionDomain as ExDom
+from anoky.generation.generation_context import GenerationContext
+from anoky.macros.macro import Macro
+from anoky.special_forms import SpecialForm
 from anoky.syntax.lisp_printer import succinct_lisp_printer
-
 from anoky.syntax.node import Element
 from anoky.syntax.util import is_form, is_identifier, is_seq
+
 
 # todo: relative import (import ..bla)
 
