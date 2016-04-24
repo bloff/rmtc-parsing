@@ -161,12 +161,13 @@ class AnokyFinder(iabc.MetaPathFinder):
 
 #sys.meta_path.append(AnokyFinder())
 
-sys.meta_path = [AnokyFinder()] + sys.meta_path
+# sys.meta_path = [AnokyFinder()] + sys.meta_path
 
 #print(len(sys.meta_path))
 
-# if all([not isinstance(f, AnokyFinder) for f in sys.meta_path]):
-#     sys.meta_path = [AnokyFinder()] + sys.meta_path
+# If the
+if not any(isinstance(f, AnokyFinder) for f in sys.meta_path):
+     sys.meta_path = [AnokyFinder()] + sys.meta_path
 
 
 

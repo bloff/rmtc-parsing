@@ -330,7 +330,7 @@ class IdMacroImport(Macro, SpecialForm):
 
 macrostore_init_code = [
     # import anoky.module as __anoky__
-    ast.Import([ast.alias(name="anoky.Module", asname="__aky__")]),
+    ast.Import([ast.alias(name="anoky.module", asname="__aky__")]),
     # __macros__ = {}  (and for id macros and special forms)
     ast.Assign(targets=[ast.Name(id="__macros__", ctx=ast.Store())],
                value=ast.Dict([], [])),
@@ -389,8 +389,8 @@ def generate_macro_store_codes_from_EC(EC:ExpansionContext):
 
 
 akyimport_init_code = [
-    #import anoky.AnokyImporter as __akyimp__
-    ast.Import([ast.alias(name="anoky.AnokyImporter", asname="__akyimp__")])
+    #import anoky.importer as __akyimp__
+    ast.Import([ast.alias(name="anoky.importer", asname="__akyimp__")])
 
 ]
 

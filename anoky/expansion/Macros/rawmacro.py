@@ -85,7 +85,7 @@ class RawMacro(Macro, SpecialForm):
 
         class_body_code = []
 
-        #class_body_code.append(ast.Import([ast.alias(name="anoky.Module", asname="__aky__")]))
+        #class_body_code.append(ast.Import([ast.alias(name="anoky.module", asname="__aky__")]))
 
         class_body_code.append(ast.Assign(targets=[ast.Name(id="HEADTEXT",
                                                             ctx=ast.Store())],
@@ -254,7 +254,7 @@ class RawSpecialForm(Macro, SpecialForm):
 
         class_body_code = []
 
-        class_body_code.append(ast.Import([ast.alias(name="anoky.Module", asname="__aky__")]))
+        class_body_code.append(ast.Import([ast.alias(name="anoky.module", asname="__aky__")]))
 
         class_body_code.append(ast.Assign(targets=[ast.Name(id="HEADTEXT",
                                                             ctx=ast.Store())],

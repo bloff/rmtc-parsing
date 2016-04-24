@@ -69,8 +69,8 @@ class DefaultGenerator(Generator):
 
         # Prepend anoky unit initialization code
         # Something like:
-        # import anoky.AnokyImporter as __akyimp__
-        # import anoky.Module as __aky__
+        # import anoky.importer as __akyimp__
+        # import anoky.module as __aky__
         # __macros__ = {}
         # __id_macros__ = {}
         # __special_forms__ = {}
