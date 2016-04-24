@@ -28,12 +28,18 @@ import importlib as _imp
 
 def fallback_import(module_name, *names):
     if module_name in _fallback_modules:
-        module = _imp.import_module(module_name + "_fb")
+        try:
+            module = _imp.import_module(module_name + "_fb")
+        except ImportError:
+            raise ImportError("Failed to import fallback for module '%s' (fallback was forced)." % module_name)
     else:
         try:
             module = _imp.import_module(module_name)
         except ImportError:
-            module = _imp.import_module(module_name + "_fb")
+            try:
+                module = _imp.import_module(module_name + "_fb")
+            except ImportError:
+                raise ImportError("Failed to import module '%s' or its fallback." % module_name)
 
     if len(names) <= 0:
         return module

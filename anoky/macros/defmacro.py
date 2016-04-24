@@ -3,7 +3,7 @@ import ast
 from anoky.expansion.expansion_context import ExpansionContext
 from anoky.generation.generation_context import GenerationContext
 from anoky.macros.macro import Macro
-from anoky.special_forms import SpecialForm
+from anoky.special_forms.special_form import SpecialForm
 from anoky.syntax.node import Element
 
 

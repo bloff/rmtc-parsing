@@ -8,12 +8,14 @@ def default_special_forms_table():
     Ctl = fallback_import("anoky.special_forms.control")
     Imp = fallback_import("anoky.special_forms.specialform_import")
 
-    Quote = fallback_import("anoky.macros.quote", "Quote")
+    Quote = fallback_import("anoky.special_forms.quote", "Quote")
     (RawMacro, RawSpecialForm) = fallback_import("anoky.macros.rawmacro", "RawMacro", "RawSpecialForm")
     Compare = fallback_import("anoky.special_forms.comparison", "Compare")
     (If, NotInIsolation) = fallback_import("anoky.special_forms.control", "If", "NotInIsolation")
     Return = fallback_import("anoky.special_forms.function", "Return")
-    (Attribute, Class, Global, Nonlocal) = fallback_import("anoky.special_forms.special_forms", "Attribute", "Class", "Global", "Nonlocal")
+    Attribute = fallback_import("anoky.special_forms.attribute", "Attribute")
+    Class = fallback_import("anoky.special_forms.class", "Class")
+    (Global, Nonlocal) = fallback_import("anoky.special_forms.scope_statement", "Global", "Nonlocal")
 
 
     return {

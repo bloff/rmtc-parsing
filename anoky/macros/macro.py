@@ -1,15 +1,6 @@
+from anoky.expansion.expander import Expander
 from anoky.expansion.expansion_context import ExpansionContext
-from anoky.expansion.expander import Expander, DefaultExpander
-from anoky.syntax.code import Code
-
-from anoky.syntax.node import Node, Element
-from anoky.syntax.form import Form
-from anoky.syntax.seq import Seq
-from anoky.syntax.literal import Literal
-from anoky.syntax.identifier import Identifier
-
-
-
+from anoky.syntax.node import Element
 
 
 class Macro(Expander):

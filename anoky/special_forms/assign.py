@@ -3,7 +3,7 @@ import ast
 from anoky.generation.domain import StatementDomain as SDom,\
     ExpressionDomain as ExDom, LValueDomain as LVDom
 from anoky.generation.generation_context import GenerationContext
-from anoky.special_forms import SpecialForm
+from anoky.special_forms.special_form import SpecialForm
 from anoky.syntax.node import Element
 
 

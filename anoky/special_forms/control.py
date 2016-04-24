@@ -4,7 +4,7 @@ from anoky.common.errors import CodeGenerationError
 from anoky.generation.domain import StatementDomain as SDom,\
     ExpressionDomain as ExDom
 from anoky.generation.generation_context import GenerationContext
-from anoky.special_forms import SpecialForm
+from anoky.special_forms.special_form import SpecialForm
 from anoky.syntax.lisp_printer import succinct_lisp_printer
 from anoky.syntax.node import Element
 
