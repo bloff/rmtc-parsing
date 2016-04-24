@@ -5,3 +5,7 @@ code_expander := DefaultExpander:
 
 
 from anoky.syntax import lisp_printer
+
+"a.b".split(".")[-1]
+
+"a.b".split(".")[-(1)]

@@ -1,4 +1,3 @@
-
 import ast
 import importlib
 import importlib.abc as iabc
@@ -6,42 +5,50 @@ import importlib.machinery as imach
 import os
 import sys
 
-#from importlib import _bootstrap._call_with_frames_removed
-#from importlib._bootstrap_external import _validate_bytecode_header, _code_to_bytecode, _compile_bytecode
+# from importlib import _bootstrap._call_with_frames_removed
+# from importlib._bootstrap_external import _validate_bytecode_header, _code_to_bytecode, _compile_bytecode
+from importlib._bootstrap_external import _NamespacePath
 from importlib.util import cache_from_source
+
+import importlib.machinery
 
 from anoky.common.record import Record
 import anoky.common.options as Options
 import compiler_anoky as akycomp
 
 
+def import_debug(*args):
+    print("anoky.importer --- ", *args)
+    pass
+
 
 class AnokyLoader(iabc.SourceLoader):
-
+    def __init__(self, name, origin):
+        self.name = name
+        self.origin = origin
 
     def path_stats(self, path):
+        # if not os.path.samefile(path, self.origin):
+        #     raise ImportError("Requested stats for path '%s' with loader for module at path '%s'." % (path, self.origin))
         s = os.stat(path)
-        return {'mtime':s.st_mtime, 'size':s.st_size}
+        ret = {'mtime': s.st_mtime, 'size': s.st_size}
+        import_debug("mstats for path ", path, ": ", ret)
+        return ret
 
     def get_data(self, path):
-        #raise NotImplementedError()
+        # raise NotImplementedError()
         with open(path, "rb") as f:
             bdata = f.read()
 
-        print("read binary data at",path)
-
+        import_debug("get_data: ", path)
 
         return bdata
 
-
     def get_filename(self, fullname):
-
-        #print("sys.meta_path length is",len(sys.meta_path))
-
-        fullpath = os.getcwd() + os.sep + fullname + ".aky"
-        return fullpath
-
-
+        import_debug("get_filename: ", fullname)
+        # if fullname != self.name:
+        #     raise ImportError("Requested module name '%s' with loader for module name '%s'." %(fullname, self.name))
+        return self.origin
 
     def source_to_code(self, data, path, *, _optimize=-1):
         """Return the code object compiled from source.
@@ -49,24 +56,21 @@ class AnokyLoader(iabc.SourceLoader):
         The 'data' argument can be any object type that compile() supports.
         """
 
-        print("compiling module at",path,"from source")
+        import_debug("source_to_code: path=", path)
 
         options = Record({'filename': path,
                           'verbose': True,
-                          'execute': False},)
+                          'execute': False}, )
 
         aky_ast = akycomp.generate(options)
 
         ast.fix_missing_locations(aky_ast)
-
 
         # return _bootstrap._call_with_frames_removed(compile, data, path, 'exec',
         #                                 dont_inherit=True, optimize=_optimize)
         aky_codeobj = super().source_to_code(aky_ast, path)
 
         return aky_codeobj
-
-
 
     def set_data(self, path, data):
         # data is a bytearray ready to be written to pyc
@@ -78,6 +82,8 @@ class AnokyLoader(iabc.SourceLoader):
         #   implementation in importlib.abc.SourceFileLoader,
         #   replacing internal functions with their
         #   os or os.path versions
+
+        import_debug("set_data: path=", path)
 
         parent, filename = os.path.split(path)
         path_parts = []
@@ -96,87 +102,71 @@ class AnokyLoader(iabc.SourceLoader):
             except OSError as exc:
                 # Could be a permission error, read-only filesystem: just forget
                 # about writing the data.
-                #_verbose_message('could not create {!r}: {!r}', parent, exc)
+                # _verbose_message('could not create {!r}: {!r}', parent, exc)
                 return
         try:
-            #_write_atomic(path, data, _mode)
+            # _write_atomic(path, data, _mode)
             with open(path, "wb") as pycfile:
                 pycfile.write(data)
 
-            #_verbose_message('created {!r}', path)
+                # _verbose_message('created {!r}', path)
         except OSError as exc:
             # Same as above: just don't write the bytecode.
-            #_verbose_message('could not create {!r}: {!r}', path, exc)
+            # _verbose_message('could not create {!r}: {!r}', path, exc)
             pass
-
-
-
-
-
 
 
 class AnokyFinder(iabc.MetaPathFinder):
 
+    def find_spec(self, full_module_name, search_path, target=None):
 
-    def find_spec(self, fullname, path, target=None):
+        import_debug("Finding module spec for module_name: ", full_module_name)
 
-        #print("finding spec for ",fullname)
+        if search_path is None:
+            import_debug("Given searchpath is None, using sys.path")
+            search_path = sys.path
 
-        if path is not None:
+        modulename = full_module_name.rsplit(".", 1)[-1]
+        filename = modulename + ".aky"
+        import_debug("using search path: ", search_path)
+        for path in search_path:
+            if path == '': path = os.getcwd()
+            filepath = os.path.join(path, filename)
 
-            #print("path is ",path)
+            if os.path.isfile(filepath):
+                import_debug("Found .aky file: ", filepath)
 
-            if isinstance(path, list):
-                #os.chdir(path[0])
-                pass
-            else:
-                # "namespace path" ??
-                return None
+                spec = imach.ModuleSpec(
+                    # name
+                    name=full_module_name,
+                    # loader
+                    loader=AnokyLoader(full_module_name, filepath),
+                    origin=filepath,
+                    # __cached__=pycpath,
+                    # etc.
+                )
 
-        cwd = os.getcwd()
-        filename = fullname + ".aky"
-        fullpath = cwd + os.sep + filename
+                return spec
 
-        if os.path.isfile(filename):
-            print(filename," found")
-
-            #pycpath = cache_from_source(fullpath)
-
-            spec = imach.ModuleSpec(
-                #name
-                name=fullname,
-                #loader
-                loader=AnokyLoader(),
-                origin=fullpath,
-                #__cached__=pycpath,
-                # etc.
-            )
-
-            print("found aky module",filename)
-
-            return spec
+        import_debug("Failed to find any .aky file!")
 
         return None
 
 
-#sys.meta_path.append(AnokyFinder())
+# sys.meta_path.append(AnokyFinder())
 
 # sys.meta_path = [AnokyFinder()] + sys.meta_path
 
-#print(len(sys.meta_path))
+# print(len(sys.meta_path))
 
 # If the
 if not any(isinstance(f, AnokyFinder) for f in sys.meta_path):
-     sys.meta_path = [AnokyFinder()] + sys.meta_path
+    sys.meta_path = [AnokyFinder()] + sys.meta_path
 
 
 
 
-#print(sys.meta_path)
+# print(sys.meta_path)
 
 
-#import pyctest
-
-
-
-
+# import pyctest

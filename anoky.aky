@@ -1,5 +1,4 @@
 # TODO: skip steps according to options
-  TODO: dynamic macro definition in interactive mode
 
 import
     argparse, ast, astpp
@@ -28,11 +27,11 @@ import
 
 
 parser = AnokyParser()
-code_generator = DefaultGenerator()
 __macros__ = default_macro_table()
 __id_macros__ = default_id_macro_table()
 __special_forms__ = default_special_forms_table()
 code_expander = DefaultExpander()
+code_generator = DefaultGenerator()
 
 def anoky_tokenize(stream, options):
     tokenized_node = parser.tokenize_into_node(stream)
@@ -93,6 +92,8 @@ def anoky_generate(parsed_node, options, CG):
     return py_ast
 
 def interactive_anoky(options):
+
+    sys.path = [''] + sys.path
 
     (CG, init_code) =
         code_generator.begin:
@@ -165,6 +166,10 @@ def non_interactive_anoky(options):
 
     try:
         filename = options.filename
+        filedir = os.path.split(filename)[0]
+
+        sys.path = [filedir] + sys.path
+
         stream = FileStream(filename)
         node = anoky_tokenize(stream, options)
 
@@ -209,37 +214,37 @@ def non_interactive_anoky(options):
 def main():
     # options = parse_args(sys.argv)
     parser = argparse.ArgumentParser(prefix_chars='-')
-    parser.add_argument('--print-tokens', action='store_true',
-                        help='Prints the tokenizer output.')
-    parser.add_argument('--print-tree-transducer-outputs', action='store_true',
-                        help='Prints the output of each transducer in the chain.')
-    parser.add_argument('--print-arrangement-outputs', action='store_true',
-                        help='Prints the output of each arrangement within each arrangement-based transducer in the chain.')
-    parser.add_argument('--print-parse', action='store_true',
-                        help='Prints the outcome of parsing the written code (the forms, seqs, etc).')
-    parser.add_argument('--print-macro-expanded-code', action='store_true',
-                        help='Prints the code after macro-expansion.')
-    parser.add_argument('--print-python-ast', action='store_true',
-                        help='Prints the generated Python AST.')
-    parser.add_argument('--print-python-code', action='store_true',
-                        help='Prints the generated Python source.')
-    # parser.add_argument('--print-semantic-analysis-history', action='store_true')
-    # parser.add_argument('--print-code-generation-history', action='store_true')
-    parser.add_argument('--skip-arrangement', action='store_true',
-                        help='Stops the compiler immediately after tokenization.')
-    parser.add_argument('--skip-macroexpansion', action='store_true',
-                        help='Stops the compiler immediately after parsing.')
-    parser.add_argument('--skip-codegen', action='store_true',
-                        help='Stops the compiler immediately after macro-expansion.')
-    parser.add_argument('--stdout', action='store_true')
-    parser.add_argument('-I', '--include',
-                        help='A colon-separated list of source paths where to search for imported modules.')
-    parser.add_argument('-E', '--toggle-exec', action='store_true',
-                        help='Executes the compiled code even in non-interactive mode, and does not execute in interactive mode.')
-    parser.add_argument('-CP', '--compile-to-python', action='store_true',
-                        help='Compiles to Python, outputing the result into a .py file on the same path.')
-    parser.add_argument('--version', action='version', version='Anoky α.1')
-    parser.add_argument('file', nargs='*')
+
+    parser.add_argument '--print-tokens', action='store_true',
+        help='Prints the tokenizer output.'
+    parser.add_argument '--print-tree-transducer-outputs', action='store_true',
+        help='Prints the output of each transducer in the chain.'
+    parser.add_argument '--print-arrangement-outputs', action='store_true',
+        help='Prints the output of each arrangement within each arrangement-based transducer in the chain.'
+    parser.add_argument '--print-parse', action='store_true',
+        help='Prints the outcome of parsing the written code (the forms, seqs, etc).'
+    parser.add_argument '--print-macro-expanded-code', action='store_true',
+        help='Prints the code after macro-expansion.'
+    parser.add_argument '--print-python-ast', action='store_true',
+        help='Prints the generated Python AST.'
+    parser.add_argument '--print-python-code', action='store_true',
+        help='Prints the generated Python source.'
+    parser.add_argument '--skip-arrangement', action='store_true',
+        help='Stops the compiler immediately after tokenization.'
+    parser.add_argument '--skip-macroexpansion', action='store_true',
+        help='Stops the compiler immediately after parsing.'
+    parser.add_argument '--skip-codegen', action='store_true',
+        help='Stops the compiler immediately after macro-expansion.'
+    parser.add_argument '--stdout', action='store_true'
+    parser.add_argument '-I', '--include',
+        help='A colon-separated list of source paths where to search for imported modules.'
+    parser.add_argument '-E', '--toggle-exec', action='store_true',
+        help='Executes the compiled code even in non-interactive mode, and does not execute in interactive mode.'
+    parser.add_argument '-CP', '--compile-to-python', action='store_true',
+        help='Compiles to Python, outputing the result into a .py file on the same path.'
+    parser.add_argument '--version', action='version', version='Anoky α.1'
+    parser.add_argument 'file', nargs='*'
+
     parse = parser.parse_args()
 
 

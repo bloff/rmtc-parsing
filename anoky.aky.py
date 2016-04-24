@@ -24,11 +24,11 @@ import sys
 import traceback
 import os.path as path
 parser = AnokyParser()
-code_generator = DefaultGenerator()
 __macros__ = default_macro_table()
 __id_macros__ = default_id_macro_table()
 __special_forms__ = default_special_forms_table()
 code_expander = DefaultExpander()
+code_generator = DefaultGenerator()
 def anoky_tokenize(stream,options):
     tokenized_node = parser.tokenize_into_node(stream)
     if options.print_tokens:
@@ -72,6 +72,7 @@ def anoky_generate(parsed_node,options,CG):
         print_python_code(ast.Module(body=py_ast))
     return py_ast
 def interactive_anoky(options):
+    sys.path = [''] + sys.path
     (CG, init_code) = code_generator.begin(interactive=True, special_forms=__special_forms__, macros=__macros__, id_macros=__id_macros__)
     interactive_history = InMemoryHistory()
     try:
@@ -114,6 +115,8 @@ def non_interactive_anoky(options):
     (CG, init_code) = code_generator.begin(interactive=False)
     try:
         filename = options.filename
+        filedir = os.path.split(filename)[0]
+        sys.path = [filedir] + sys.path
         stream = FileStream(filename)
         node = anoky_tokenize(stream, options)
         if not options.arrange:
