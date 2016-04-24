@@ -1,24 +1,13 @@
 import ast
-import importlib
 import importlib.abc as iabc
 import importlib.machinery as imach
 import os
 import sys
-
-# from importlib import _bootstrap._call_with_frames_removed
-# from importlib._bootstrap_external import _validate_bytecode_header, _code_to_bytecode, _compile_bytecode
-from importlib._bootstrap_external import _NamespacePath
-from importlib.util import cache_from_source
-
-import importlib.machinery
-
-from anoky.common.record import Record
-import anoky.common.options as Options
-import compiler_anoky as akycomp
+import traceback
 
 
-def import_debug(*args):
-    print("anoky.importer --- ", *args)
+def _import_debug(*args):
+    # print("anoky.importer --- ", *args)
     pass
 
 
@@ -32,7 +21,7 @@ class AnokyLoader(iabc.SourceLoader):
         #     raise ImportError("Requested stats for path '%s' with loader for module at path '%s'." % (path, self.origin))
         s = os.stat(path)
         ret = {'mtime': s.st_mtime, 'size': s.st_size}
-        import_debug("mstats for path ", path, ": ", ret)
+        _import_debug("mstats for path ", path, ": ", ret)
         return ret
 
     def get_data(self, path):
@@ -40,35 +29,56 @@ class AnokyLoader(iabc.SourceLoader):
         with open(path, "rb") as f:
             bdata = f.read()
 
-        import_debug("get_data: ", path)
+        _import_debug("get_data: ", path)
 
         return bdata
 
     def get_filename(self, fullname):
-        import_debug("get_filename: ", fullname)
-        # if fullname != self.name:
-        #     raise ImportError("Requested module name '%s' with loader for module name '%s'." %(fullname, self.name))
+        _import_debug("get_filename: ", fullname)
+        if fullname != self.name:
+            raise ImportError("Requested module name '%s' with loader for module name '%s'." %(fullname, self.name))
         return self.origin
 
-    def source_to_code(self, data, path, *, _optimize=-1):
+    def source_to_code(self, data, path, *args, _optimize=-1):
         """Return the code object compiled from source.
 
         The 'data' argument can be any object type that compile() supports.
         """
 
-        import_debug("source_to_code: path=", path)
+        _import_debug("source_to_code: path=", path)
 
-        options = Record({'filename': path,
-                          'verbose': True,
-                          'execute': False}, )
+        from anoky.common.errors import CompilerError
+        from anoky.expansion.expander import DefaultExpander
+        from anoky.generation.generator import DefaultGenerator
+        from anoky.parsers.anoky_parser import AnokyParser
+        from anoky.streams.file_stream import FileStream
 
-        aky_ast = akycomp.generate(options)
+        def _compile_to_ast(filepath):
+            parser = AnokyParser()
+            expander = DefaultExpander()
+            generator = DefaultGenerator()
+
+            stream = FileStream(filepath)
+
+            file_node = parser.parse(stream)
+            expander.expand_unit(file_node)
+            py_module = generator.generate_unit(file_node)
+
+            return py_module
+
+        try:
+            aky_ast = _compile_to_ast(path)
+        except CompilerError as e:
+            raise ImportError("Failed to compile module '%s'. Compilation error was:\n%s"
+                              %(self.name, e.trace))
+        except Exception:
+            traceback.print_exc()
+            raise ImportError("Failed to compile module '%s'. The above exception was thrown." % self.name)
+
 
         ast.fix_missing_locations(aky_ast)
 
-        # return _bootstrap._call_with_frames_removed(compile, data, path, 'exec',
-        #                                 dont_inherit=True, optimize=_optimize)
-        aky_codeobj = super().source_to_code(aky_ast, path)
+        aky_codeobj = iabc.SourceLoader.source_to_code(self, aky_ast, path, *args, _optimize=_optimize)
 
         return aky_codeobj
 
@@ -83,7 +93,7 @@ class AnokyLoader(iabc.SourceLoader):
         #   replacing internal functions with their
         #   os or os.path versions
 
-        import_debug("set_data: path=", path)
+        _import_debug("set_data: path=", path)
 
         parent, filename = os.path.split(path)
         path_parts = []
@@ -120,21 +130,24 @@ class AnokyFinder(iabc.MetaPathFinder):
 
     def find_spec(self, full_module_name, search_path, target=None):
 
-        import_debug("Finding module spec for module_name: ", full_module_name)
+        _import_debug("Finding module spec for module_name: ", full_module_name)
 
         if search_path is None:
-            import_debug("Given searchpath is None, using sys.path")
+            _import_debug("Given searchpath is None, using sys.path")
             search_path = sys.path
 
         modulename = full_module_name.rsplit(".", 1)[-1]
         filename = modulename + ".aky"
-        import_debug("using search path: ", search_path)
+        _import_debug("using search path: ", search_path)
         for path in search_path:
             if path == '': path = os.getcwd()
             filepath = os.path.join(path, filename)
 
+            if not os.path.isfile(filepath):
+                filepath = os.path.join(path, modulename, "__init__.aky")
+
             if os.path.isfile(filepath):
-                import_debug("Found .aky file: ", filepath)
+                _import_debug("Found .aky file: ", filepath)
 
                 spec = imach.ModuleSpec(
                     # name
@@ -148,7 +161,7 @@ class AnokyFinder(iabc.MetaPathFinder):
 
                 return spec
 
-        import_debug("Failed to find any .aky file!")
+        _import_debug("Failed to find any .aky file!")
 
         return None
 
