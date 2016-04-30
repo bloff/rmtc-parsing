@@ -219,14 +219,17 @@ def define_default_anoky_transducer_chain():
     # tt_commaoperator = TopDownTreeTransducer("Comma as binary operator",
     #                                          Arrangement([RightLeftBinaryOperator({','})]))
 
-    
+
+    tt_unary_minus = TopDownTreeTransducer("Additive inverse",
+                                        Arrangement([
+                                            LeftRightUnaryPrefixNospaceOperator({'-'})]))
 
     tt_exponentiation = TopDownTreeTransducer("Exponentiation",
                                               Arrangement([
                                                   LeftRightBinaryOperator({'**'})]))
 
     tt_tilde = TopDownTreeTransducer("Bitwise NOT",
-                    Arrangement([LeftRightUnaryPrefixNospaceTokenCapturingOperator({'~'})]))
+                    Arrangement([LeftRightUnaryPrefixNospaceOperator({'~'})]))
 
 
     tt_multiplication = TopDownTreeTransducer("Multiplication, Division, etc.",
@@ -309,10 +312,6 @@ def define_default_anoky_transducer_chain():
                                            ]))
 
 
-    # tt_unaryadd = TopDownTreeTransducer("Unary Plus/Minus",
-    #                                     Arrangement([LeftRightUnaryPrefixNospaceTokenCapturingOperator({'+', '-'})
-    #                                     ]))
-
 
     tt_as = TopDownTreeTransducer("infix as",
                                   Arrangement([
@@ -326,6 +325,7 @@ def define_default_anoky_transducer_chain():
                                         tt_infix_special_ops,
                                         tt_punctuation,
 
+                                        tt_unary_minus,
                                         tt_exponentiation,
 
                                         tt_tilde,

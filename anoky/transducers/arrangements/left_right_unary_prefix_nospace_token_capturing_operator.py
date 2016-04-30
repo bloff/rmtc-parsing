@@ -1,6 +1,6 @@
 from anoky.common.errors import ArrangementError
 from anoky.common.util import is_not_none
-from anoky.syntax.util import is_identifier, is_literal, identifier_in
+from anoky.syntax.util import is_identifier, is_literal, identifier_in, is_form
 from anoky.syntax.form import Form
 from anoky.syntax.node import Element
 from anoky.syntax.token import is_token
@@ -35,7 +35,7 @@ class LeftRightUnaryPrefixNospaceTokenCapturingOperator(ArrangementRule):
         next = element.next
         return (
             next is not None and
-            (not element.is_first() or not next.is_last()) and
+            (not (element.is_first() and is_form(element.parent)) or not next.is_last()) and
             is_identifier(element) and
             identifier_in(element.code, self.sym_vals) and
             is_not_none(element, ".code.range.position_after.index") and

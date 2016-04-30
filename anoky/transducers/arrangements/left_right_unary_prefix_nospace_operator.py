@@ -1,6 +1,6 @@
 from anoky.common.errors import ArrangementError
 from anoky.common.util import is_not_none
-from anoky.syntax.util import  is_identifier, is_literal
+from anoky.syntax.util import  is_identifier, is_literal, is_form
 from anoky.syntax.form import Form
 from anoky.syntax.identifier import Identifier
 from anoky.syntax.node import Element
@@ -17,29 +17,24 @@ class LeftRightUnaryPrefixNospaceOperator(ArrangementRule):
     """
 
     def __init__(self, token_vals):
-        ArrangementRule.__init__(self, "Left-Right Unary Prefix No-Space Token-Capturing Operator")
+        ArrangementRule.__init__(self, "Left-Right Unary Prefix No-Space Operator")
         self.token_vals = token_vals
 
     def applies(self, element:Element):
         next = element.next
         return (
-            not element.is_last() and
+            next is not None and
+            (not (element.is_first() and is_form(element.parent)) or not next.is_last()) and
             is_identifier(element) and
             element.code.name in self.token_vals and
             is_not_none(element, ".range.position_after.index", next, ".range.first_position.index") and
-            element.code.range.position_after.index == next.code.range.first_position.index and
-            not isinstance(element.parent, Form)
+            element.code.range.position_after.index == next.code.range.first_position.index
         )
 
     def apply(self, element):
         form = element.parent
         next = element.next
-        if is_identifier(next) or is_literal(next):
-            new_form_element = form.wrap(element, next, Form)
-        elif is_token(next, BEGIN_MACRO):
-            new_form_element = form.wrap(element, next.end, Form)
-        else:
-            raise ArrangementError(next.range.first_position, "Expected identifier, literal or begin-macro-token after '%s' identifier in position %s." %(element.value, element.range.first_position.nameless_str))
+        new_form_element = form.wrap(element, next, Form)
         new_form = new_form_element.code
         new_form.remove(element)
         new_form.prepend(Identifier(element.code.full_name, element.range))

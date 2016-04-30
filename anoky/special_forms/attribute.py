@@ -23,10 +23,10 @@ class Attribute(SpecialForm):
 
         att_name = acode[2].code.full_name
 
-        if GC.domain == LVDom:
+        if GC.domain == LValueDomain:
             return ast.Attribute(base_object_code, att_name, ast.Store())
 
-        elif GC.domain == DelDom:
+        elif GC.domain == DeletionDomain:
             return ast.Attribute(base_object_code, att_name, ast.Del())
 
         else:
