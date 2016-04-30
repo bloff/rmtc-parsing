@@ -80,11 +80,33 @@ class AddOp(BinaryOp):
     OP = ast.Add
 
 
-class SubOp(BinaryOp):
+class SubOp(SpecialForm):
 
     HEADTEXT = "-"
     OP = ast.Sub
 
+    def generate(self, element:Element, GC:GenerationContext):
+
+        acode = element.code
+
+        if len(acode) == 2:
+            arg = acode[1]
+
+            with GC.let(domain=ExDom):
+                arg_code = GC.generate(arg)
+
+            return expr_wrap(ast.UnaryOp(op=ast.USub(), operand=arg_code), GC)
+
+        else:
+            assert len(acode) == 3
+
+            left_element, right_element = acode[1], acode[2]
+
+            with GC.let(domain=ExDom):
+                left_code = GC.generate(left_element)
+                right_code = GC.generate(right_element)
+
+            return expr_wrap(ast.BinOp(left_code, ast.Sub(), right_code), GC)
 
 class MultOp(BinaryOp):
 
