@@ -1,4 +1,0 @@
-rawmacro myname(element, EC):
-        print "test"
-
-myname()
