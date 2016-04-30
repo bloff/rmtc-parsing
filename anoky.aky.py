@@ -81,10 +81,14 @@ def interactive_anoky(options):
             stream = StringStream(written_code, '<interactive>')
             try:
                 node = anoky_tokenize(stream, options)
-                if not options.arrange:
+                if not options.arrange_tokens:
                     continue
                 anoky_transduce(node, options)
+                if not options.expand_macros:
+                    continue
                 anoky_expand(node, options)
+                if not options.generate_code:
+                    continue
                 py_ast = anoky_generate(node, options, CG)
                 py_ast = code_generator.end(py_ast, CG)
             except CompilerError as e:
@@ -119,10 +123,14 @@ def non_interactive_anoky(options):
         sys.path = [filedir] + sys.path
         stream = FileStream(filename)
         node = anoky_tokenize(stream, options)
-        if not options.arrange:
+        if not options.arrange_tokens:
             return
         anoky_transduce(node, options)
+        if not options.expand_macros:
+            return
         anoky_expand(node, options)
+        if not options.generate_code:
+            return
         py_ast = init_code + anoky_generate(node, options, CG)
         py_ast = code_generator.end(py_ast, CG)
     except CompilerError as e:
@@ -152,7 +160,7 @@ def main():
     parser.add_argument('--print-macro-expanded-code', action='store_true', help='Prints the code after macro-expansion.')
     parser.add_argument('--print-python-ast', action='store_true', help='Prints the generated Python AST.')
     parser.add_argument('--print-python-code', action='store_true', help='Prints the generated Python source.')
-    parser.add_argument('--skip-arrangement', action='store_true', help='Stops the compiler immediately after tokenization.')
+    parser.add_argument('--skip-transducing', action='store_true', help='Stops the compiler immediately after tokenization.')
     parser.add_argument('--skip-macroexpansion', action='store_true', help='Stops the compiler immediately after parsing.')
     parser.add_argument('--skip-codegen', action='store_true', help='Stops the compiler immediately after macro-expansion.')
     parser.add_argument('--stdout', action='store_true')
@@ -182,12 +190,16 @@ def main():
         options.filename = parse.file[0]
         options.compile_to_python = parse.compile_to_python
         options.execute = parse.toggle_exec
-    options.arrange = not parse.skip_arrangement
-    if not options.arrange:
+    options.arrange_tokens = not parse.skip_transducing
+    if not options.arrange_tokens:
         options.print_tokens = True
-    options.macroexpand = not parse.skip_macroexpansion and not parse.skip_arrangement
-    options.codegen = not parse.skip_macroexpansion and not parse.skip_arrangement and not parse.skip_codegen
-    options.print_python_code = parse.print_python_code
+    options.expand_macros = not parse.skip_macroexpansion and not parse.skip_transducing
+    if not options.expand_macros:
+        options.print_parse = True
+    options.generate_code = not parse.skip_macroexpansion and not parse.skip_transducing and not parse.skip_codegen
+    if not options.generate_code:
+        options.print_macro_expanded_code = True
+    options.print_python_code = parse.print_python_code or not options.execute
     options.print_python_ast = parse.print_python_ast
     if parse.stdout:
         options.output = '<stdout>'
