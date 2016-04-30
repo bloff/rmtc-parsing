@@ -301,25 +301,17 @@ class Subscript(SpecialForm):
 
         # (.. )
         if is_form(acode[2], ".."):
-
             #slice
-
             raise NotImplementedError()
-
-
-
-
 
         #if isinstance(acode[2].code, Literal):
         else:
-
             with GC.let(domain=ExDom):
                 index_code = GC.generate(acode[2])
 
-
-            return ast.Subscript(base_object_code,
+            return expr_wrap(ast.Subscript(base_object_code,
                                  ast.Index(index_code),
-                                 ast.Store() if GC.domain == LVDom else ast.Load())
+                                 ast.Store() if GC.domain == LVDom else ast.Load()), GC)
 
             # if GC.domain == DelDom
             # else
