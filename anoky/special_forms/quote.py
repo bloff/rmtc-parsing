@@ -9,9 +9,9 @@ from anoky.special_forms.special_form import SpecialForm
 from anoky.syntax.form import Form
 from anoky.syntax.identifier import Identifier
 from anoky.syntax.literal import Literal
-from anoky.syntax.node import Element
+from anoky.syntax.node import Element, Node
 from anoky.syntax.seq import Seq
-from anoky.syntax.util import is_identifier
+from anoky.syntax.util import is_identifier, is_form
 
 
 class Quote(SpecialForm):
@@ -23,43 +23,38 @@ class Quote(SpecialForm):
     #     Macro.__init__(self)
 
     def expand(self, element:Element, EC:ExpansionContext):
-
-        acode = element.code
-        aquote = element.code[1].code
-
-        # expand any escaped code
-        Quote.expand_inner_escapes(acode[1], EC)
+        quote_form = element.code
+        for subcode in quote_form[1:]:
+            # expand any escaped code
+            Quote.expand_inner_escapes(subcode, EC)
 
 
 
     def generate(self, element:Element, GC:GenerationContext):
 
-        acode = element.code
-        aquote = element.code[1].code
+        assert len(element.code) > 1
 
-        quote_ast = Quote.generate_quote_ast(acode[1], GC)
-        return expr_wrap(quote_ast, GC)
+        asts = [Quote.generate_quote_ast(subcode, GC) for subcode in element.code[1:]]
+
+        if len(asts) == 1:
+            return expr_wrap(asts[0], GC)
+        else:
+            return expr_wrap(ast.List(asts, ast.Load()), GC)
+
 
 
     @staticmethod
     def expand_inner_escapes(element:Element, EC:ExpansionContext):
-
         aquote = element.code
-
-        if isinstance(aquote, Form) and is_identifier(aquote[0], "~"):
-
+        # If we have a quote escape, expand sub-elements
+        if is_form(aquote, "~"):
             assert len(aquote) == 2
-
             EC.expand(aquote[1])
 
-        elif isinstance(aquote, Form) or isinstance(aquote, Seq):
-        # or, isinstance(aquote, Node)
-
+        # otherwise, recurse on nodes, ignore the rest
+        elif isinstance(aquote, Node):
             for e in aquote:
-
                 Quote.expand_inner_escapes(e, EC)
-
-        # and that should be it.
 
 
 
