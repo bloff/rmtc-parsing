@@ -64,10 +64,14 @@ class AnokyLoader(iabc.SourceLoader):
             expander.expand_unit(file_node)
             py_module = generator.generate_unit(file_node)
 
+            ast.fix_missing_locations(py_module)
+
             return py_module
 
         try:
             aky_ast = _compile_to_ast(path)
+            aky_codeobj = iabc.SourceLoader.source_to_code(self, aky_ast, path, *args, _optimize=_optimize)
+
         except CompilerError as e:
             raise ImportError("Failed to compile module '%s'. Compilation error was:\n%s"
                               %(self.name, e.trace))
@@ -75,10 +79,6 @@ class AnokyLoader(iabc.SourceLoader):
             traceback.print_exc()
             raise ImportError("Failed to compile module '%s'. The above exception was thrown." % self.name)
 
-
-        ast.fix_missing_locations(aky_ast)
-
-        aky_codeobj = iabc.SourceLoader.source_to_code(self, aky_ast, path, *args, _optimize=_optimize)
 
         return aky_codeobj
 
@@ -143,8 +143,10 @@ class AnokyFinder(iabc.MetaPathFinder):
             if path == '': path = os.getcwd()
             filepath = os.path.join(path, filename)
 
+            is_package = False
             if not os.path.isfile(filepath):
                 filepath = os.path.join(path, modulename, "__init__.aky")
+                is_package = True
 
             if os.path.isfile(filepath):
                 _import_debug("Found .aky file: ", filepath)
@@ -155,9 +157,14 @@ class AnokyFinder(iabc.MetaPathFinder):
                     # loader
                     loader=AnokyLoader(full_module_name, filepath),
                     origin=filepath,
+                    is_package=is_package
                     # __cached__=pycpath,
                     # etc.
                 )
+
+                if is_package:
+                    spec.submodule_search_locations = [os.path.join(path, modulename)]
+                spec.has_location = True
 
                 return spec
 
