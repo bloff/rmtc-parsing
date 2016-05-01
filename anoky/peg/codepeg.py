@@ -567,19 +567,17 @@ class Conditions:
 
 
 class Parser(object):
-    _lyc_parser = BlackflagParser()
 
-    def __init__(self, code:str):
-        code_node = Parser._lyc_parser.parse(code)
+    def __init__(self, code:Code):
         self.peg_rules = {}
         self.start_rule = None
         self.code = code
 
-        for elm in code_node:
+        for elm in code:
             form = elm.code
             assert is_form(form)
             head = form.first
-            if is_identifier(head, '<-'):
+            if is_identifier(head, '='):
                 # extract rule_name
                 assert is_identifier(form[1])
                 rule_name = form[1].code.name
