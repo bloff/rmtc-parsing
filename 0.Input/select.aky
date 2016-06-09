@@ -1,0 +1,99 @@
+# Expected syntax:
+  ```
+  select expression:
+        value1:
+           body
+        value2:
+           body
+        ...
+        else:
+            body
+  ```
+
+  is expanded to
+
+  ```
+  var = expression
+  if var == value1:
+      body
+  elif var == value2:
+      body
+  ...
+  else:
+    body
+  ```
+  where var is a unique identifier.
+
+
+
+
+rawmacro select(element, EC):
+    import anoky.syntax.util(is_form)
+
+    print "\n"*4
+    print element
+
+    form = element.code
+    len_form = len(form)
+
+    if len_form < 2:
+        if element.parent isnt None: element.parent.remove(element)
+        return
+
+    # generate the assignment var = expression
+    expression = form[1].code
+    var = EC.gensym()
+    assignment = `~var = ~expression`
+
+    print assignment
+
+    # generate the main `if` statement
+    first_case = form[2].code
+    value = first_case[0]
+    first_case.prepend(`if`)
+    first_case.replace(value, `~var == ~value.code`)
+
+    i = 3
+
+    # generate the corresponding `elif` and `else`s
+    while i < len_form:
+        extra_case = form[i].code
+        if is_form(extra_case, "else"):
+            first_case.append(extra_case)
+            break
+        else:
+            value = extra_case[0]
+            extra_case.prepend(`elif`)
+            extra_case.replace(value, `~var == ~value.code`)
+            first_case.append(extra_case)
+        i += 1
+
+    element.parent.insert(element, first_case)
+    element.parent.replace(element, assignment)
+
+
+#   Example usage:
+    ```
+    select 2:
+        1: print("a")
+        2: print("b")
+        else: print("c")
+    ```
+
+
+    ——›–  Parsed source before macro expansion  –‹——
+    (select 2
+          (1 (print "a"))
+          (2 (print "b"))
+          (else (print "c")))
+
+
+    ——›–  Parsed source after macro expansion  –‹——
+    (= GENSYM_1 2)
+
+    (if (compare == (GENSYM_1, 1))
+        (print "a")
+     (elif (compare == (GENSYM_1, 2))
+        (print "b"))
+     (else (print "c")))
+

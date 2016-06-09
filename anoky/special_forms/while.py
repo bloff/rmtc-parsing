@@ -22,7 +22,7 @@ class While(SpecialForm):
 
         testexpr_element = acode[1]
 
-        with GC.let(domain=ExDom):
+        with GC.let(domain=ExpressionDomain):
 
             testexpr_code = GC.generate(testexpr_element)
 

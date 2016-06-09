@@ -13,6 +13,8 @@ from anoky.streams.file_stream import FileStream
 from anoky.syntax.lisp_printer import indented_lisp_printer
 from anoky.common.errors import CompilerError
 from anoky.streams.string_stream import StringStream
+from anoky.generation.default_special_forms_table import default_special_forms_table
+from anoky.expansion.default_macro_table import default_macro_table, default_id_macro_table
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit import prompt
 import argparse
@@ -20,12 +22,15 @@ import ast
 import astpp
 import sys
 import traceback
-import os.path as path
+import os
 parser = AnokyParser()
-code_generator = DefaultGenerator()
+__macros__ = default_macro_table()
+__id_macros__ = default_id_macro_table()
+__special_forms__ = default_special_forms_table()
 code_expander = DefaultExpander()
+code_generator = DefaultGenerator()
 def anoky_tokenize(stream,options):
-    tokenized_node = parser.tokenize_into_node(stream)
+    tokenized_node = parser.tokenize_into_node(stream, emmit_restart_tokens=False)
     if options.print_tokens:
         print('\n——›–  Tokenized source  –‹——')
         for token in tokenized_node:
@@ -34,12 +39,12 @@ def anoky_tokenize(stream,options):
 def anoky_transduce(node,options):
     parser.transduce(node)
     if options.print_parse:
-        print('\n——›–  Parsed source before macro expansion  –‹——', end='')
+        print('\n——›–  Parsed source before macro expansion  –‹——', end="")
         print(indented_lisp_printer(node))
 def anoky_expand(parsed_node,options):
-    code_expander.expand_unit(parsed_node)
+    code_expander.expand_unit(parsed_node, macros=__macros__, id_macros=__id_macros__)
     if options.print_macro_expanded_code:
-        print('\n——›–  Parsed source after macro expansion  –‹——', end='')
+        print('\n——›–  Parsed source after macro expansion  –‹——', end="")
         print(indented_lisp_printer(parsed_node))
 def print_ast(py_ast,message='\n——›–  Generated Python AST  –‹——'):
     print(message)
@@ -50,6 +55,8 @@ def print_ast(py_ast,message='\n——›–  Generated Python AST  –‹——
         traceback.print_exc()
 def print_python_code(py_ast,message='\n——›–  Generated Python Source Code  –‹——'):
     try:
+        if isinstance(py_ast, ast.Interactive):
+            py_ast = ast.Module(body=py_ast.body)
         python_source = ASTFormatter().format(py_ast)
     except Exception:
         print('\n!–›–  Failed to generate Python Source Code!  –‹–!')
@@ -59,13 +66,10 @@ def print_python_code(py_ast,message='\n——›–  Generated Python Source Co
         print(python_source)
 def anoky_generate(parsed_node,options,CG):
     py_ast = code_generator.generate_elements(parsed_node, CG)
-    if options.print_python_ast:
-        print_ast(ast.Module(body=py_ast))
-    if options.print_python_code:
-        print_python_code(ast.Module(body=py_ast))
     return py_ast
 def interactive_anoky(options):
-    (CG, init_code) = code_generator.begin(interactive=True)
+    sys.path = [''] + sys.path
+    (CG, init_code) = code_generator.begin(interactive=True, special_forms=__special_forms__, macros=__macros__, id_macros=__id_macros__)
     interactive_history = InMemoryHistory()
     try:
         while True:
@@ -73,21 +77,29 @@ def interactive_anoky(options):
             stream = StringStream(written_code, '<interactive>')
             try:
                 node = anoky_tokenize(stream, options)
-                if not options.arrange:
+                if not options.arrange_tokens:
                     continue
                 anoky_transduce(node, options)
+                if not options.expand_macros:
+                    continue
                 anoky_expand(node, options)
+                if not options.generate_code:
+                    continue
                 py_ast = anoky_generate(node, options, CG)
                 py_ast = code_generator.end(py_ast, CG)
+                ast.fix_missing_locations(py_ast)
+                if options.print_python_ast:
+                    print_ast(py_ast)
+                if options.print_python_code:
+                    print_python_code(py_ast)
             except CompilerError as e:
                 print(e.trace)
             except Exception:
                 print('\n!—›–  Compiler raised unhandled exception (this is not supposed to happen)!!!  –‹—!')
                 traceback.print_exc()
             else:
-                ast.fix_missing_locations(py_ast)
                 try:
-                    compiled_ast = compile(py_ast, filename='<ast>', mode='single')
+                    compiled_ast = compile(py_ast, filename='<interactive>', mode='single')
                 except Exception:
                     print('\n——›–  AST compilation failed !!!  –‹——')
                     traceback.print_exc()
@@ -96,7 +108,7 @@ def interactive_anoky(options):
                 else:
                     if options.execute:
                         try:
-                            exec(compiled_ast)
+                            exec(compiled_ast, {}, {})
                         except Exception as e:
                             traceback.print_exc()
     except EOFError:
@@ -107,14 +119,24 @@ def non_interactive_anoky(options):
     (CG, init_code) = code_generator.begin(interactive=False)
     try:
         filename = options.filename
+        filedir = os.path.split(filename)[0]
+        sys.path = [filedir] + sys.path
         stream = FileStream(filename)
         node = anoky_tokenize(stream, options)
-        if not options.arrange:
+        if not options.arrange_tokens:
             return
         anoky_transduce(node, options)
+        if not options.expand_macros:
+            return
         anoky_expand(node, options)
+        if not options.generate_code:
+            return
         py_ast = init_code + anoky_generate(node, options, CG)
         py_ast = code_generator.end(py_ast, CG)
+        if options.print_python_ast:
+            print_ast(py_ast)
+        if options.print_python_code:
+            print_python_code(py_ast)
     except CompilerError as e:
         print(e.trace, file=sys.stderr)
     else:
@@ -131,7 +153,7 @@ def non_interactive_anoky(options):
                 out_file.close()
         if options.execute:
             ast.fix_missing_locations(py_ast)
-            compiled_module = compile(py_ast, filename='<ast>', mode='exec')
+            compiled_module = compile(py_ast, filename=os.path.abspath(filename), mode='exec')
             exec(compiled_module)
 def main():
     parser = argparse.ArgumentParser(prefix_chars='-')
@@ -142,7 +164,7 @@ def main():
     parser.add_argument('--print-macro-expanded-code', action='store_true', help='Prints the code after macro-expansion.')
     parser.add_argument('--print-python-ast', action='store_true', help='Prints the generated Python AST.')
     parser.add_argument('--print-python-code', action='store_true', help='Prints the generated Python source.')
-    parser.add_argument('--skip-arrangement', action='store_true', help='Stops the compiler immediately after tokenization.')
+    parser.add_argument('--skip-transducing', action='store_true', help='Stops the compiler immediately after tokenization.')
     parser.add_argument('--skip-macroexpansion', action='store_true', help='Stops the compiler immediately after parsing.')
     parser.add_argument('--skip-codegen', action='store_true', help='Stops the compiler immediately after macro-expansion.')
     parser.add_argument('--stdout', action='store_true')
@@ -172,12 +194,16 @@ def main():
         options.filename = parse.file[0]
         options.compile_to_python = parse.compile_to_python
         options.execute = parse.toggle_exec
-    options.arrange = not parse.skip_arrangement
-    if not options.arrange:
+    options.arrange_tokens = not parse.skip_transducing
+    if not options.arrange_tokens:
         options.print_tokens = True
-    options.macroexpand = not parse.skip_macroexpansion and not parse.skip_arrangement
-    options.codegen = not parse.skip_macroexpansion and not parse.skip_arrangement and not parse.skip_codegen
-    options.print_python_code = parse.print_python_code
+    options.expand_macros = not parse.skip_macroexpansion and not parse.skip_transducing
+    if not options.expand_macros:
+        options.print_parse = True
+    options.generate_code = not parse.skip_macroexpansion and not parse.skip_transducing and not parse.skip_codegen
+    if not options.generate_code:
+        options.print_macro_expanded_code = True
+    options.print_python_code = parse.print_python_code or not options.execute
     options.print_python_ast = parse.print_python_ast
     if parse.stdout:
         options.output = '<stdout>'

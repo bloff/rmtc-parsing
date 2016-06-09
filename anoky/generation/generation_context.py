@@ -21,7 +21,7 @@ class GenerationContext(Context):
 
         # copy line and column number info from the generated element
         range = element.range
-        if range is not None:
+        if range is not None and range.first_position is not None:
             lineno = range.first_position.line
             col_offset = range.first_position.column
             if isinstance(ast, list):

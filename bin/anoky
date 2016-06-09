@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ -z "$ANOKY_AKY_PY" ]; then
+    ANOKY_AKY_PY="/home/bruno/Dropbox/blackrose/rmtc-parsing/anoky.aky.py";
+fi
+
+python3 $ANOKY_AKY_PY $@

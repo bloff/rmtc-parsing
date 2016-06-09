@@ -46,6 +46,7 @@ def default_special_forms_table():
         # "+" : Op.UnaryAddOp(),
         # "-" : Op.UnarySubOp(),
         "not": operators.NotOp(),
+
         "~": operators.InvertOp(),
 
         "+": operators.AddOp(),

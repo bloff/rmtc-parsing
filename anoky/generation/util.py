@@ -22,3 +22,9 @@ def expr_wrap(code, GC:GenerationContext):
         else:
             return ast.Expr(code)
     return code
+
+def extend_body(body_code, param):
+    if isinstance(param, list):
+        body_code.extend(param)
+    else:
+        body_code.append(param)

@@ -2,6 +2,7 @@ import ast
 
 from anoky.expansion.expansion_context import ExpansionContext
 from anoky.generation.generation_context import GenerationContext
+from anoky.generation.util import extend_body
 from anoky.macros.macro import Macro
 from anoky.special_forms.special_form import SpecialForm
 from anoky.syntax.node import Element
@@ -47,7 +48,9 @@ class RawMacro(Macro, SpecialForm):
 
         expand_body_elements = acode[2:]
 
-        expand_body_code = [GC.generate(b) for b in expand_body_elements]
+        expand_body_code = []
+        for b in expand_body_elements:
+            extend_body(expand_body_code, GC.generate(b))
         # The... second-to-last form? of the original element should be
         #  responsible for generating (i.e. should return) code that will
         #  complete the macro expansion;
@@ -82,13 +85,13 @@ class RawMacro(Macro, SpecialForm):
 
         class_body_code = []
 
-        #class_body_code.append(ast.Import([ast.alias(name="anoky.module", asname="__aky__")]))
+        # extend_body(class_body_code, ast.Import([ast.alias(name="anoky.module", asname="__aky__")]))
 
-        class_body_code.append(ast.Assign(targets=[ast.Name(id="HEADTEXT",
+        extend_body(class_body_code, ast.Assign(targets=[ast.Name(id="HEADTEXT",
                                                             ctx=ast.Store())],
                                           value=ast.Str(macro_name)))
 
-        class_body_code.append(expand_method_code)
+        extend_body(class_body_code, expand_method_code)
 
 
 
@@ -181,8 +184,9 @@ class RawSpecialForm(Macro, SpecialForm):
 
 
         expand_body_elements = rawexpand[1:]
-
-        expand_body_code = [GC.generate(b) for b in expand_body_elements]
+        expand_body_code = []
+        for b in expand_body_elements:
+            extend_body(expand_body_code, GC.generate(b))
         # The... second-to-last form? of the original element should be
         #  responsible for generating (i.e. should return) code that will
         #  complete the macro expansion;
@@ -251,14 +255,14 @@ class RawSpecialForm(Macro, SpecialForm):
 
         class_body_code = []
 
-        class_body_code.append(ast.Import([ast.alias(name="anoky.module", asname="__aky__")]))
+        extend_body(class_body_code,ast.Import([ast.alias(name="anoky.module", asname="__aky__")]))
 
-        class_body_code.append(ast.Assign(targets=[ast.Name(id="HEADTEXT",
+        extend_body(class_body_code, ast.Assign(targets=[ast.Name(id="HEADTEXT",
                                                             ctx=ast.Store())],
                                           value=ast.Str(sf_name)))
 
-        class_body_code.append(expand_method_code)
-        class_body_code.append(generate_method_code)
+        extend_body(class_body_code, expand_method_code)
+        extend_body(class_body_code, generate_method_code)
 
 
 

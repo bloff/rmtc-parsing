@@ -4,6 +4,7 @@ from anoky.common.errors import CodeGenerationError
 from anoky.generation.domain import StatementDomain as SDom,\
     ExpressionDomain as ExDom
 from anoky.generation.generation_context import GenerationContext
+from anoky.generation.util import extend_body
 from anoky.special_forms.special_form import SpecialForm
 from anoky.syntax.lisp_printer import succinct_lisp_printer
 from anoky.syntax.node import Element
@@ -80,7 +81,7 @@ class If(SpecialForm):
                 break
             else:
                 body_gen = GC.generate(body_elm)
-                body_gens.append(body_gen)
+                extend_body(body_gens, body_gen)
 
         if len(body_gens) == 0: body_gens.append(ast.Pass())
 

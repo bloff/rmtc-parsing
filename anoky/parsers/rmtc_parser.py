@@ -21,6 +21,7 @@ class RMTCParser(object):
             readtable = default_readtable,
             # Tokenizer classes
             DefaultTokenizer = DefaultTokenizer,
+            expected_closing_seqs=0,
         )
         self.transducer_chain = transducer_chain
 
@@ -35,18 +36,21 @@ class RMTCParser(object):
 
         return stream
 
-    def tokenize(self, code_or_stream:Union[str, CharacterStream]):
+    def tokenize(self, code_or_stream:Union[str, CharacterStream], **context_kwargs):
 
         # Set the stream of the tokenization context
         stream = self._get_stream(code_or_stream)
-        self.tokenization_context.set(stream=stream)
+        if "emmit_restart_tokens" not in context_kwargs: context_kwargs["emmit_restart_tokens"] = False
+        self.tokenization_context.set(stream=stream, **context_kwargs)
 
         # Make instance of default tokenizer
         tokenizer = self.tokenization_context.DefaultTokenizer(self.tokenization_context)
 
+        self.tokenization_context.set(error = True)
         # yield every token emitted by the default tokenizer
         token = None
         for token in tokenizer.run():
+            if isinstance(token, Tokens.ERROR): self.tokenization_context.set(error = True)
             yield token
 
         # Raise an exception if we failed to emit any token, or fail to parse the entire file
@@ -64,9 +68,9 @@ class RMTCParser(object):
 
 
 
-    def tokenize_into_node(self, code_or_stream:Union[str, CharacterStream]) -> Node:
+    def tokenize_into_node(self, code_or_stream:Union[str, CharacterStream], **context_kwargs) -> Node:
         node = Node()
-        for token in self.tokenize(code_or_stream):
+        for token in self.tokenize(code_or_stream, **context_kwargs):
             node.append(token)
         return node
 

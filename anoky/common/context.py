@@ -33,8 +33,10 @@ class Context(object):
     def __setattr__(self, name, value):
         if name.startswith(u'_'):
             self.__dict__[name] = value
+        elif name in self._root:
+            self._root[name] = value
         else:
-            raise AttributeError("Context variables can only be set using `with env.let()`")
+            raise AttributeError("Non-root context variables can only be set using `with env.let()`")
 
     def __getitem__(self, item):
         return self.__getattr__(item)

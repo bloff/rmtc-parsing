@@ -18,7 +18,10 @@ class Token(Element):
             if isinstance(self.value, str): r = repr(self.value)[1:-1]
             else: r = self.value
             s += ', value=“%s”' % r
-        elif hasattr(self, 'text'): s += ', text=“%s”' % self.text
+        elif hasattr(self, 'text') and self.text is not None: s += ', text=“%s”' % self.text
+
+        if hasattr(self, 'message') and self.message is not None:
+            s += ', message=“%s”' % self.message
 
         s += ')'
         return s

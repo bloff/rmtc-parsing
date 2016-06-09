@@ -9,7 +9,7 @@ from anoky.tokenization.tokenizers.delimiter import DelimiterTokenizer, SharpDel
 from anoky.tokenization.tokenizers.lispmode import LispModeTokenizer
 from anoky.tokenization.tokenizers.raw_comment import RawCommentTokenizer
 from anoky.tokenization.tokenizers.indentation_readtable import IndentationReadtableTokenizer
-from anoky.tokenization.tokenizers.string import StringTokenizer
+from anoky.tokenization.tokenizers.string import StringTokenizer, BlockStringTokenizer
 from anoky.transducers.arrangement import Arrangement
 from anoky.transducers.arrangements.apply_in_isolation import ApplyInIsolation
 from anoky.transducers.arrangements.apply_to_rest import ApplyToRest
@@ -64,14 +64,14 @@ default_readtable = make_readtable( [
     [RT.MACRO, ["`", "```"],
      {'tokenizer': 'CodeQuoteTokenizer'}],
 
-    #
-    # [RT.MACRO, "'''",
-    #  {'tokenizer': 'TripleSingleQuoteStringTokenizer',
-    #   'preserve-leading-whitespace': True}],
-    #
-    # [RT.MACRO, '"""',
-    #  {'tokenizer': 'TripleDoubleQuoteStringTokenizer',
-    #   'preserve-leading-whitespace': True}],
+
+    [RT.MACRO, "'''",
+     {'tokenizer': 'TripleSingleQuoteStringTokenizer',
+      'preserve-leading-whitespace': True}],
+
+    [RT.MACRO, '"""',
+     {'tokenizer': 'TripleDoubleQuoteStringTokenizer',
+      'preserve-leading-whitespace': True}],
 
     
 
@@ -146,13 +146,16 @@ class AnokyDoubleQuoteStringTokenizer(StringTokenizer):
     MY_CLOSING_DELIMITER = '"'
 
 
-# class PythonTripleSingleQuoteStringTokenizer(StringTokenizer):
-#     MY_OPENING_DELIMITER = "'''"
-#     MY_CLOSING_DELIMITER = "'''"
+class AnokyTripleSingleQuoteStringTokenizer(BlockStringTokenizer):
+    MY_OPENING_DELIMITER = "'''"
+    MY_CLOSING_DELIMITER = "'''"
+    MY_CLOSING_DELIMITER_LENGTH = 3
 
-# class PythonTripleDoubleQuoteStringTokenizer(StringTokenizer):
-#     MY_OPENING_DELIMITER = '"""'
-#     MY_CLOSING_DELIMITER = '"""'
+
+class AnokyTripleDoubleQuoteStringTokenizer(BlockStringTokenizer):
+    MY_OPENING_DELIMITER = '"""'
+    MY_CLOSING_DELIMITER = '"""'
+    MY_CLOSING_DELIMITER_LENGTH = 3
 
 
 
@@ -260,12 +263,13 @@ def define_default_anoky_transducer_chain():
     
     tt_comparisons = TopDownTreeTransducer("Comparisons, Membership/Identity Tests",
                                            Arrangement([
+                                               LeftRightBinaryOperatorTwoSymbols({
+                                                   ('not', 'in')}),
                                                LeftRightBinaryOperator({
                                                    'in', 'is',}),
                                                LeftRightNaryOperatorMultipleHeads('compare',
-                                                   {'==', '!=', '<', '>', '<=', '>='}),
-                                               LeftRightBinaryOperatorTwoSymbols({
-                                                   ('not', 'in'), ('is', 'not')})]))
+                                                   {'==', '!=', '<', '>', '<=', '>=', 'is', 'isnt'}),
+                                               ]))
 
 
     
@@ -373,7 +377,7 @@ define_default_anoky_transducer_chain()
 class AnokyParser(RMTCParser):
 
     def __init__(self):
-        RMTCParser.__init__(self, TokenizationContext("PTC"),
+        RMTCParser.__init__(self, TokenizationContext("Anoky Tokenization Context"),
                             default_readtable,
                             IndentationReadtableTokenizer,
                             default_python_transducer_chain)
@@ -383,11 +387,11 @@ class AnokyParser(RMTCParser):
             SharpDelimiterTokenizer = AnokySharpDelimiterTokenizer,
             SingleQuoteStringTokenizer = AnokySingleQuoteStringTokenizer,
             DoubleQuoteStringTokenizer = AnokyDoubleQuoteStringTokenizer,
-            # TripleSingleQuoteStringTokenizer = PythonTripleSingleQuoteStringTokenizer,
-            # TripleDoubleQuoteStringTokenizer = PythonTripleDoubleQuoteStringTokenizer,
+            TripleSingleQuoteStringTokenizer = AnokyTripleSingleQuoteStringTokenizer,
+            TripleDoubleQuoteStringTokenizer = AnokyTripleDoubleQuoteStringTokenizer,
             CommentTokenizer = AnokyCommentTokenizer,
             LispModeTokenizer = LispModeTokenizer,
-            CodeQuoteTokenizer = SingleUseTokenizer
+            CodeQuoteTokenizer = SingleUseTokenizer,
             )
 
         # For Anoky we do not make use of DelimitedIdentifiers or non-raw Comments.

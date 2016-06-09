@@ -1,0 +1,10 @@
+>>> + 1, 2, 3
+
+——›–  Parsed source before macro expansion  –‹——
+(+ 1 2 3)
+
+
+——›–  Generated Python Source Code  –‹——
+1 + 2
+
+3

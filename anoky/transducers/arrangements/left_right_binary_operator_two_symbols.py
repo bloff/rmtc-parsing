@@ -22,28 +22,28 @@ class LeftRightBinaryOperatorTwoSymbols(ArrangementRule):
         self.sym_vals = sym_vals
 
     def applies(self, element:Element):
-        prev = element.prev
+        next = element.next
         return (
             is_identifier(element.code) and
-            prev is not None and
-            is_identifier(prev.code) and
-            (prev.code.name, element.code.name) in self.sym_vals and # FIXME
-            not prev.is_first() and
-            not element.is_last()
+            next is not None and
+            is_identifier(next.code) and
+            (element.code.name, next.code.name) in self.sym_vals and # FIXME
+            not element.is_first() and
+            not next.is_last()
         )
 
     def apply(self, element):
         form = element.parent
         p = element.prev
-        pp = p.prev
         n = element.next
+        nn = n.next
         form.remove(p)
-        form.remove(pp)
         form.remove(n)
-        head = Identifier(p.code.name + "-" + element.code.name)
-        head.range.update(p.code.range)
+        form.remove(nn)
+        head = Identifier(element.code.name + n.code.name)
         head.range.update(element.code.range)
-        new_form = Form(head, pp, n)
+        head.range.update(n.code.range)
+        new_form = Form(head, p, nn)
         new_form_element = form.replace(element, new_form)
 
         return new_form_element.next

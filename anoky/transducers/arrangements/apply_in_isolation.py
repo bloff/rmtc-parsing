@@ -5,6 +5,17 @@ from anoky.syntax.util import is_identifier
 from anoky.transducers.arrangement_rule import ArrangementRule
 
 
+def is_forced_head(element):
+    if not element.is_first(): return False
+    parent = element.parent
+    if isinstance(parent, PreForm):
+        return len(element.parent) > 1
+    elif isinstance(parent, Form):
+        return True
+    else:
+        return False
+
+
 class ApplyInIsolation(ArrangementRule):
     """
     ::
@@ -22,7 +33,7 @@ class ApplyInIsolation(ArrangementRule):
     def applies(self, element:Element):
         return (is_identifier(element.code) and
                 element.code.name in self.names and
-                not element.is_first())
+                not is_forced_head(element))
 
     def apply(self, element):
         form = element.parent

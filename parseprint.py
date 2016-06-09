@@ -54,3 +54,67 @@ def parseprint(code, filename="<string>", mode="exec", **kwargs):
 # Short name: pdp = parse, dump, print
 pdp = parseprint
 
+
+pyast = parse("""a = 1
+print(a)
+
+def f():
+    print(a)
+
+f()""")
+
+pyast2 = Module(body=[
+    Assign(targets=[
+        Name(id='a', ctx=Store()),
+      ], value=Num(n=1)),
+    Expr(value=Call(func=Name(id='print', ctx=Load()), args=[
+        Name(id='a', ctx=Load()),
+      ], keywords=[])),
+    FunctionDef(name='f', args=arguments(args=[], vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=None, defaults=[]), body=[
+        Expr(value=Call(func=Name(id='print', ctx=Load()), args=[
+            Name(id='a', ctx=Load()),
+          ], keywords=[])),
+      ], decorator_list=[], returns=None),
+    Expr(value=Call(func=Name(id='f', ctx=Load()), args=[], keywords=[])),
+  ])
+
+fix_missing_locations(pyast2)
+
+pyast3 = Module(body=[
+    Import(names=[
+        alias(name='anoky.importer', asname='__akyimp__'),
+      ]),
+    Import(names=[
+        alias(name='anoky.module', asname='__aky__'),
+      ]),
+    Assign(targets=[
+        Name(id='__macros__', ctx=Store()),
+      ], value=Dict(keys=[], values=[])),
+    Assign(targets=[
+        Name(id='__id_macros__', ctx=Store()),
+      ], value=Dict(keys=[], values=[])),
+    Assign(targets=[
+        Name(id='__special_forms__', ctx=Store()),
+      ], value=Dict(keys=[], values=[])),
+    Assign(targets=[
+        Name(id='a', ctx=Store()),
+      ], value=Num(n=1)),
+    Expr(value=Call(func=Name(id='print', ctx=Load()), args=[
+        Name(id='a', ctx=Load()),
+      ], keywords=[])),
+    FunctionDef(name='f', args=arguments(args=[], vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=None, defaults=[]), body=[
+        Expr(value=Call(func=Name(id='print', ctx=Load()), args=[
+            Name(id='a', ctx=Load()),
+          ], keywords=[])),
+      ], decorator_list=[], returns=None),
+    Expr(value=Call(func=Name(id='f', ctx=Load()), args=[], keywords=[])),
+  ])
+
+fix_missing_locations(pyast3)
+
+
+exec(compile(pyast, "<ast1>", mode="exec"))
+exec(compile(pyast2, "<ast1>", mode="exec"))
+exec(compile(pyast3, "<ast1>", mode="exec"))
+
+pass

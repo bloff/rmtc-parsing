@@ -17,7 +17,9 @@ class Compare(SpecialForm):
                     "<=": ast.LtE,
                     ">=": ast.GtE,
                     "<": ast.Lt,
-                    ">": ast.Gt}
+                    ">": ast.Gt,
+                    "is": ast.Is,
+                    "isnt": ast.IsNot}
 
     def generate(self, element:Element, GC:GenerationContext):
 

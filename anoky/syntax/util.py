@@ -92,3 +92,4 @@ def force_literal(code_or_value):
         return code_or_value
     else:
         return Literal(code_or_value)
+

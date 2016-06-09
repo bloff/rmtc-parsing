@@ -1,6 +1,6 @@
 import
     argparse, ast, astpp
-    sys, traceback, os.path as path
+    sys, traceback, os
 
     astformatter: ASTFormatter
 
@@ -11,13 +11,14 @@ import
     anoky.parsers.anoky_parser:   AnokyParser
     anoky.streams.file_stream:    FileStream
     anoky.syntax.lisp_printer:    indented_lisp_printer
-    anoky.common.errors:          CompilerError
+    anoky.common.errors:          CompilerError, TokenizingError
     anoky.streams.string_stream:  StringStream
 
     anoky.generation.default_special_forms_table: default_special_forms_table
     anoky.expansion.default_macro_table: default_macro_table, default_id_macro_table
 
-
+    anoky.syntax.token: is_token
+    anoky.syntax.tokens as Tokens
 
     prompt_toolkit.history: InMemoryHistory
     prompt_toolkit:         prompt
@@ -32,12 +33,27 @@ code_expander = DefaultExpander()
 code_generator = DefaultGenerator()
 
 def anoky_tokenize(stream, options):
-    tokenized_node = parser.tokenize_into_node(stream)
+    tokenized_node = parser.tokenize_into_node(stream, emmit_restart_tokens=False)
 
     if options.print_tokens:
         print  "\n——›–  Tokenized source  –‹——"
         for token in tokenized_node:
             print str(token)
+
+    errors = []
+
+    for token in tokenized_node:
+        if is_token(token, Tokens.ERROR):
+            errors.append(token)
+
+
+    if len(errors) > 0:
+        message = ""
+        for token in errors:
+            if token.message isnt None and token.message != "":
+                message +=  "%s: %s\n" % ( token.range, token.message )
+
+        raise TokenizingError(None, message)
 
     return tokenized_node
 
@@ -81,16 +97,10 @@ def print_python_code(py_ast, message="\n——›–  Generated Python Source C
 
 def anoky_generate(parsed_node, options, CG):
     py_ast = code_generator.generate_elements(parsed_node, CG)
-
-    if options.print_python_ast:
-        print_ast(ast.Module(body=py_ast))
-    if options.print_python_code:
-        print_python_code(ast.Module(body=py_ast))
-
     return py_ast
 
 def interactive_anoky(options):
-
+    options.filename = "<interactive>"
     sys.path = [''] + sys.path
 
     (CG, init_code) =
@@ -131,6 +141,12 @@ def interactive_anoky(options):
 
                 py_ast = code_generator.end(py_ast, CG)
 
+
+                if options.print_python_ast:
+                    print_ast py_ast
+                if options.print_python_code:
+                    print_python_code py_ast
+
             except CompilerError as e:
                 print(e.trace)
             except Exception:
@@ -144,7 +160,7 @@ def interactive_anoky(options):
                     compiled_ast =
                         compile:
                             py_ast
-                            filename="<ast>"
+                            filename="<interactive>"
                             mode="single"
                     # todo: write pyc file
                 except Exception:
@@ -194,6 +210,11 @@ def non_interactive_anoky(options):
 
         py_ast = code_generator.end(py_ast, CG)
 
+        if options.print_python_ast:
+            print_ast py_ast
+        if options.print_python_code:
+            print_python_code py_ast
+
     except CompilerError as e:
         print(e.trace, file=sys.stderr)
     else:
@@ -213,7 +234,7 @@ def non_interactive_anoky(options):
             ast.fix_missing_locations(py_ast)
             compiled_module =
                 compile: py_ast
-                    filename="<ast>"
+                    filename=os.path.abspath(filename)
                     mode="exec"
 
             exec(compiled_module)

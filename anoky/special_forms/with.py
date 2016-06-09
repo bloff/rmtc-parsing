@@ -2,6 +2,7 @@ import ast
 
 from anoky.generation.domain import StatementDomain as SDom, ExpressionDomain
 from anoky.generation.generation_context import GenerationContext
+from anoky.generation.util import extend_body
 from anoky.special_forms.special_form import SpecialForm
 from anoky.syntax import Element
 from anoky.syntax.util import is_form
@@ -24,7 +25,7 @@ class With(SpecialForm):
 
         with_items = []
 
-        with GC.let(domain=ExDom):
+        with GC.let(domain=ExpressionDomain):
 
             for ctxel in context_element_code:
 
@@ -53,8 +54,7 @@ class With(SpecialForm):
             with GC.let(domain=SDom):
 
                 for bodyel in acode[2:]:
-
-                    body_items.append(GC.generate(bodyel))
+                    extend_body(body_items, GC.generate(bodyel))
 
 
         return ast.With(items=with_items,

@@ -3,6 +3,7 @@ import ast
 from anoky.generation.domain import StatementDomain as SDom,\
     ExpressionDomain as ExDom
 from anoky.generation.generation_context import GenerationContext
+from anoky.generation.util import extend_body
 from anoky.special_forms.special_form import SpecialForm
 from anoky.syntax.form import Form
 from anoky.syntax.identifier import Identifier
@@ -54,7 +55,7 @@ class Def(SpecialForm):
         body_code = []
         with GC.let(domain=SDom):
             for body_element in body_elements:
-                body_code.append(GC.generate(body_element))
+                extend_body(body_code, GC.generate(body_element))
 
         decorators_code = []
 

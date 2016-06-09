@@ -74,7 +74,7 @@ class IndentedCharacterStream(CharacterStream):
             raise Exception("Tried to read character beyond EOF.")
 
         char = None
-        current_starting_column = self._stack[-1].visual_column
+        current_starting_column = self.current_starting_column
         while self._parent.position.visual_column < current_starting_column:
             char = self._parent.read()
             if char == ' ':
@@ -151,6 +151,11 @@ class IndentedCharacterStream(CharacterStream):
         self._update_relative_position()
         self.current_relative_position.index = 0 # no unread to previous-level characters
         self.relative_eof = self._parent.prev_is_EOF()
+
+
+    @property
+    def current_starting_column(self):
+        return self._stack[-1].visual_column
 
     def _update_relative_position(self):
         fpos = self._stack[-1]

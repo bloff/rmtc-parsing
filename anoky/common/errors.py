@@ -1,5 +1,7 @@
 from anoky.common.globals import G
 import anoky.common.options
+from anoky.common.string_stuff import indent_string
+
 
 class CompilerError(Exception):
     name = "Generic Error"
@@ -12,7 +14,11 @@ class CompilerError(Exception):
     @property
     def trace(self):
         trace = self.__class__.name + ":\n"
-        trace += "    %s: %s" %(str(self.range_or_pos), self.message)
+        message = "\n" + indent_string(self.message) if "\n" in self.message else self.message
+        if self.range_or_pos is not None:
+            trace += "    %s: %s" %(str(self.range_or_pos), message)
+        else:
+            trace += message
         return trace
 
 class TokenizingError(CompilerError):

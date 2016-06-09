@@ -15,6 +15,7 @@ class StringTokenizer(Tokenizer):
 
     See `<https://bloff.github.io/lyc/2015/10/04/lexer-3.html>`_.
     """
+    ALLOW_RUNOFF_CLOSING_DELIMITER = False
     MY_OPENING_DELIMITER = '"'
     MY_CLOSING_DELIMITER = '"'
     MY_CLOSING_DELIMITER_LENGTH = 1
@@ -36,7 +37,13 @@ class StringTokenizer(Tokenizer):
         stream = self.context.stream
         readtable = self.context.readtable
 
-        self.push_stream()
+        if stream.next_is_EOF():
+            yield Tokens.ERROR(self.__class__.MY_OPENING_DELIMITER, self.opening_delimiter_position,
+                               self.opening_delimiter_position_after,
+                               "No characters found after opening delimiter %s." % repr(self.__class__.MY_OPENING_DELIMITER))
+            return
+
+        stream.push()
 
         seen_escape = False
 
@@ -50,17 +57,31 @@ class StringTokenizer(Tokenizer):
         while True:
             if stream.next_is_EOF():
                 stream.pop()
-                skip_white_lines(stream, readtable)
-                k_chars = stream.readn(self.__class__.MY_CLOSING_DELIMITER_LENGTH)
-                if k_chars != self.__class__.MY_CLOSING_DELIMITER:
-                    raise TokenizingError(StreamRange(self.opening_delimiter_position, stream.copy_absolute_position()),
-                                      "Expected closing string-delimiter «%s», matching opening delimiter «%s» at position %s." %
-                                      (self.__class__.MY_CLOSING_DELIMITER, self.__class__.MY_OPENING_DELIMITER, self.opening_delimiter_position.nameless_str))
+                if self.__class__.ALLOW_RUNOFF_CLOSING_DELIMITER:
+                    position_before_skipping_white_lines = stream.copy_absolute_position()
+                    skip_white_lines(stream, readtable)
+                    position_before_attempting_to_read_k_chars = stream.copy_absolute_position()
+                    k_chars = stream.readn(self.__class__.MY_CLOSING_DELIMITER_LENGTH)
+                    if k_chars != self.__class__.MY_CLOSING_DELIMITER:
+                        yield Tokens.ERROR(k_chars, position_before_attempting_to_read_k_chars, stream.copy_absolute_position(),
+                                          "Expected closing string-delimiter «%s», matching opening delimiter «%s» at position %s.%s" %
+                                          (self.__class__.MY_CLOSING_DELIMITER,
+                                           self.__class__.MY_OPENING_DELIMITER,
+                                           self.opening_delimiter_position.nameless_str,
+                                           "" if k_chars is None else " Found " + repr(k_chars)))
+                        return
+                    else:
+                        value += '\n'
+                        yield Tokens.STRING(value, value_first_position, position_before_skipping_white_lines)
+                        yield Tokens.END_MACRO(opening_string_token, self.__class__.MY_CLOSING_DELIMITER, stream.absolute_position_of_unread(), stream.copy_absolute_position())
+                        return
                 else:
-                    value += '\n'
-                    yield Tokens.STRING(value, value_first_position, stream.absolute_position_of_unread())
-                    yield Tokens.END_MACRO(opening_string_token, self.__class__.MY_CLOSING_DELIMITER, stream.absolute_position_of_unread(), stream.copy_absolute_position())
-                    return
+                    yield Tokens.ERROR("", stream.copy_absolute_position(), stream.copy_absolute_position(),
+                                       "Expected closing string-delimiter «%s», matching opening delimiter «%s» at position %s." %
+                                       (self.__class__.MY_CLOSING_DELIMITER,
+                                        self.__class__.MY_OPENING_DELIMITER,
+                                        self.opening_delimiter_position.nameless_str))
+                return
 
             char = stream.read()
             if char == '\\':
@@ -73,83 +94,43 @@ class StringTokenizer(Tokenizer):
                     elif char in ('␤', '␉', self.MY_INTERPOL_CHAR): value += char
                     elif char == self.__class__.MY_CLOSING_DELIMITER: value += self.__class__.MY_CLOSING_DELIMITER
                     else:
-                        raise TokenizingError(stream.absolute_position_of_unread(), "Unknown escape code sequence “%s”." % char)
+                        yield Tokens.STRING(value, value_first_position, stream.absolute_position_of_unread())
+                        value = ""
+                        value_first_position = stream.copy_absolute_position()
+                        yield Tokens.ERROR(char, stream.absolute_position_of_unread(), stream.copy_absolute_position(), "Unknown escape code sequence “%s”." % char)
                     seen_escape = False
                 else:
                     if char == self.MY_INTERPOL_CHAR:
                         yield Tokens.STRING(value, value_first_position, stream.absolute_position_of_unread())
-                        for token in self.escape():
-                            yield token
                         value = ""
                         value_first_position = stream.copy_absolute_position()
+                        for token in util.interpolation(self.context):
+                            yield token
                     else:
                         value += char
                         last_k_chars = value[-self.__class__.MY_CLOSING_DELIMITER_LENGTH:]
                         if last_k_chars == self.__class__.MY_CLOSING_DELIMITER:
                             value = value[:-self.__class__.MY_CLOSING_DELIMITER_LENGTH]
-                            yield Tokens.STRING(value, value_first_position, stream.absolute_position_of_unread())
-                            yield Tokens.END_MACRO(opening_string_token, self.__class__.MY_CLOSING_DELIMITER, stream.absolute_position_of_unread(), stream.copy_absolute_position())
+                            closing_delimiter_first_position = stream.absolute_position_of_unread(self.__class__.MY_CLOSING_DELIMITER_LENGTH)
+                            yield Tokens.STRING(value, value_first_position, closing_delimiter_first_position)
+                            yield Tokens.END_MACRO(opening_string_token, self.__class__.MY_CLOSING_DELIMITER,
+                                                   closing_delimiter_first_position, stream.copy_absolute_position())
                             stream.pop()
                             return
 
         stream.pop()
 
-    def escape(self):
-        stream = self.context.stream
-        readtable = self.context.readtable
-
-        if stream.next_is_EOF():
-            raise TokenizingError(StreamRange(self.opening_delimiter_position, stream.copy_absolute_position()),
-                                  "Expected closing string-delimiter «%s», matching opening delimiter «%s» at position %s." % (self.__class__.MY_CLOSING_DELIMITER, self.__class__.MY_OPENING_DELIMITER, self.opening_delimiter_position.nameless_str))
-        else:
-            seq, properties = readtable.probe(stream)
-
-            assert 'type' in properties
-            seq_type = properties.type
-
-            if seq_type == RT.ISOLATED_CONSTITUENT:
-                yield Tokens.CONSTITUENT(seq, stream.absolute_position_of_unread_seq(seq), stream.copy_absolute_position())
-            elif seq_type == RT.MACRO:
-                assert 'tokenizer' in properties
-
-                abs_macro_seq_position = stream.absolute_position_of_unread_seq(seq)
-                abs_macro_seq_position_after = stream.copy_absolute_position()
-
-                TokenizerClass = self.context[properties.tokenizer]
-                assert issubclass(TokenizerClass, Tokenizer)
-                tokenizer = TokenizerClass(self.context, seq, abs_macro_seq_position, abs_macro_seq_position_after)
-                for token in tokenizer.run():
-                    yield token
-            elif seq_type == RT.CONSTITUENT:
-                first_position = stream.absolute_position_of_unread_seq(seq)
-                concatenation = seq + util.read_and_concatenate_constituent_sequences(stream, readtable)
-                yield Tokens.CONSTITUENT(concatenation, first_position, stream.copy_absolute_position())
-
-            # Step 3
-            elif (seq_type == RT.WHITESPACE or
-                  seq_type == RT.PUNCTUATION or
-                  seq_type == RT.NEWLINE or
-                  seq_type == RT.CLOSING or
-                  seq_type == RT.INVALID
-                  ):
-                first_position = stream.absolute_position_of_unread_seq(seq)
-                error_message = properties.error_message if 'error_message' in properties else "Unexpected sequence after string interpolation character '"+self.MY_INTERPOL_CHAR + "'."
-                raise TokenizingError(first_position, error_message)
-
-    def push_stream(self):
-        self.context.stream.push()
 
 class BlockStringTokenizer(StringTokenizer):
 
-    def push_stream(self):
+    ALLOW_RUNOFF_CLOSING_DELIMITER = True
+
+    def run(self):
         stream = self.context.stream
         readtable = self.context.readtable
         skip_white_lines(stream, readtable)
-        col_of_first_non_whitespace = stream.visual_column
-        if stream.next_is_EOF():
-            raise TokenizingError(stream.copy_absolute_position(), "No characters found after opening delimiter '%s'." % self.opening_delimiter)
-        if col_of_first_non_whitespace < 1:
-            raise TokenizingError(stream.copy_absolute_position(), "Indentation too small after opening delimiter '%s'." % self.opening_delimiter)
 
-        stream.push()
+
+        for token in super(BlockStringTokenizer, self).run():
+            yield token
 

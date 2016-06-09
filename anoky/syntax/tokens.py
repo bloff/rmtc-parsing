@@ -19,6 +19,9 @@ class _TokenTypes(Enum):
     STRING = 7
     COMMENT = 8
     PUNCTUATION = 9
+    VALID_RESTART_FROM = 10
+    VALID_RESTART_TO = 11
+    ERROR = 12
 
 class BEGIN(Token):
     """
@@ -139,3 +142,42 @@ class COMMENT(Token):
         Token.__init__(self, _TokenTypes.COMMENT, StreamRange(first_position, position_after))
         self.value = value
 
+
+
+class VALID_RESTART_FROM(Token):
+    """
+    A token stating that the current position is a valid place from which retokenizing the stream.
+    That means that the default tokenizer started at this position, and the relative column is 1, the latter
+    meaning that the current column is the indentation level of the stream.
+    """
+    def __init__(self, position:StreamPosition):
+        Token.__init__(self, _TokenTypes.VALID_RESTART_FROM, StreamRange(position, position))
+
+    def print(self):
+        return "RESTART FROM"
+
+
+class VALID_RESTART_TO(Token):
+    """
+    A token stating that the current position is a valid place from which retokenizing the stream.
+    That means that the default tokenizer started at this position, and the relative column is 1, the latter
+    meaning that the current column is the indentation level of the stream.
+    """
+    def __init__(self, position:StreamPosition):
+        Token.__init__(self, _TokenTypes.VALID_RESTART_TO, StreamRange(position, position))
+
+    def print(self):
+        return "RESTART TO"
+
+
+class ERROR(Token):
+    """
+    A token representing a tokenization error.
+    """
+    def __init__(self, value:str, first_position:StreamPosition, position_after:StreamPosition, message=None):
+        Token.__init__(self, _TokenTypes.ERROR, StreamRange(first_position, position_after))
+        self.value = value
+        self.message = message
+
+    def print(self):
+        return "ERROR(%s)" % repr(self.message)

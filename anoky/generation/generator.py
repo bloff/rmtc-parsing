@@ -12,7 +12,7 @@ from anoky.syntax.literal import Literal
 from anoky.syntax.node import Element, Node
 from anoky.syntax.seq import Seq
 from anoky.syntax.util import is_form
-
+import anoky.syntax.colors as colors
 
 class Generator(object):
 
@@ -100,6 +100,8 @@ class DefaultGenerator(Generator):
             headcode = head.code
 
             if isinstance(headcode, Identifier) and headcode.full_name in GC.special_forms:
+
+                    head.color = colors.SPECIAL_FORM
 
                     hcname = headcode.full_name
 
@@ -196,6 +198,7 @@ class DefaultGenerator(Generator):
 
 
         if isinstance(acode, Literal):
+            element.color = colors.LITERAL
 
             if acode.type is str:
                 return expr_wrap(ast.Str(acode.value), GC)
@@ -218,6 +221,7 @@ class DefaultGenerator(Generator):
                 return expr_wrap(ast.NameConstant(None), GC)
 
             elif acode.full_name in GC.special_forms:
+                element.color = colors.SPECIAL_FORM
                 raise CodeGenerationError(acode.range, "Refering to special form `%s` by name requires the use of `the`." % acode.full_name)
             # elif acode.full_name in GC.macros:
             #     raise CodeGenerationError(acode.range,

@@ -24,7 +24,7 @@ class For(SpecialForm):
         target_element = target_iter_element.code[0]
         iter_element = target_iter_element.code[1]
 
-        with GC.let(domain=ExDom):
+        with GC.let(domain=ExpressionDomain):
 
             target_code = GC.generate(target_element)
             iter_code = GC.generate(iter_element)

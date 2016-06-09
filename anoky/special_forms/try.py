@@ -3,6 +3,7 @@ import ast
 from anoky.common.errors import CodeGenerationError
 from anoky.generation.domain import StatementDomain as SDom, ExpressionDomain, ExpressionDomain
 from anoky.generation.generation_context import GenerationContext
+from anoky.generation.util import extend_body
 from anoky.special_forms.special_form import SpecialForm
 from anoky.syntax import Element
 from anoky.syntax.util import is_form, is_identifier
@@ -31,14 +32,14 @@ class Try(SpecialForm):
             exception_elm = my_code[1]
             name = None
             if is_form(exception_elm, 'as'):
-                with GC.let(domain=ExDom):
+                with GC.let(domain=ExpressionDomain):
                     my_exception_type = GC.generate(exception_elm.code[1])
                 my_exception_name_id = exception_elm.code[2]
                 if not is_identifier(my_exception_name_id):
                     raise CodeGenerationError(my_exception_name_id.range, "Expected an identifier as exception name of `except` clause in `try` special-form.")
                 name = my_exception_name_id.code.name
             else:
-                with GC.let(domain=ExDom):
+                with GC.let(domain=ExpressionDomain):
                     my_exception_type = GC.generate(exception_elm)
 
             body_gens = [GC.generate(my_body_elm) for my_body_elm in my_code.iterate_from(2)]
@@ -69,7 +70,7 @@ class Try(SpecialForm):
             else:
                 if stage > 0: raise CodeGenerationError(body_elm.range, "Found body clause after first `%s` in `try` special form." % names[stage])
                 body_gen = GC.generate(body_elm)
-                body_gens.append(body_gen)
+                extend_body(body_gens, body_gen)
 
 
         return ast.Try(body_gens, handlers, or_else, finally_body)
