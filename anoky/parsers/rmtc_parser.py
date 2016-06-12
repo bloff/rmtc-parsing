@@ -1,6 +1,7 @@
 from typing import Union
 
 from anoky.common.errors import TokenizingError
+from anoky.common.record import Record
 from anoky.streams.character_stream import CharacterStream
 from anoky.streams.stream_position import StreamPosition
 from anoky.streams.string_stream import StringStream
@@ -25,6 +26,15 @@ class RMTCParser(object):
         )
         self.transducer_chain = transducer_chain
 
+    @property
+    def readtable(self):
+        return self.tokenization_context.readtable
+
+    def add_reader_macro(self, macro_seq, tokenizer_class):
+        tokenizer_name = tokenizer_class.__name__
+        self.tokenization_context.set(**{tokenizer_name: tokenizer_class})
+
+        self.readtable.add_or_upd_seq(macro_seq, Record(type=RT.MACRO, tokenizer=tokenizer_name))
 
     # returns a stream appropriate for parsing
     def _get_stream(self, code_or_stream:Union[str, CharacterStream]):
@@ -113,3 +123,19 @@ class RMTCParser(object):
     def transduce(self, code_node:Node):
         apply_transducer_chain(self.transducer_chain, code_node)
         return code_node
+
+    def get_transducer(self, name):
+        for transducer in self.transducer_chain:
+            if hasattr(transducer, "name") and transducer.name == name:
+                return transducer
+        return None
+
+    def insert_transducer(self, after_transducer_with_name, transducer):
+        i = 0
+        while i < len(self.transducer_chain):
+
+            if hasattr(self.transducer_chain[i], "name") and self.transducer_chain[i].name == after_transducer_with_name:
+                self.rules.insert(i, transducer)
+                return
+            i += 1
+        raise IndexError("No transducer with name '%s'" % after_transducer_with_name)

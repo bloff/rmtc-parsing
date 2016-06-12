@@ -20,8 +20,8 @@ class Strings(ArrangementRule):
 
        BEGIN_MACRO("“") ⋅  END_MACRO   ⦅str ⦆ ⋅
     """
-    def __init__(self, string_delimiters, string_literal_type = "STRING (PLACEHOLDER TYPE)"):
-        ArrangementRule.__init__(self, "Strings")
+    def __init__(self, string_delimiters, string_literal_type = "STRING (PLACEHOLDER TYPE)", name=None):
+        ArrangementRule.__init__(self, "Strings" if name is None else name)
         self.string_literal_type = string_literal_type
         self.str_delims = string_delimiters
 
@@ -46,6 +46,7 @@ class Strings(ArrangementRule):
             string_token.code = Literal(string_token.value, self.string_literal_type, string_token.range)
             return string_token.next
         else:
+            # FIXME: allow for interpolation
             new_form_element = element.parent.wrap(element, element.end, Form)
             new_form = new_form_element.code
             new_form.prepend(Identifier("str", element.range))

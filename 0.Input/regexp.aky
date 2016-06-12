@@ -1,0 +1,153 @@
+import:
+    anoky.syntax.tokens as Tokens
+
+    anoky.common.errors:                        TokenizingError
+    anoky.streams.stream_position:              StreamPosition
+    anoky.tokenization.tokenization_context:    TokenizationContext
+    anoky.tokenization.tokenizer:               Tokenizer
+    anoky.tokenization.tokenizers.util:         skip_white_lines, interpolation
+    anoky.transducers.arrangement_rule:         ArrangementRule
+    anoky.syntax.token:                         is_token
+
+
+
+
+class RegexpTokenizer(Tokenizer):
+    """
+    Reads "regexps" with interpolated code.
+    """
+
+    def __init__( self, context, opening_delimiter,
+                  opening_delimiter_position, opening_delimiter_position_after ):
+
+        Tokenizer.__init__(self, context)
+        assert opening_delimiter == "r/"
+        self.opening_delimiter_position = opening_delimiter_position
+        self.opening_delimiter_position_after = opening_delimiter_position_after
+
+
+    def run(self):
+        stream = self.context.stream
+
+        if stream.next_is_EOF():
+            yield Tokens.ERROR:
+                "r/"
+                self.opening_delimiter_position
+                self.opening_delimiter_position_after
+                "No characters found after opening delimiter 'r/'."
+            return
+
+        stream.push()
+
+        seen_escape = False
+
+
+        begin_macro_token = Tokens.BEGIN_MACRO:
+            "r/"
+            self.opening_delimiter_position
+            self.opening_delimiter_position_after
+
+        yield begin_macro_token
+
+
+        # We now accumulate characters in the regexp's specifier string,
+          until we find a closing character '/', that is not preceeded by the escape
+          character '\'
+
+        value = ""
+        value_first_position = stream.copy_absolute_position()
+
+        while True:
+            if stream.next_is_EOF():
+                stream.pop()
+                yield Tokens.ERROR
+                        "", stream.copy_absolute_position(), stream.copy_absolute_position(),
+                        "Expected closing regexp-delimiter '/', matching opening delimiter 'r/' \
+                         at position %s." % self.opening_delimiter_position.nameless_str
+                return
+
+            char = stream.read()
+            if char == '\\':
+                if seen_escape:
+                    seen_escape = False
+                    value += '\\'
+                else: seen_escape = True
+            else:
+                if seen_escape:
+                    if char == '/': value += char
+                    else: value += '\\' + char
+                    seen_escape = False
+                else:
+                    if char == '/':
+                        closing_delimiter_first_position = stream.absolute_position_of_unread()
+                        yield Tokens.STRING(value, value_first_position, closing_delimiter_first_position)
+                        yield Tokens.END_MACRO
+                            begin_macro_token, '/'
+                            closing_delimiter_first_position, stream.copy_absolute_position()
+                        stream.pop()
+                        return
+                    else:
+                        value += char
+
+        stream.pop()
+
+
+
+# from Semantics.Types.Bootstrap0 import String
+
+class RegexpArrangement(ArrangementRule):
+    """
+    Processes the regexp reader macro.
+    ::
+
+       BEGIN_MACRO("r/") ⋅ STRING("abc") END_MACRO
+
+    gets converted to
+    ::
+
+       __compile_regexp__("abc")
+
+    """
+
+    def __init__(self):
+        ArrangementRule.__init__(self, "Regexp")
+
+    def applies(self, element):
+        return is_token(element, Tokens.BEGIN_MACRO, token_text="r/")
+
+    def apply(self, begin_macro):
+        end_macro = begin_macro.end
+        parent = begin_macro.parent
+        # if the regexp is empty, as in r//, its value is None
+        if begin_macro.next is end_macro:
+            parent.remove(end_macro)
+            begin_macro.code = `None`
+            return begin_macro.next
+
+        # otherwise we have something like r/abc/, where "abc" is tokenized into a STRING token
+        assert is_token(begin_macro.next, Tokens.STRING)
+        regexp = begin_macro.next
+        assert regexp.next is end_macro
+
+        # we then remove the begin_macro and end_macro tokens
+        # and replace the STRING token with the code __compile_regexp__("abc")
+        parent.remove(begin_macro)
+        parent.remove(end_macro)
+        regexp.code = `__compile_regexp__(~regexp.value)`
+        return regexp.next
+
+
+def compile_regexp(regexp_str):
+    import re
+    return re.compile(regexp_str)
+
+__builtins__["__compile_regexp__"] = compile_regexp
+
+
+# To use, do the following on an interactive anoky shell:
+  import regexp(RegexpTokenizer, RegexpArrangement)
+  __parser__.add_reader_macro("r/", RegexpTokenizer)
+  __parser__.get_transducer("Primary").insert_rule("Strings", RegexpArrangement())
+
+# Then you can do
+  if r/abc/.match("abc"): print("OK!") # prints OK!

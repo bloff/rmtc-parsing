@@ -69,6 +69,21 @@ class Arrangement(object):
                     break
             element = nxt
 
+    def get_rule(self, name):
+        for rule in self.rules:
+            if hasattr(rule, "name") and rule.name == name:
+                return rule
+        return None
+
+    def insert_rule(self, after_rule_with_name, rule):
+        i = 0
+        while i < len(self.rules):
+
+            if hasattr(self.rules[i], "name") and self.rules[i].name == after_rule_with_name:
+                    self.rules.insert(i, rule)
+                    return
+            i += 1
+        raise IndexError("No arrangment rule with name '%s'" % after_rule_with_name)
 
 # def surrounding_elements_code(element, distance_before, distance_after = 0):
 #     l = []

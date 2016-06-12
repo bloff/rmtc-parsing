@@ -20,3 +20,9 @@ class BottomUpTreeTransducer(TreeTransducer):
             if isinstance(elm.code, Node):
                 self.transduce(elm.code)
         self.arrangement.arrange(tree)
+
+    def get_rule(self, name):
+        return self.arrangement.get_rule(name)
+
+    def insert_rule(self, after_rule_with_name, rule):
+        return self.arrangement.insert_rule(after_rule_with_name, rule)

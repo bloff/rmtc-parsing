@@ -125,8 +125,8 @@ class Delimiters(ArrangementRule):
 
     Where ``[``  can be any string in the ``opening_delimiters`` attribute.
     """
-    def __init__(self, opening_delimiters):
-        ArrangementRule.__init__(self, "Delimiters")
+    def __init__(self, opening_delimiters, name=None):
+        ArrangementRule.__init__(self, "Delimiters" if name is None else name)
         self.opening_delimiters = opening_delimiters
 
     def applies(self, element):

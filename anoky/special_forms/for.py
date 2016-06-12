@@ -1,6 +1,6 @@
 import ast
 
-from anoky.generation.domain import StatementDomain as SDom, ExpressionDomain
+from anoky.generation.domain import StatementDomain as SDom, ExpressionDomain, LValueDomain
 from anoky.generation.generation_context import GenerationContext
 from anoky.generation.util import extend_body
 from anoky.special_forms.special_form import SpecialForm
@@ -25,9 +25,10 @@ class For(SpecialForm):
         target_element = target_iter_element.code[0]
         iter_element = target_iter_element.code[1]
 
-        with GC.let(domain=ExpressionDomain):
-
+        with GC.let(domain=LValueDomain):
             target_code = GC.generate(target_element)
+
+        with GC.let(domain=ExpressionDomain):
             iter_code = GC.generate(iter_element)
 
         if is_form(acode.last, "else"):

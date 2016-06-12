@@ -18,8 +18,10 @@ class Compare(SpecialForm):
                     ">=": ast.GtE,
                     "<": ast.Lt,
                     ">": ast.Gt,
+                    "in": ast.In,
+                    "notin": ast.NotIn,
                     "is": ast.Is,
-                    "isnt": ast.IsNot}
+                    "isnot": ast.IsNot}
 
     def generate(self, element:Element, GC:GenerationContext):
 

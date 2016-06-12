@@ -8,3 +8,14 @@
 1 + 2
 
 3
+
+
+a = ""
+——›–  Parsed source after macro expansion  –‹——
+(= a "")
+
+Traceback (most recent call last):
+  File "/home/bruno/Dropbox/blackrose/rmtc-parsing/anoky.aky.py", line 124, in interactive_anoky
+    exec(compiled_ast)
+  File "<interactive>", line 1, in <module>
+NameError: name '""' is not defined

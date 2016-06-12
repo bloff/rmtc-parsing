@@ -25,7 +25,7 @@ import
 
 
 
-parser = AnokyParser()
+__parser__ = AnokyParser()
 __macros__ = default_macro_table()
 __id_macros__ = default_id_macro_table()
 __special_forms__ = default_special_forms_table()
@@ -33,7 +33,7 @@ code_expander = DefaultExpander()
 code_generator = DefaultGenerator()
 
 def anoky_tokenize(stream, options):
-    tokenized_node = parser.tokenize_into_node(stream, emmit_restart_tokens=False)
+    tokenized_node = __parser__.tokenize_into_node(stream, emmit_restart_tokens=False)
 
     if options.print_tokens:
         print  "\n——›–  Tokenized source  –‹——"
@@ -50,7 +50,7 @@ def anoky_tokenize(stream, options):
     if len(errors) > 0:
         message = ""
         for token in errors:
-            if token.message isnt None and token.message != "":
+            if token.message isnot None and token.message != "":
                 message +=  "%s: %s\n" % ( token.range, token.message )
 
         raise TokenizingError(None, message)
@@ -58,7 +58,7 @@ def anoky_tokenize(stream, options):
     return tokenized_node
 
 def anoky_transduce(node, options):
-    parser.transduce(node)
+    __parser__.transduce(node)
 
     if options.print_parse:
         print  "\n——›–  Parsed source before macro expansion  –‹——", end=""

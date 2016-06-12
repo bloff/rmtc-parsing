@@ -11,8 +11,6 @@ from anoky.tokenization.tokenizers.lispmode import LispModeTokenizer
 from anoky.tokenization.tokenizers.raw_comment import RawCommentTokenizer
 from anoky.tokenization.tokenizers.indentation_readtable import IndentationReadtableTokenizer
 
-RegexpTokenizer = fallback_import("anoky.tokenization.tokenizers.regexp", "RegexpTokenizer", force_fallback=True)
-
 from anoky.tokenization.tokenizers.string import StringTokenizer, BlockStringTokenizer
 from anoky.transducers.arrangement import Arrangement
 from anoky.transducers.arrangements.apply_in_isolation import ApplyInIsolation
@@ -59,9 +57,6 @@ default_readtable = make_readtable( [
 
     
 # """ strings
-
-    [RT.MACRO, "r/",
-     {'tokenizer': 'RegexpTokenizer'}],
 
     [RT.MACRO, "'",
      {'tokenizer': 'SingleQuoteStringTokenizer'}],
@@ -243,12 +238,12 @@ def define_default_anoky_transducer_chain():
                     Arrangement([LeftRightUnaryPrefixNospaceOperator({'~'})]))
 
 
-    tt_multiplication = TopDownTreeTransducer("Multiplication, Division, etc.",
+    tt_multiplication = TopDownTreeTransducer("Multiplication",
                                               Arrangement([
                                                   LeftRightBinaryOperator({
                                                       '*', '@', '/', '%'})]))
 
-    tt_addition = TopDownTreeTransducer("Addition, Subtraction",
+    tt_addition = TopDownTreeTransducer("Addition",
                                         Arrangement([
                                             LeftRightBinaryOperator({'+', '-'})]))
 
@@ -268,15 +263,13 @@ def define_default_anoky_transducer_chain():
 
 
 
-    
-    tt_comparisons = TopDownTreeTransducer("Comparisons, Membership/Identity Tests",
+    # tt_join_isnt_notin = TopDownTreeTransducer("Comparisons, Membership/Identity Tests",
+    #                                            Arrangement([
+    #                                                     ]))
+    tt_comparisons = TopDownTreeTransducer("Compare",
                                            Arrangement([
-                                               LeftRightBinaryOperatorTwoSymbols({
-                                                   ('not', 'in')}),
-                                               LeftRightBinaryOperator({
-                                                   'in', 'is',}),
                                                LeftRightNaryOperatorMultipleHeads('compare',
-                                                   {'==', '!=', '<', '>', '<=', '>=', 'is', 'isnt'}),
+                                                   {'==', '!=', '<', '>', '<=', '>=', 'in', 'notin', 'is', 'isnot'}),
                                                ]))
 
 
@@ -400,7 +393,6 @@ class AnokyParser(RMTCParser):
             CommentTokenizer = AnokyCommentTokenizer,
             LispModeTokenizer = LispModeTokenizer,
             CodeQuoteTokenizer = SingleUseTokenizer,
-            RegexpTokenizer=RegexpTokenizer,
             )
 
         # For Anoky we do not make use of DelimitedIdentifiers or non-raw Comments.

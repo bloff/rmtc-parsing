@@ -70,7 +70,7 @@ class Readtable(object):
                 node_properties_pair = node[char]
             node = node_properties_pair[0]
         assert node_properties_pair is not None
-        assert node_properties_pair[1] is None
+
         node_properties_pair[1] = properties
 
 
@@ -104,25 +104,30 @@ class Readtable(object):
         :return: A pair with the largest possible such sequence and the associated properties.
         """
         node = self.root_node
-        node_properties_pair = [{}, None]
-        seq = ""
+
+        # read first char
+        char = stream.read()
+        if char not in node:
+            return char, self.default_properties
+        else:
+            node, properties = node[char]
+        # if char can be continued to something appearing in the readtable:
+        seq = char
+        ret_seq, ret_properties = char, properties if properties is not None else self.default_properties
         while not stream.next_is_EOF():
             char = stream.read()
             if char in node:
                 seq += char
-                node_properties_pair = node[char]
-                node = node_properties_pair[0]
+                node, properties = node[char]
+                if properties is not None:
+                    ret_seq, ret_properties = seq, properties
             else:
-                if seq != "":
-                    stream.unread()
-                    properties = self._return_properties(node_properties_pair[1])
-                    return seq, properties
-                else:
-                    return char, self._return_properties(None)
-        if seq != "":
-            properties = self._return_properties(node_properties_pair[1])
-            return seq, properties
-        assert False
+                stream.unread()
+                break
+
+        if len(ret_seq) < len(seq):
+            stream.unread(len(seq) - len(ret_seq))
+        return ret_seq, ret_properties
 
 
 def make_readtable(definition:list):

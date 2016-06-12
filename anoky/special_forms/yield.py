@@ -2,6 +2,7 @@ import ast
 
 from anoky.generation.domain import ExpressionDomain, StatementDomain
 from anoky.generation.generation_context import GenerationContext
+from anoky.generation.util import expr_wrap
 from anoky.special_forms.special_form import SpecialForm
 from anoky.syntax import Element
 
@@ -9,11 +10,10 @@ from anoky.syntax import Element
 class Yield(SpecialForm):
 
     HEADTEXT = "yield"
-    #DOMIN =
+    DOMAIN = [StatementDomain, ExpressionDomain]
 
     def generate(self, element:Element, GC:GenerationContext):
-
-        assert GC.domain == StatementDomain
+        self.precheck(element, GC)
 
         acode = element.code
 
@@ -26,4 +26,4 @@ class Yield(SpecialForm):
             with GC.let(domain=ExpressionDomain):
                 expression_code = GC.generate(acode[1])
 
-            return ast.Yield(expression_code)
+            return expr_wrap(ast.Yield(expression_code), GC)

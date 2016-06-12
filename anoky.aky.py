@@ -25,14 +25,14 @@ import sys
 import traceback
 import os
 import anoky.syntax.tokens as Tokens
-parser = AnokyParser()
+__parser__ = AnokyParser()
 __macros__ = default_macro_table()
 __id_macros__ = default_id_macro_table()
 __special_forms__ = default_special_forms_table()
 code_expander = DefaultExpander()
 code_generator = DefaultGenerator()
 def anoky_tokenize(stream,options):
-    tokenized_node = parser.tokenize_into_node(stream, emmit_restart_tokens=False)
+    tokenized_node = __parser__.tokenize_into_node(stream, emmit_restart_tokens=False)
     if options.print_tokens:
         print('\n——›–  Tokenized source  –‹——')
         for token in tokenized_node:
@@ -42,21 +42,21 @@ def anoky_tokenize(stream,options):
         if is_token(token, Tokens.ERROR):
             errors.append(token)
     if len(errors) > 0:
-        message = ""
+        message = ''
         for token in errors:
-            if token.message is not None and token.message != "":
+            if token.message is not None and token.message != '':
                 message += '%s: %s\n' % (token.range, token.message)
         raise TokenizingError(None, message)
     return tokenized_node
 def anoky_transduce(node,options):
-    parser.transduce(node)
+    __parser__.transduce(node)
     if options.print_parse:
-        print('\n——›–  Parsed source before macro expansion  –‹——', end="")
+        print('\n——›–  Parsed source before macro expansion  –‹——', end='')
         print(indented_lisp_printer(node))
 def anoky_expand(parsed_node,options):
     code_expander.expand_unit(parsed_node, macros=__macros__, id_macros=__id_macros__)
     if options.print_macro_expanded_code:
-        print('\n——›–  Parsed source after macro expansion  –‹——', end="")
+        print('\n——›–  Parsed source after macro expansion  –‹——', end='')
         print(indented_lisp_printer(parsed_node))
 def print_ast(py_ast,message='\n——›–  Generated Python AST  –‹——'):
     print(message)

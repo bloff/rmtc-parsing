@@ -30,22 +30,17 @@
 rawmacro select(element, EC):
     import anoky.syntax.util(is_form)
 
-    print "\n"*4
-    print element
-
     form = element.code
     len_form = len(form)
 
     if len_form < 2:
-        if element.parent isnt None: element.parent.remove(element)
+        if element.parent isnot None: element.parent.remove(element)
         return
 
     # generate the assignment var = expression
     expression = form[1].code
     var = EC.gensym()
     assignment = `~var = ~expression`
-
-    print assignment
 
     # generate the main `if` statement
     first_case = form[2].code
@@ -97,3 +92,4 @@ rawmacro select(element, EC):
         (print "b"))
      (else (print "c")))
 
+    b
