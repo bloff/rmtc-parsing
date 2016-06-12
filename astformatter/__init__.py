@@ -438,11 +438,11 @@ class ASTFormatter(ast.NodeVisitor):
 
     def visit_Yield(self, node):
         if getattr(node, 'value', None):
-            return "yield %s" % (self.visit(node.value),)
-        return "yield"
+            return "yield %s\n" % (self.visit(node.value),)
+        return "yield\n"
 
     def visit_YieldFrom(self, node):
-        return "yield from %s" % (self.visit(node.value),)
+        return "yield from %s\n" % (self.visit(node.value),)
 
     ####################################################################
     # statement methods - these return either a single string or a list
