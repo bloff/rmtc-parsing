@@ -25,3 +25,6 @@ class TopDownTreeTransducer(TreeTransducer):
 
     def insert_rule(self, after_rule_with_name, rule):
         return self.arrangement.insert_rule(after_rule_with_name, rule)
+
+    def insert_rule_before(self, after_rule_with_name, rule):
+        return self.arrangement.insert_rule_before(after_rule_with_name, rule)

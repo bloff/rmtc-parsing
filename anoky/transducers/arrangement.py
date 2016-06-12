@@ -78,10 +78,18 @@ class Arrangement(object):
     def insert_rule(self, after_rule_with_name, rule):
         i = 0
         while i < len(self.rules):
-
             if hasattr(self.rules[i], "name") and self.rules[i].name == after_rule_with_name:
-                    self.rules.insert(i, rule)
+                    self.rules.insert(i + 1, rule)
                     return
+            i += 1
+        raise IndexError("No arrangment rule with name '%s'" % after_rule_with_name)
+
+    def insert_rule_before(self, after_rule_with_name, rule):
+        i = 0
+        while i < len(self.rules):
+            if hasattr(self.rules[i], "name") and self.rules[i].name == after_rule_with_name:
+                self.rules.insert(i, rule)
+                return
             i += 1
         raise IndexError("No arrangment rule with name '%s'" % after_rule_with_name)
 

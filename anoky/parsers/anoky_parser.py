@@ -1,16 +1,15 @@
 from typing import Union
 
-from anoky.fallback import fallback_import
 from anoky.parsers.rmtc_parser import RMTCParser
 from anoky.streams.character_stream import CharacterStream
 from anoky.streams.indented_character_stream import IndentedCharacterStream
 from anoky.tokenization.readtable import make_readtable, RT
 from anoky.tokenization.tokenization_context import TokenizationContext
+from anoky.tokenization.tokenizers.delimited_identifier import DelimitedIdentifierTokenizer
 from anoky.tokenization.tokenizers.delimiter import DelimiterTokenizer, SharpDelimiterTokenizer, SingleUseTokenizer
+from anoky.tokenization.tokenizers.indentation_readtable import IndentationReadtableTokenizer
 from anoky.tokenization.tokenizers.lispmode import LispModeTokenizer
 from anoky.tokenization.tokenizers.raw_comment import RawCommentTokenizer
-from anoky.tokenization.tokenizers.indentation_readtable import IndentationReadtableTokenizer
-
 from anoky.tokenization.tokenizers.string import StringTokenizer, BlockStringTokenizer
 from anoky.transducers.arrangement import Arrangement
 from anoky.transducers.arrangements.apply_in_isolation import ApplyInIsolation
@@ -24,12 +23,10 @@ from anoky.transducers.arrangements.delimiters import ParenthesisWithHead, Paren
     Delimiters, CodeQuote
 from anoky.transducers.arrangements.if_else import InfixIfElse, FormWithDirectives
 from anoky.transducers.arrangements.left_right_binary_operator import LeftRightBinaryOperator
-from anoky.transducers.arrangements.left_right_binary_operator_two_symbols import LeftRightBinaryOperatorTwoSymbols
 from anoky.transducers.arrangements.left_right_binary_token_capturing_operator import LeftRightBinaryTokenCapturingOperator
 from anoky.transducers.arrangements.left_right_nary_operator import LeftRightNaryOperator
 from anoky.transducers.arrangements.left_right_nary_operator_multiple_heads import LeftRightNaryOperatorMultipleHeads
 from anoky.transducers.arrangements.left_right_unary_prefix_nospace_operator import LeftRightUnaryPrefixNospaceOperator
-from anoky.transducers.arrangements.left_right_unary_prefix_nospace_token_capturing_operator import LeftRightUnaryPrefixNospaceTokenCapturingOperator
 from anoky.transducers.arrangements.lispmode import LispMode
 from anoky.transducers.arrangements.multiple_assignment import MultipleAssignment
 from anoky.transducers.arrangements.right_left_binary_operator import RightLeftBinaryOperator
@@ -51,6 +48,8 @@ default_readtable = make_readtable( [
     [RT.MACRO, ['(', '[', '{' ],
      {'tokenizer': 'DelimiterTokenizer'}],
 
+    [RT.MACRO, '«',
+     {'tokenizer':'DelimitedIdentifier'}],
 
     [RT.MACRO, '#(',
     {'tokenizer': 'LispModeTokenizer'}],
@@ -393,6 +392,7 @@ class AnokyParser(RMTCParser):
             CommentTokenizer = AnokyCommentTokenizer,
             LispModeTokenizer = LispModeTokenizer,
             CodeQuoteTokenizer = SingleUseTokenizer,
+            DelimitedIdentifier = DelimitedIdentifierTokenizer
             )
 
         # For Anoky we do not make use of DelimitedIdentifiers or non-raw Comments.

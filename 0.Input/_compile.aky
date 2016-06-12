@@ -1,6 +1,2 @@
-import regexp(RegexpTokenizer, RegexpArrangement)
-__parser__.add_reader_macro("r/", RegexpTokenizer)
-__parser__.get_transducer("Primary").insert_rule("Strings", RegexpArrangement())
-
-# Then you can do
-if r/abc/.match("abc"): print("OK!") # prints OK!
+import regexp
+regexp.__importreader__(__parser__)

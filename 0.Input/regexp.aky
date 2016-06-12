@@ -1,13 +1,20 @@
 import:
     anoky.syntax.tokens as Tokens
 
+
+    anoky.syntax.token:                         is_token
     anoky.common.errors:                        TokenizingError
     anoky.streams.stream_position:              StreamPosition
     anoky.tokenization.tokenization_context:    TokenizationContext
     anoky.tokenization.tokenizer:               Tokenizer
     anoky.tokenization.tokenizers.util:         skip_white_lines, interpolation
+    anoky.transducers.arrangement:              Arrangement
     anoky.transducers.arrangement_rule:         ArrangementRule
-    anoky.syntax.token:                         is_token
+    anoky.transducers.top_down_tree_transducer: TopDownTreeTransducer
+    anoky.tokenization.readtable:               RT
+
+    anoky.transducers.arrangements.left_right_binary_operator: LeftRightBinaryOperator
+
 
 
 
@@ -92,9 +99,6 @@ class RegexpTokenizer(Tokenizer):
         stream.pop()
 
 
-
-# from Semantics.Types.Bootstrap0 import String
-
 class RegexpArrangement(ArrangementRule):
     """
     Processes the regexp reader macro.
@@ -143,11 +147,27 @@ def compile_regexp(regexp_str):
 
 __builtins__["__compile_regexp__"] = compile_regexp
 
+RegexpMatchOperatorTransducer = TopDownTreeTransducer:
+    "Regexp Match Operator"
+    Arrangement [LeftRightBinaryOperator({'=~'})]
 
-# To use, do the following on an interactive anoky shell:
-  import regexp(RegexpTokenizer, RegexpArrangement)
-  __parser__.add_reader_macro("r/", RegexpTokenizer)
-  __parser__.get_transducer("Primary").insert_rule("Strings", RegexpArrangement())
+rawmacro «=~»(element, EC):
+    parent = element.parent
+    regexp = element.code[1].code
+    arg = element.code[2].code
 
+    match = `(~regexp).match(~arg)`
+    parent.replace(element, match)
+
+
+__parser__.add_reader_macro("r/", RegexpTokenizer)
+__parser__.get_transducer("Primary").insert_rule("Strings", RegexpArrangement())
+__parser__.set_readtable_entry("=~", type=RT.ISOLATED_CONSTITUENT)
+__parser__.insert_transducer_before("Compare", RegexpMatchOperatorTransducer)
+
+
+
+# To use, copy-paste the above code into an interactive Anoky shell
 # Then you can do
   if r/abc/.match("abc"): print("OK!") # prints OK!
+

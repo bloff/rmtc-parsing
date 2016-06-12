@@ -1,17 +1,14 @@
 from typing import Union
 
+import anoky.syntax.tokens as Tokens
 from anoky.common.errors import TokenizingError
 from anoky.common.record import Record
 from anoky.streams.character_stream import CharacterStream
 from anoky.streams.stream_position import StreamPosition
 from anoky.streams.string_stream import StringStream
 from anoky.syntax.node import Node
-from anoky.syntax.token import is_token
 from anoky.tokenization.readtable import RT
-from anoky.tokenization.tokenizers.util import print_tokens
 from anoky.transducers.tree_transducer import apply_transducer_chain
-from anoky.common.globals import G
-import anoky.syntax.tokens as Tokens
 
 class RMTCParser(object):
 
@@ -35,6 +32,9 @@ class RMTCParser(object):
         self.tokenization_context.set(**{tokenizer_name: tokenizer_class})
 
         self.readtable.add_or_upd_seq(macro_seq, Record(type=RT.MACRO, tokenizer=tokenizer_name))
+
+    def set_readtable_entry(self, seq, **properties):
+        self.readtable.add_or_upd_seq("=~", Record(**properties))
 
     # returns a stream appropriate for parsing
     def _get_stream(self, code_or_stream:Union[str, CharacterStream]):
@@ -133,9 +133,18 @@ class RMTCParser(object):
     def insert_transducer(self, after_transducer_with_name, transducer):
         i = 0
         while i < len(self.transducer_chain):
-
             if hasattr(self.transducer_chain[i], "name") and self.transducer_chain[i].name == after_transducer_with_name:
-                self.rules.insert(i, transducer)
+                self.transducer_chain.insert(i+1, transducer)
+                return
+            i += 1
+        raise IndexError("No transducer with name '%s'" % after_transducer_with_name)
+
+    def insert_transducer_before(self, after_transducer_with_name, transducer):
+        i = 0
+        while i < len(self.transducer_chain):
+            if hasattr(self.transducer_chain[i], "name") and self.transducer_chain[
+                i].name == after_transducer_with_name:
+                self.transducer_chain.insert(i, transducer)
                 return
             i += 1
         raise IndexError("No transducer with name '%s'" % after_transducer_with_name)
