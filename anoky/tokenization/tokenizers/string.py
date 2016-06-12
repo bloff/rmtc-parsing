@@ -1,11 +1,9 @@
+import anoky.syntax.tokens as Tokens
 from anoky.common.errors import TokenizingError
 from anoky.streams.stream_position import StreamPosition
-from anoky.streams.stream_range import StreamRange
-from anoky.tokenization.readtable import RT
-from anoky.tokenization.tokenizers import util
-from anoky.tokenization import tokenization_context
+from anoky.tokenization.tokenization_context import TokenizationContext
 from anoky.tokenization.tokenizer import Tokenizer
-import anoky.syntax.tokens as Tokens
+from anoky.tokenization.tokenizers import util
 from anoky.tokenization.tokenizers.util import skip_white_lines
 
 
@@ -15,14 +13,19 @@ class StringTokenizer(Tokenizer):
 
     See `<https://bloff.github.io/lyc/2015/10/04/lexer-3.html>`_.
     """
+
     ALLOW_RUNOFF_CLOSING_DELIMITER = False
     MY_OPENING_DELIMITER = '"'
     MY_CLOSING_DELIMITER = '"'
     MY_CLOSING_DELIMITER_LENGTH = 1
     MY_INTERPOL_CHAR = '$'  # assuming interpolation marker is only a single character
+    MY_ESCAPE_CHARS = {"n": "\n", "t": "\t", "a":"\a", "b": "\b", "f":"\f", "r":"\r", "v":"\v",
+                       "\n" : ""
+
+                       }
     #MY_INTERPOL_CHAR_LENGTH?
 
-    def __init__(self, context: tokenization_context, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
+    def __init__(self, context: TokenizationContext, opening_delimiter:str, opening_delimiter_position:StreamPosition, opening_delimiter_position_after:StreamPosition):
         Tokenizer.__init__(self, context)
 
         if opening_delimiter != self.__class__.MY_OPENING_DELIMITER:
@@ -85,14 +88,16 @@ class StringTokenizer(Tokenizer):
 
             char = stream.read()
             if char == '\\':
-                if seen_escape: value += '\\'
+                if seen_escape:
+                    value += '\\'
+                    seen_escape = False
                 else: seen_escape = True
             else:
                 if seen_escape:
-                    if char == 'n': value += '\n'
-                    elif char == 't': value += '\t'
-                    elif char in ('␤', '␉', self.MY_INTERPOL_CHAR): value += char
-                    elif char == self.__class__.MY_CLOSING_DELIMITER: value += self.__class__.MY_CLOSING_DELIMITER
+                    if char in self.__class__.MY_ESCAPE_CHARS:
+                        value += self.__class__.MY_ESCAPE_CHARS[char]
+                    elif char == self.__class__.MY_INTERPOL_CHAR: value += char
+                    elif char == self.__class__.MY_CLOSING_DELIMITER: value += char
                     else:
                         yield Tokens.STRING(value, value_first_position, stream.absolute_position_of_unread())
                         value = ""

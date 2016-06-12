@@ -1,5 +1,6 @@
 from typing import Union
 
+from anoky.fallback import fallback_import
 from anoky.parsers.rmtc_parser import RMTCParser
 from anoky.streams.character_stream import CharacterStream
 from anoky.streams.indented_character_stream import IndentedCharacterStream
@@ -9,6 +10,9 @@ from anoky.tokenization.tokenizers.delimiter import DelimiterTokenizer, SharpDel
 from anoky.tokenization.tokenizers.lispmode import LispModeTokenizer
 from anoky.tokenization.tokenizers.raw_comment import RawCommentTokenizer
 from anoky.tokenization.tokenizers.indentation_readtable import IndentationReadtableTokenizer
+
+RegexpTokenizer = fallback_import("anoky.tokenization.tokenizers.regexp", "RegexpTokenizer", force_fallback=True)
+
 from anoky.tokenization.tokenizers.string import StringTokenizer, BlockStringTokenizer
 from anoky.transducers.arrangement import Arrangement
 from anoky.transducers.arrangements.apply_in_isolation import ApplyInIsolation
@@ -34,6 +38,7 @@ from anoky.transducers.arrangements.right_left_binary_operator import RightLeftB
 from anoky.transducers.arrangements.right_left_unary_prefix_operator import RightLeftUnaryPrefixOperator
 from anoky.transducers.arrangements.segment import Segment
 from anoky.transducers.arrangements.strings import Strings
+from anoky.transducers.bottom_up_tree_transducer import BottomUpTreeTransducer
 from anoky.transducers.convert_preforms import ConvertPreforms
 from anoky.transducers.top_down_tree_transducer import TopDownTreeTransducer
 
@@ -54,7 +59,10 @@ default_readtable = make_readtable( [
 
     
 # """ strings
-    
+
+    [RT.MACRO, "r/",
+     {'tokenizer': 'RegexpTokenizer'}],
+
     [RT.MACRO, "'",
      {'tokenizer': 'SingleQuoteStringTokenizer'}],
 
@@ -201,7 +209,7 @@ def define_default_anoky_transducer_chain():
 
                                            CodeQuote({'`','```'}),
                                            
-                                           Strings({"'",'"'}, str), # "'''",'"""'}),
+                                           Strings({"'",'"', "'''", '"""'}, str), # "'''",'"""'}),
 
                                            LeftRightBinaryTokenCapturingOperator({'.'}),
                                            
@@ -290,7 +298,7 @@ def define_default_anoky_transducer_chain():
 
 
 
-    tt_conditional = TopDownTreeTransducer("Conditionals",
+    tt_conditional = BottomUpTreeTransducer("Conditionals",
                                            Arrangement([
                                                InfixIfElse({('if', 'else')}),
                                                FormWithDirectives('if', {'elif', 'else'}),
@@ -392,6 +400,7 @@ class AnokyParser(RMTCParser):
             CommentTokenizer = AnokyCommentTokenizer,
             LispModeTokenizer = LispModeTokenizer,
             CodeQuoteTokenizer = SingleUseTokenizer,
+            RegexpTokenizer=RegexpTokenizer,
             )
 
         # For Anoky we do not make use of DelimitedIdentifiers or non-raw Comments.

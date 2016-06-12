@@ -1,3 +1,4 @@
+from anoky.streams.stream_range import StreamRange
 from anoky.syntax.form import Form
 from anoky.syntax.identifier import Identifier
 from anoky.syntax.literal import Literal
@@ -29,7 +30,14 @@ class Strings(ArrangementRule):
         return any([is_token(element, Tokens.BEGIN_MACRO, token_text=c) for c in self.str_delims])
 
     def apply(self, element) -> Element:
+        if element.next is element.end:
+            parent = element.parent
+            parent.remove(element.end)
+            element.code = Literal("", self.string_literal_type, StreamRange(element.range.position_after, element.range.position_after))
+            return element.next
+
         assert is_token(element.next, Tokens.STRING)
+
         if element.next.next is element.end:
             parent = element.parent
             string_token = element.next
