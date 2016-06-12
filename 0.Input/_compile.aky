@@ -1,2 +1,13 @@
-import regexp
-regexp.__importreader__(__parser__)
+import anoky.tokenization.readtable(RT),  regexp(RegexpTokenizer, RegexpArrangement, RegexpMatchOperatorTransducer)
+rawmacro «=~»(element, EC):
+        parent = element.parent
+        regexp = element.code[1].code
+        arg = element.code[2].code
+
+        match = `(~regexp).match(~arg)`
+        parent.replace(element, match)
+
+__parser__.add_reader_macro("r/", RegexpTokenizer)
+__parser__.get_transducer("Primary").insert_rule("Strings", RegexpArrangement())
+__parser__.set_readtable_entry("=~", type=RT.ISOLATED_CONSTITUENT)
+__parser__.insert_transducer_before("Compare", RegexpMatchOperatorTransducer)
