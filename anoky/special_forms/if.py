@@ -56,7 +56,9 @@ class If(SpecialForm):
                 with GC.let(domain=ExDom):
                     my_condition_gen = GC.generate(my_code[1])
 
-                my_body_gens = [GC.generate(body_elm) for body_elm in my_code.iterate_from(2)]
+                my_body_gens = []
+                for body_elm in my_code.iterate_from(2):
+                    extend_body(my_body_gens, GC.generate(body_elm))
 
                 if elif_else_elm.next is None:
                     return [astIf(my_condition_gen, my_body_gens, [])]
@@ -64,17 +66,20 @@ class If(SpecialForm):
                     else_code = gen_elif_elses(elif_else_elm.next)
                     return [astIf(my_condition_gen, my_body_gens, else_code)]
             elif is_form(elif_else_elm, 'else'):
-                return [GC.generate(body_elm) for body_elm in my_code.iterate_from(1)]
+                my_body_gens = []
+                for body_elm in my_code.iterate_from(1):
+                    extend_body(my_body_gens, GC.generate(body_elm))
+                return my_body_gens
             else:
-                raise CodeGenerationError(elif_else_elm.range, "Unexpected element `%s` after first `elif` or `else` form within `if` form." % (succinct_lisp_printer(elif_else_elm)))
-
-
-
+                raise CodeGenerationError(elif_else_elm.range,
+                                          "Unexpected element `%s` after first `elif` or `else` form within `if` form." % (
+                                          succinct_lisp_printer(elif_else_elm)))
 
         with GC.let(domain=ExDom):
             condition_gen = GC.generate(acode[1])
         body_gens = []
         else_code = []
+
         for body_elm in acode.iterate_from(2):
             if is_form(body_elm, 'elif') or is_form(body_elm, 'else'):
                 else_code = gen_elif_elses(body_elm)
@@ -84,6 +89,7 @@ class If(SpecialForm):
                 extend_body(body_gens, body_gen)
 
         if len(body_gens) == 0: body_gens.append(ast.Pass())
+
 
         if GC.domain == ExDom:
             return ast.IfExp(condition_gen, body_gens[0], else_code[0] if len(else_code) > 0 else ast.NameConstant(None))

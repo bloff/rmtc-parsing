@@ -23,6 +23,7 @@ def default_special_forms_table():
 
     NotInIsolation = fallback_import("anoky.special_forms.not_in_isolation", "NotInIsolation")
 
+    # ExpectPreviousForm = fallback_import("anoky.special_forms.expect_previous_form", "ExpectPreviousForm")
 
 
     Import = fallback_import("anoky.special_forms.import", "Import")
@@ -89,6 +90,7 @@ def default_special_forms_table():
 
         "if": If(),
         "else": NotInIsolation(),
+        "elif": NotInIsolation(),
 
         "while": While(),
         "for": For(),
@@ -100,6 +102,7 @@ def default_special_forms_table():
 
 
         "return": Return(),
+        "yield": Yield(),
         "break": Break(),
         "continue": Continue(),
 
