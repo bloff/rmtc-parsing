@@ -42,7 +42,9 @@ class Try(SpecialForm):
                 with GC.let(domain=ExpressionDomain):
                     my_exception_type = GC.generate(exception_elm)
 
-            body_gens = [GC.generate(my_body_elm) for my_body_elm in my_code.iterate_from(2)]
+            body_gens = []
+            for my_body_elm in my_code.iterate_from(2):
+                extend_body(body_gens, GC.generate(my_body_elm))
 
             return ast.ExceptHandler(my_exception_type, name, body_gens)
 
@@ -66,7 +68,9 @@ class Try(SpecialForm):
             elif is_form(body_elm, 'finally'):
                 if stage > 2: raise CodeGenerationError(body_elm.range, "Found `except` clause after first `%s` in `try` special form." % names[stage])
                 else: stage = 3
-                finally_body = [GC.generate(my_body_elm) for my_body_elm in body_elm.code.iterate_from(1)]
+                finally_body = []
+                for my_body_elm in body_elm.code.iterate_from(1):
+                    extend_body(finally_body, GC.generate(my_body_elm))
             else:
                 if stage > 0: raise CodeGenerationError(body_elm.range, "Found body clause after first `%s` in `try` special form." % names[stage])
                 body_gen = GC.generate(body_elm)

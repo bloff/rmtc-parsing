@@ -26,8 +26,8 @@ _fallback_modules = []
 
 import importlib as _imp
 
-def fallback_import(module_name, *names):
-    if module_name in _fallback_modules:
+def fallback_import(module_name, *names, force_fallback=False):
+    if force_fallback or module_name in _fallback_modules:
         try:
             module = _imp.import_module(module_name + "_fb")
         except ImportError:

@@ -264,6 +264,7 @@ class Node (Code):
         assert isinstance(child, Code) or isinstance(child, Element)
         if after_this is None and self.first is None:
             self.append(child)
+            return self.first
         else:
             assert after_this.parent is self
             element = new_element(child, self)
@@ -274,6 +275,7 @@ class Node (Code):
                 after_this.next.prev = element
             else: self.last = element
             after_this.next = element
+            return element
 
     def remove(self, element):
         """

@@ -5,6 +5,8 @@ from anoky.generation.generation_context import GenerationContext
 from anoky.generation.util import extend_body
 from anoky.special_forms.special_form import SpecialForm
 from anoky.syntax import Element, Identifier, Seq
+from anoky.syntax.form import Form
+from anoky.syntax.util import is_identifier
 
 
 class Class(SpecialForm):
@@ -19,27 +21,20 @@ class Class(SpecialForm):
 
 
         #name
-        name_element = acode[1]
-        assert isinstance(name_element.code, Identifier)
-        class_name = name_element.full_name
-
-        #bases
-        base_classes_element = acode[2]
-        if isinstance(base_classes_element.code, Identifier):
-            with GC.let(domain=ExDom):
-                base_classes_codes = [ GC.generate(base_classes_element) ]
-
-        else:
-            assert isinstance(base_classes_element.code, Seq)
+        spec = acode[1]
+        if isinstance(spec.code, Form):
+            assert is_identifier(spec.code[0])
+            class_name = spec.code[0].code.full_name
 
             with GC.let(domain=ExDom):
-
                 base_classes_codes = []
 
-                for base_class in base_classes_element.code:
+                for base_class in spec.code[1:]:
+                    extend_body(base_classes_codes, GC.generate(base_class))
 
-                    base_classes_codes.append(GC.generate(base_class))
-
+        elif isinstance(spec.code, Identifier):
+            class_name = spec.code.full_name
+            base_classes_codes = []
 
         #keywords
 

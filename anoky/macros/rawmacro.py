@@ -230,7 +230,9 @@ class RawSpecialForm(Macro, SpecialForm):
 
         generate_body_elements = rawgenerate[1:]
 
-        generate_body_code = [GC.generate(b) for b in generate_body_elements]
+        generate_body_code = []
+        for b in generate_body_elements:
+            extend_body(generate_body_code, GC.generate(b))
 
 
         generate_args_code = ast.arguments(
