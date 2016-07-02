@@ -27,7 +27,7 @@ def default_special_forms_table():
 
 
     Import = fallback_import("anoky.special_forms.import", "Import")
-    ImportMacro = fallback_import("anoky.special_forms.import", "ImportMacro")
+    MetaImport = fallback_import("anoky.special_forms.import", "MetaImport")
 
 
     Quote = fallback_import("anoky.special_forms.quote", "Quote")
@@ -116,7 +116,7 @@ def default_special_forms_table():
         "class": Class(),
 
         "import": Import(),
-        "import_macro": ImportMacro(),
+        "#meta_import": MetaImport(),
         "quote": Quote(),
         "rawmacro": RawMacro(),
         "rawspecial": RawSpecialForm()

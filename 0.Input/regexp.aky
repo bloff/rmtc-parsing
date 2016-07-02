@@ -152,23 +152,18 @@ RegexpMatchOperatorTransducer = TopDownTreeTransducer:
     Arrangement [LeftRightBinaryOperator({'=~'})]
 
 
+rawmacro «=~»(element, EC):
+        parent = element.parent
+        regexp = element.code[1].code
+        arg = element.code[2].code
+
+        match = `(~regexp).match(~arg)`
+        parent.replace(element, match)
 
 
-
-# To use, copy-paste the following code into an interactive Anoky shell
-    import anoky.tokenization.readtable(RT),  regexp(RegexpTokenizer, RegexpArrangement, RegexpMatchOperatorTransducer)
-    rawmacro «=~»(element, EC):
-            parent = element.parent
-            regexp = element.code[1].code
-            arg = element.code[2].code
-
-            match = `(~regexp).match(~arg)`
-            parent.replace(element, match)
-
-    __parser__.add_reader_macro("r/", RegexpTokenizer)
-    __parser__.get_transducer("Primary").insert_rule("Strings", RegexpArrangement())
-    __parser__.set_readtable_entry("=~", type=RT.ISOLATED_CONSTITUENT)
-    __parser__.insert_transducer_before("Compare", RegexpMatchOperatorTransducer)
-# Then you can do
-  if r/abc/.match("abc"): print("OK!") # prints OK!
-
+def __meta_import__(context):
+    parser = context.parser
+    parser.add_reader_macro("r/", RegexpTokenizer)
+    parser.get_transducer("Primary").insert_rule("Strings", RegexpArrangement())
+    parser.set_readtable_entry("=~", type=RT.ISOLATED_CONSTITUENT)
+    parser.insert_transducer_before("Compare", RegexpMatchOperatorTransducer)

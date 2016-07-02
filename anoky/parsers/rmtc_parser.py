@@ -51,7 +51,7 @@ class RMTCParser(object):
         # Set the stream of the tokenization context
         stream = self._get_stream(code_or_stream)
         if "emmit_restart_tokens" not in context_kwargs: context_kwargs["emmit_restart_tokens"] = False
-        self.tokenization_context.set(stream=stream, **context_kwargs)
+        self.tokenization_context.set(stream=stream, parser=self, **context_kwargs)
 
         # Make instance of default tokenizer
         tokenizer = self.tokenization_context.DefaultTokenizer(self.tokenization_context)

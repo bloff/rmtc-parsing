@@ -9,6 +9,7 @@ from anoky.tokenization.tokenizers.delimited_identifier import DelimitedIdentifi
 from anoky.tokenization.tokenizers.delimiter import DelimiterTokenizer, SharpDelimiterTokenizer, SingleUseTokenizer
 from anoky.tokenization.tokenizers.indentation_readtable import IndentationReadtableTokenizer
 from anoky.tokenization.tokenizers.lispmode import LispModeTokenizer
+from anoky.tokenization.tokenizers.meta_import import MetaImporter
 from anoky.tokenization.tokenizers.raw_comment import RawCommentTokenizer
 from anoky.tokenization.tokenizers.string import StringTokenizer, BlockStringTokenizer
 from anoky.transducers.arrangement import Arrangement
@@ -53,6 +54,9 @@ default_readtable = make_readtable( [
 
     [RT.MACRO, '#(',
     {'tokenizer': 'LispModeTokenizer'}],
+
+    [RT.MACRO, ['#meta-import', '#meta_import'],
+        {'tokenizer': 'MetaImporter'}],
 
     
 # """ strings
@@ -392,7 +396,8 @@ class AnokyParser(RMTCParser):
             CommentTokenizer = AnokyCommentTokenizer,
             LispModeTokenizer = LispModeTokenizer,
             CodeQuoteTokenizer = SingleUseTokenizer,
-            DelimitedIdentifier = DelimitedIdentifierTokenizer
+            DelimitedIdentifier = DelimitedIdentifierTokenizer,
+            MetaImporter = MetaImporter
             )
 
         # For Anoky we do not make use of DelimitedIdentifiers or non-raw Comments.

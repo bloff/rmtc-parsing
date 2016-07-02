@@ -1,0 +1,8 @@
+# To use, copy-paste the following code into an interactive Anoky shell
+
+#meta-import regexp
+
+# After entering the previous line, you can do
+
+if r/(.*)abc(.*)/.match("testabcxyz"): print("yes!") # prints OK!
+
